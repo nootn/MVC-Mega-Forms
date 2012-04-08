@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using Foolproof;
+using MvcMega.Forms.DataAnnotations;
 
 namespace MvcMegaFormsDemo.Models
 {
@@ -15,13 +16,13 @@ namespace MvcMegaFormsDemo.Models
         [EqualTo("EqualToInitial", ErrorMessage = "EqualToSecond must be equal to EqualToInitial.")]
         public string EqualToSecond { get; set; }
 
-        //TODO: Enable this is EqualToInitial == EqualToSecond!
+        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Disabled, "EqualToSecond", ChangeVisuallyAttribute.DisplayChangeIf.NotEquals, "", false)]
         public string EqualToShowIfOk { get; set; }
 
         public bool ShowNextField { get; set; }
 
-        //TODO: show this if ShowNextField == true
         [RequiredIf("ShowNextField", Operator.EqualTo, true)]
+        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "ShowNextField", ChangeVisuallyAttribute.DisplayChangeIf.Equals, false, false)]
         public string NextField { get; set; }
     }
 }
