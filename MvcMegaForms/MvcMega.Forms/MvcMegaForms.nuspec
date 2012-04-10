@@ -1,0 +1,32 @@
+﻿<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>MvcMegaForms</id>
+    <version>0.0.0.1</version>
+    <authors>http://about.me/nootn</authors>
+    <owners>http://about.me/nootn</owners>
+    <projectUrl>http://nootn.github.com/MVC-Mega-Forms/</projectUrl>
+    <iconUrl>https://en.gravatar.com/userimage/3172408/16287e323f3bf3578271be411aadde84.jpg</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Additional components to make awesome forms in ASP.NET MVC.  It contains things like hiding/showing or enabling/disabling form fields based on values of other fields.</description>
+    <copyright>Copyright http://about.me/nootn 2012</copyright>
+    <tags>asp.net mvc form forms mega nootn</tags>
+    <dependencies>
+      <dependency id="AspNetMvc" />
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="net40" />
+      <frameworkAssembly assemblyName="System" targetFramework="net40" />
+      <frameworkAssembly assemblyName="System.ComponentModel.DataAnnotations" targetFramework="net40" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="net40" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework="net40" />
+      <frameworkAssembly assemblyName="System.Web.Razor" targetFramework="net40" />
+      <frameworkAssembly assemblyName="System.Xml" targetFramework="net40" />
+      <frameworkAssembly assemblyName="System.Xml.Linq" targetFramework="net40" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="bin\release\MvcMega.Forms.dll" target="lib" />
+    <file src="Content\Scripts\*.js" target="Content\Scripts" />
+  </files>
+</package>
