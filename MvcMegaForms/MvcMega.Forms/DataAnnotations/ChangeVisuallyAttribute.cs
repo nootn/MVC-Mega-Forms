@@ -33,7 +33,6 @@ namespace MvcMega.Forms.DataAnnotations
             If = ifOperator;
             Value = value;
             ConditionPassesIfNull = conditionPassesIfNull;
-            JQueryParentContainerSelector = ".editor-field";
         }
 
         public ChangeTo To { get; set; }
@@ -45,13 +44,6 @@ namespace MvcMega.Forms.DataAnnotations
         public object Value { get; set; }
 
         public bool ConditionPassesIfNull { get; set; }
-
-        /// <summary>
-        /// In order to hide the selected property, it's visual representation on the screen must be "contained" within some markup; A.K.A it's "Parent".
-        /// A common example is that you have a label, the input field and a validation message.  If these are contained within a div with a class "container"
-        /// then you should set this to ".container".
-        /// </summary>
-        public string JQueryParentContainerSelector { get; set; }
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
@@ -70,7 +62,6 @@ namespace MvcMega.Forms.DataAnnotations
             rule.ValidationParameters.Add("ifoperator", If.ToString().ToLower());
             rule.ValidationParameters.Add("value", Value == null ? null : Value.ToString().ToLower());
             rule.ValidationParameters.Add("conditionpassesifnull", ConditionPassesIfNull);
-            rule.ValidationParameters.Add("jqueryparentcontainerselector", JQueryParentContainerSelector);
 
             yield return rule;
         }

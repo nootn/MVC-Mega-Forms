@@ -24,7 +24,8 @@ namespace MvcMegaFormsDemo.Controllers
                 TempData.Add("success", "Successfully submitted form!");
                 return RedirectToAction("Index");
             }
-            return View();
+            model.PopulateAllTestDropDownItems();
+            return View(model);
         }
 
     }

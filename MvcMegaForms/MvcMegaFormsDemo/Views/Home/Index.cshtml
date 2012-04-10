@@ -22,15 +22,60 @@
 
     <fieldset>
         <legend>Please fill in the form</legend>
-        @Html.EditorForModel(Model)
-@*        <ol>
-            <li>
-                @Html.LabelFor(m => m.Description)
-                @Html.TextBoxFor(m => m.Description)
-                @Html.ValidationMessageFor(m => m.Description)
+        @*@Html.EditorForModel(Model)*@
+        <ol>
+            <li class="container">
+                @Html.LabelFor(m => m.EqualToInitial)
+                @Html.TextBoxFor(m => m.EqualToInitial)
+                @Html.ValidationMessageFor(m => m.EqualToInitial)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.EqualToSecond)
+                @Html.TextBoxFor(m => m.EqualToSecond)
+                @Html.ValidationMessageFor(m => m.EqualToSecond)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.EqualToSecondDisableIfSet)
+                @Html.TextBoxFor(m => m.EqualToSecondDisableIfSet)
+                @Html.ValidationMessageFor(m => m.EqualToSecondDisableIfSet)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.ShowNextField)
+                @Html.CheckBoxFor(m => m.ShowNextField)
+                @Html.ValidationMessageFor(m => m.ShowNextField)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.NextField)
+                @Html.TextBoxFor(m => m.NextField)
+                @Html.ValidationMessageFor(m => m.NextField)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.TestSelectedDropDownItemId)
+                @Html.DropDownListFor(m => m.TestSelectedDropDownItemId, Model.AllTestDropDownItems)
+                @Html.ValidationMessageFor(m => m.TestSelectedDropDownItemId)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.DropDownOther)
+                @Html.TextBoxFor(m => m.DropDownOther)
+                @Html.ValidationMessageFor(m => m.DropDownOther)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.TestSelectedMultiSelectItemIds)
+                @Html.ListBoxFor(m => m.TestSelectedMultiSelectItemIds, Model.AllTestDropDownItems)
+                @Html.ValidationMessageFor(m => m.TestSelectedMultiSelectItemIds)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.MultiSelectOther)
+                @Html.TextBoxFor(m => m.MultiSelectOther)
+                @Html.ValidationMessageFor(m => m.MultiSelectOther)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.OnlySupplyIfMultiSelectDoesNotContainTwo)
+                @Html.TextBoxFor(m => m.OnlySupplyIfMultiSelectDoesNotContainTwo)
+                @Html.ValidationMessageFor(m => m.OnlySupplyIfMultiSelectDoesNotContainTwo)
             </li>
         </ol>
-        @Html.HiddenFor(m=>m.ComplicatedFormId)*@
+        @Html.HiddenFor(m=>m.ComplicatedFormId)
         <input type="submit" value="submit" />
     </fieldset>
 }

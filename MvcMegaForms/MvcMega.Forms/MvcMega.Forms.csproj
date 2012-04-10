@@ -81,6 +81,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataAnnotations\ChangeVisuallyAttribute.cs" />
+    <Compile Include="DataAnnotations\RequiredIfNotContains.cs" />
+    <Compile Include="DataAnnotations\RequiredIfContains.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
