@@ -10,6 +10,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 var MvcMegaForms = MvcMegaForms || {};
 
 $(document).ready(function () {
+
     $("input[data-val-changevisually]").each(function () {
         var to = $(this).attr('data-val-changevisually-to');
         var otherPropertyName = $(this).attr('data-val-changevisually-otherpropertyname');
@@ -21,7 +22,7 @@ $(document).ready(function () {
 
         var modelPrefix = dependentProperty.attr('name').substr(0, dependentProperty.attr('name').lastIndexOf(".") + 1);
         var otherProperty = $("[name=" + modelPrefix + otherPropertyName + "]");
-        
+
         MvcMegaForms.ApplyChangeVisually(dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull);
 
         otherProperty.change(function () {
@@ -29,7 +30,108 @@ $(document).ready(function () {
         });
     });
 
+    $("select[parentlistid]").each(function () {
+
+        var combinations = $(this).attr('combos');
+        var parentId = $(this).attr('parentListId');
+
+        var modelPrefix = $(this).attr('name').substr(0, $(this).attr('name').lastIndexOf(".") + 1);
+        var parentList = $("[name=" + modelPrefix + parentId + "]");
+
+        parentList.attr('combos', combinations);
+        $(this).removeAttr('combos');
+        parentList.attr('childid', $(this).attr('id'));
+
+        MvcMegaForms.SetupCascadingDropDown(parentList);
+
+        parentList.bind('change', function () {
+            MvcMegaForms.SetupCascadingDropDown($(this));
+        });
+
+    });
 });
+
+MvcMegaForms.CascadeStringStatus = {
+    StartParentId: 0,
+    StartChildId: 1,
+    EndChildId: 2,
+    EndChildValueWithNext: 3,
+    EndChildValue: 4
+};
+
+MvcMegaForms.SetupCascadingDropDown = function (parentList) {
+
+    var parentVal = MvcMegaForms.GetFormValue($(parentList));
+    var combos = $(parentList).attr('combos');
+    var childId = $(parentList).attr('childid');
+    var childList = $('#' + childId);
+    childList.empty();
+
+    var state = MvcMegaForms.CascadeStringStatus.StartParentId;
+    var currParentId = "";
+    var currChildId = "";
+    var currChildValue = "";
+    for (var i = 0; i < combos.length; i++) {
+        var val = combos[i];
+
+        //set state
+        if (val == "[") {
+            state = MvcMegaForms.CascadeStringStatus.StartChildId;
+        }
+        else if (val == "~") {
+            state = MvcMegaForms.CascadeStringStatus.EndChildId;
+        }
+        else if (val == ";") {
+            state = MvcMegaForms.CascadeStringStatus.EndChildValueWithNext;
+        }
+        else if (val == "]") {
+            state = MvcMegaForms.CascadeStringStatus.EndChildValue;
+        }
+
+        //set values
+        if (state == MvcMegaForms.CascadeStringStatus.StartParentId) {
+            currParentId += val;
+        }
+        else if (state == MvcMegaForms.CascadeStringStatus.StartChildId) {
+            if (currParentId == parentVal) {
+                if (val != "[") {
+                    currChildId += val;
+                }
+            }
+            else {
+                currParentId = "";
+            }
+        }
+        else if (state == MvcMegaForms.CascadeStringStatus.EndChildId) {
+            if (currParentId != "" && currChildId != "") {
+                if (val != "~") {
+                    currChildValue += val;
+                }
+            }
+            else {
+                currParentId = "";
+                currChildId = "";
+            }
+        }
+        else if (state == MvcMegaForms.CascadeStringStatus.EndChildValueWithNext) {
+            if (currChildId != "") {
+                childList.append($('<option></option>').val(currChildId).html(currChildValue));
+            }
+            state = MvcMegaForms.CascadeStringStatus.StartChildId;
+            currChildId = "";
+            currChildValue = "";
+        }
+        else if (state == MvcMegaForms.CascadeStringStatus.EndChildValue) {
+            if (currChildId != "") {
+                childList.append($('<option></option>').val(currChildId).html(currChildValue));
+            }
+            state = MvcMegaForms.CascadeStringStatus.StartParentId;
+            currParentId = "";
+            currChildId = "";
+            currChildValue = "";
+        }
+    }
+};
 
 $.validator.addMethod('requiredifcontains', function (val, element, dependentproperty, dependentvalue) {
     if (val != null && $.trim(val) != '') {

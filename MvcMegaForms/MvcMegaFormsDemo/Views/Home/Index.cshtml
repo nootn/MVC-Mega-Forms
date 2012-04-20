@@ -1,3 +1,4 @@
+@using MvcMega.Forms.MVC.Html
 @model MvcMegaFormsDemo.Models.ComplicatedForm
 @{
     ViewBag.Title = "A not-so-simple form!";
@@ -73,6 +74,16 @@
                 @Html.LabelFor(m => m.OnlySupplyIfMultiSelectDoesNotContainTwo)
                 @Html.TextBoxFor(m => m.OnlySupplyIfMultiSelectDoesNotContainTwo)
                 @Html.ValidationMessageFor(m => m.OnlySupplyIfMultiSelectDoesNotContainTwo)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.ParentItemId)
+                @Html.DropDownListFor(m => m.ParentItemId, Model.AllParentItems)
+                @Html.ValidationMessageFor(m => m.ParentItemId)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.ChildItemId)
+                @Html.DropDownChildListFor(m => m.ChildItemId, Model.AllChildItems)
+                @Html.ValidationMessageFor(m => m.ChildItemId)
             </li>
         </ol>
         @Html.HiddenFor(m=>m.ComplicatedFormId)

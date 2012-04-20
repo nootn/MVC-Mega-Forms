@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using Foolproof;
 using MvcMega.Forms.DataAnnotations;
+using MvcMega.Forms.MVC;
 
 namespace MvcMegaFormsDemo.Models
 {
@@ -29,6 +30,21 @@ namespace MvcMegaFormsDemo.Models
             AllTestDropDownItems.Add(new SelectListItem {Text = "One", Value = "1"});
             AllTestDropDownItems.Add(new SelectListItem {Text = "Two", Value = "2"});
             AllTestDropDownItems.Add(new SelectListItem {Text = "Other", Value = "3"});
+
+            AllParentItems = new List<SelectListItem>();
+            AllParentItems.Add(new SelectListItem { Text = "Parent 1", Value = "1" });
+            AllParentItems.Add(new SelectListItem { Text = "Parent 2", Value = "2" });
+            AllParentItems.Add(new SelectListItem { Text = "Parent 3", Value = "3" });
+
+            AllChildItems = new CascadingSelectList();
+            AllChildItems.ParentSelectListPropertyName = "ParentItemId";
+            AllChildItems.Add(new ChildSelectListItem { Text = "Child 1 of Parent 1", ParentValue = "1", Value = "1" });
+            AllChildItems.Add(new ChildSelectListItem { Text = "Child 1 of Parent 2", ParentValue = "2", Value = "2" });
+            AllChildItems.Add(new ChildSelectListItem { Text = "Child 2 of Parent 2", ParentValue = "2", Value = "3" });
+            AllChildItems.Add(new ChildSelectListItem { Text = "Child 1 of Parent 3", ParentValue = "3", Value = "4" });
+            AllChildItems.Add(new ChildSelectListItem { Text = "Child 2 of Parent 3", ParentValue = "3", Value = "5" });
+            AllChildItems.Add(new ChildSelectListItem { Text = "Child 3 of Parent 3", ParentValue = "3", Value = "6" });
+
         }
 
         [HiddenInput]
@@ -67,5 +83,13 @@ namespace MvcMegaFormsDemo.Models
         [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Disabled, "TestSelectedMultiSelectItemIds", ChangeVisuallyAttribute.DisplayChangeIf.Contains, "2", false)]
         public string OnlySupplyIfMultiSelectDoesNotContainTwo { get; set; }
 
+
+        public List<SelectListItem> AllParentItems { get; set; }
+
+        public int ParentItemId { get; set; }
+
+        public CascadingSelectList AllChildItems { get; set; }
+
+        public int ChildItemId { get; set; }
     }
 }

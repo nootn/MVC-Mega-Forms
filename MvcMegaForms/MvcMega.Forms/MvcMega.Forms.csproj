@@ -45,6 +45,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\AspNetWebPages.Core.2.0.20126.16343\lib\net40\System.Web.Helpers.dll</HintPath>
@@ -82,6 +83,9 @@
     <Compile Include="DataAnnotations\ChangeVisuallyAttribute.cs" />
     <Compile Include="DataAnnotations\RequiredIfNotContains.cs" />
     <Compile Include="DataAnnotations\RequiredIfContains.cs" />
+    <Compile Include="MVC\CascadingSelectList.cs" />
+    <Compile Include="MVC\ChildSelectListItem.cs" />
+    <Compile Include="MVC\Html\SelectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
