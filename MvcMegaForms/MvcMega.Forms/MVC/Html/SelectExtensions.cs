@@ -24,7 +24,7 @@ namespace MvcMega.Forms.MVC.Html
                     {
                         EnsureNoSpecialCharacters(currParent);
                         finalItems.Append(currParent);
-                        finalItems.Append("[");
+                        finalItems.Append("{");
                         var childIds = list.Where(i => i.ParentValue == currParent);
                         if (childIds.Any())
                         {
@@ -36,7 +36,7 @@ namespace MvcMega.Forms.MVC.Html
                             }
                             finalItems.Remove(finalItems.Length - 1, 1);
                         }
-                        finalItems.Append("]");
+                        finalItems.Append("}");
                     }
                 }
             }

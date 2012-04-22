@@ -85,6 +85,11 @@
                 @Html.DropDownChildListFor(m => m.ChildItemId, Model.AllChildItems)
                 @Html.ValidationMessageFor(m => m.ChildItemId)
             </li>
+            <li class="container">
+                @Html.LabelFor(m => m.ChildOfChildItemId)
+                @Html.DropDownChildListFor(m => m.ChildOfChildItemId, Model.AllChildOfChildItems)
+                @Html.ValidationMessageFor(m => m.ChildOfChildItemId)
+            </li>
         </ol>
         @Html.HiddenFor(m=>m.ComplicatedFormId)
         <input type="submit" value="submit" />
