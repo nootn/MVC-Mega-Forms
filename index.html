@@ -35,6 +35,20 @@
 <p>This project aims to close that gap to get you up and running with "smart" forms super fast.</p>
 
 <p>To see progress on the project - what's done, in progress and upcoming, check out the <a href="https://trello.com/board/mvc-mega-forms/4f80dfdad096c0a82e10b37f">Trello board</a>.</p>
+
+<h3>Quick Start</h3>
+<p>First, install the Nuget package into your ASP.NET MVC 4 Web Application</p>
+<script src="https://gist.github.com/2470080.js?file=NuGet.ps1"></script>
+
+<h3>Change Visually - Quick Start</h3>
+<p>The 'ChangeVisually' attribute allows you to either show/hide or enable/disable a form field based on another form field within the same Model.</p>
+<p>The first step is to create a Model.  Add some fields that have a ChangeVisually attribute - play aroun with the different options within the attribute...</p>
+<script src="https://gist.github.com/2470080.js?file=SampleModel.cs"></script>
+<p>Next, create the view which renders a form for the Model.  You need to wrap everything related to a particular form field (E.g. the label, the input itself and any validation/help) in some sort of container with some sort of identifier that jQuery can find (E.g. give it a class).  In the example below, see the 'li' elements that have the class 'container' as an example...</p>
+<script src="https://gist.github.com/2470080.js?file=SampleRazorView.cshtml"></script>
+<p>You should set the javascript global variable 'MegaFormsChangeVisuallyJQueryParentContainerSelector' to tell the library how to identify your form field container.  The example below uses '.container' indicating it's class is 'container'.  Optionally you can also specify some jQuery animations to use when hiding and showing fields...</p>
+<script src="https://gist.github.com/2470080.js?file=CustomJavascriptConfiguration.js"></script>
+<p>That's it!  If you check the checkboxes you should see the behavior, the first text box hiding and showing and the second enabling and disabling</p>
       </section>
     </div>
 
