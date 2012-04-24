@@ -13,6 +13,34 @@ namespace MvcMega.Forms.MVC.Html
                                                                                 expression,
                                                                             CascadingSelectList selectList)
         {
+            var combosValue = GetCombosAttributeValue(selectList);
+
+            return System.Web.Mvc.Html.SelectExtensions.DropDownListFor(
+                htmlHelper, expression, selectList, null,
+                new
+                    {
+                        combos = combosValue,
+                        parentListId = selectList.ParentSelectListPropertyName
+                    });
+        }
+
+
+        public static MvcHtmlString DropDownChildList(this HtmlHelper htmlHelper, string name, CascadingSelectList selectList)
+        {
+            var combosValue = GetCombosAttributeValue(selectList);
+
+            return System.Web.Mvc.Html.SelectExtensions.DropDownList(
+                htmlHelper, name, selectList, null,
+                new
+                {
+                    combos = combosValue,
+                    parentListId = selectList.ParentSelectListPropertyName
+                });
+        }
+
+
+        public static StringBuilder GetCombosAttributeValue(CascadingSelectList selectList)
+        {
             var list = selectList.ToList();
             var finalItems = new StringBuilder();
             if (list.Any())
@@ -40,14 +68,7 @@ namespace MvcMega.Forms.MVC.Html
                     }
                 }
             }
-
-            return System.Web.Mvc.Html.SelectExtensions.DropDownListFor(
-                htmlHelper, expression, selectList, null,
-                new
-                    {
-                        combos = finalItems.ToString(),
-                        parentListId = selectList.ParentSelectListPropertyName
-                    });
+            return finalItems;
         }
 
         private static void EnsureNoSpecialCharacters(string value)
