@@ -68,6 +68,20 @@ namespace MvcMegaFormsDemo.Models
 
         }
 
+        //This will show as a checkbox on the screen - checking it will show "TheNextHidingField"
+        public bool ShowTheNextHidingField { get; set; }
+
+        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "ShowTheNextHidingField", ChangeVisuallyAttribute.DisplayChangeIf.Equals, false, false)]
+        public string TheNextHidingField { get; set; }
+
+        //This will show as a checkbox on the screen - checking it will enable "TheNextDisabledField"
+        public bool EnableTheNextDisabledField { get; set; }
+
+        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Disabled, "EnableTheNextDisabledField", ChangeVisuallyAttribute.DisplayChangeIf.Equals, false, false)]
+        public string TheNextDisabledField { get; set; }
+
+
+
         [HiddenInput]
         public int ComplicatedFormId { get; set; }
 

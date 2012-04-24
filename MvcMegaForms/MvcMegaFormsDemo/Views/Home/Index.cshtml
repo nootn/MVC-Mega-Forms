@@ -23,8 +23,27 @@
 
     <fieldset>
         <legend>Please fill in the form</legend>
-        @*@Html.EditorForModel(Model)*@
         <ol>
+            <li class="container">
+                @Html.LabelFor(m => m.ShowTheNextHidingField)
+                @Html.CheckBoxFor(m => m.ShowTheNextHidingField)
+                @Html.ValidationMessageFor(m => m.ShowTheNextHidingField)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.TheNextHidingField)
+                @Html.TextBoxFor(m => m.TheNextHidingField)
+                @Html.ValidationMessageFor(m => m.TheNextHidingField)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.EnableTheNextDisabledField)
+                @Html.CheckBoxFor(m => m.EnableTheNextDisabledField)
+                @Html.ValidationMessageFor(m => m.EnableTheNextDisabledField)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.TheNextDisabledField)
+                @Html.TextBoxFor(m => m.TheNextDisabledField)
+                @Html.ValidationMessageFor(m => m.TheNextDisabledField)
+            </li>
             <li class="container">
                 @Html.LabelFor(m => m.EqualToInitial)
                 @Html.TextBoxFor(m => m.EqualToInitial)

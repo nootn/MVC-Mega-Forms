@@ -11,40 +11,39 @@ var MvcMegaForms = MvcMegaForms || {};
 
 $(document).ready(function () {
     
-    $("input[data-val-changevisually]").each(function () {
+    $(":input").each(function () {
         var to = $(this).attr('data-val-changevisually-to');
-        var otherPropertyName = $(this).attr('data-val-changevisually-otherpropertyname');
-        var ifOperator = $(this).attr('data-val-changevisually-ifoperator');
-        var value = $(this).attr('data-val-changevisually-value');
-        var conditionPassesIfNull = $(this).attr('data-val-changevisually-conditionpassesifnull');
+        if (to != null && to != '') {
+            var otherPropertyName = $(this).attr('data-val-changevisually-otherpropertyname');
+            var ifOperator = $(this).attr('data-val-changevisually-ifoperator');
+            var value = $(this).attr('data-val-changevisually-value');
+            var conditionPassesIfNull = $(this).attr('data-val-changevisually-conditionpassesifnull');
 
-        var dependentProperty = $(this);
+            var dependentProperty = $(this);
 
-        var modelPrefix = dependentProperty.attr('name').substr(0, dependentProperty.attr("name").lastIndexOf(".") + 1);
-        var otherProperty = $("[name=" + modelPrefix + otherPropertyName + "]");
+            var otherProperty = $("[name=" + dependentProperty.attr('name').substr(0, dependentProperty.attr("name").lastIndexOf(".") + 1) + otherPropertyName + "]");
 
-        otherProperty.live("change.changevisually", function () {
-            MvcMegaForms.ApplyChangeVisually(dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull);
-        });
+            otherProperty.live("change.changevisually", function () {
+                MvcMegaForms.ApplyChangeVisually(dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull);
+            });
 
-        otherProperty.change();
-    });
+            otherProperty.change();
+        }
 
-    $("select[parentlistid]").each(function () {
         var parentId = $(this).attr("parentListId");
+        if (parentId != null && parentId != '') {
+            var parentList = $("[name=" + $(this).attr("name").substr(0, $(this).attr("name").lastIndexOf(".") + 1) + parentId + "]");
 
-        var modelPrefix = $(this).attr("name").substr(0, $(this).attr("name").lastIndexOf(".") + 1);
-        var parentList = $("[name=" + modelPrefix + parentId + "]");
+            parentList.attr("childid", $(this).attr('id'));
 
-        parentList.attr("childid", $(this).attr('id'));
+            parentList.live("change.cascade", function() {
+                MvcMegaForms.SetupCascadingDropDown($(this));
+            });
 
-        parentList.live("change.cascade", function () {
-            MvcMegaForms.SetupCascadingDropDown($(this));
-        });
-
-        parentList.change();
-
+            parentList.change();
+        }
     });
+
 });
 
 $.validator.addMethod('requiredifcontains', function (val, element, dependentproperty, dependentvalue) {
@@ -192,10 +191,10 @@ MvcMegaForms.SetupCascadingDropDown = function (parentList) {
     var childId = $(parentList).attr('childid');
     var childList = $('#' + childId);
 
-    //if this child has a child one, it's selected event will not fire, so we must call it manually
+    //if this child has a child one, it's change event will not fire, so we must call it manually
     var childOfChild = childList.attr('childid');
     if (childOfChild != null && childOfChild != '') {
-        MvcMegaForms.CascadeDropDown(childList);
+        childList.change();
     }
 };
 
