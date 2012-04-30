@@ -109,6 +109,26 @@
                 @Html.DropDownChildListFor(m => m.ChildOfChildItemId, Model.AllChildOfChildItems)
                 @Html.ValidationMessageFor(m => m.ChildOfChildItemId)
             </li>
+            <li class="container">
+                @Html.LabelFor(m => m.FirstSubDetails.HasValue)
+                @Html.CheckBoxFor(m => m.FirstSubDetails.HasValue)
+                @Html.ValidationMessageFor(m => m.FirstSubDetails.HasValue)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.FirstSubDetails.TheValue)
+                @Html.TextBoxFor(m => m.FirstSubDetails.TheValue)
+                @Html.ValidationMessageFor(m => m.FirstSubDetails.TheValue)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.SecondSubDetails.HasValue)
+                @Html.CheckBoxFor(m => m.SecondSubDetails.HasValue)
+                @Html.ValidationMessageFor(m => m.SecondSubDetails.HasValue)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.SecondSubDetails.TheValue)
+                @Html.TextBoxFor(m => m.SecondSubDetails.TheValue)
+                @Html.ValidationMessageFor(m => m.SecondSubDetails.TheValue)
+            </li>
         </ol>
         @Html.HiddenFor(m=>m.ComplicatedFormId)
         <input type="submit" value="submit" />

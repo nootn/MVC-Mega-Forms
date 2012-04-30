@@ -21,7 +21,7 @@ $(document).ready(function () {
 
             var dependentProperty = $(this);
 
-            var otherProperty = $("[name=" + dependentProperty.attr('name').substr(0, dependentProperty.attr("name").lastIndexOf(".") + 1) + otherPropertyName + "]");
+            var otherProperty = $("[name='" + dependentProperty.attr('name').substr(0, dependentProperty.attr("name").lastIndexOf(".") + 1) + otherPropertyName + "']");
 
             otherProperty.live("change.changevisually", function () {
                 MvcMegaForms.ApplyChangeVisually(dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull);
@@ -32,7 +32,7 @@ $(document).ready(function () {
 
         var parentId = $(this).attr("parentListId");
         if (parentId != null && parentId != '') {
-            var parentList = $("[name=" + $(this).attr("name").substr(0, $(this).attr("name").lastIndexOf(".") + 1) + parentId + "]");
+            var parentList = $("[name='" + $(this).attr("name").substr(0, $(this).attr("name").lastIndexOf(".") + 1) + parentId + "']");
 
             parentList.attr("childid", $(this).attr('id'));
 
@@ -51,7 +51,7 @@ $.validator.addMethod('requiredifcontains', function (val, element, dependentpro
         return false;
     }
     var modelPrefix = element.name.substr(0, element.name.lastIndexOf(".") + 1);
-    var otherProperty = $("[name=" + modelPrefix + dependentproperty + "]");
+    var otherProperty = $("[name='" + modelPrefix + dependentproperty + "']");
     var otherVal = MvcMegaForms.GetFormValue(otherProperty);
     for (var i = 0; i < otherVal.length; i++) {
         var currValue = otherVal[i];
@@ -68,7 +68,7 @@ $.validator.addMethod('requiredifnotcontains', function (val, element, dependent
         return false;
     }
     var modelPrefix = element.name.substr(0, element.name.lastIndexOf(".") + 1);
-    var otherProperty = $("[name=" + modelPrefix + dependentproperty + "]");
+    var otherProperty = $("[name='" + modelPrefix + dependentproperty + "']");
     var otherVal = MvcMegaForms.GetFormValue(otherProperty);
     for (var i = 0; i < otherVal.length; i++) {
         var currValue = otherVal[i];

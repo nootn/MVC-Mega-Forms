@@ -132,5 +132,9 @@ namespace MvcMegaFormsDemo.Models
 
         [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "ChildItemId", ChangeVisuallyAttribute.DisplayChangeIf.Equals, 0, true)]
         public int ChildOfChildItemId { get; set; }
+
+        public SubDetails FirstSubDetails { get; set; }
+
+        public SubDetails SecondSubDetails { get; set; }
     }
 }
