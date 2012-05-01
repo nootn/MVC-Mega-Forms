@@ -26,7 +26,9 @@
         <ol>
             <li class="container">
                 @Html.LabelFor(m => m.ShowTheNextHidingField)
-                @Html.CheckBoxFor(m => m.ShowTheNextHidingField)
+                @*@Html.CheckBoxFor(m => m.ShowTheNextHidingField)*@
+                <label>@Html.RadioButtonFor(m => m.ShowTheNextHidingField, true, new { id = "ShowTheNextHidingFieldTrue" }) Yes</label>
+                <label>@Html.RadioButtonFor(m => m.ShowTheNextHidingField, false, new { id = "ShowTheNextHidingFieldFalse" }) No</label>
                 @Html.ValidationMessageFor(m => m.ShowTheNextHidingField)
             </li>
             <li class="container">

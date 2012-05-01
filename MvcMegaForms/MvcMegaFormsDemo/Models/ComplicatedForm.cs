@@ -71,6 +71,7 @@ namespace MvcMegaFormsDemo.Models
         //This will show as a checkbox on the screen - checking it will show "TheNextHidingField"
         public bool ShowTheNextHidingField { get; set; }
 
+        [RequiredIf("ShowTheNextHidingField", Operator.EqualTo, true)]
         [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "ShowTheNextHidingField", ChangeVisuallyAttribute.DisplayChangeIf.Equals, false, false)]
         public string TheNextHidingField { get; set; }
 

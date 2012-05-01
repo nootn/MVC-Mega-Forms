@@ -52,9 +52,9 @@ $.validator.addMethod('requiredifcontains', function (val, element, dependentpro
     }
     var modelPrefix = element.name.substr(0, element.name.lastIndexOf(".") + 1);
     var otherProperty = $("[name='" + modelPrefix + dependentproperty + "']");
-    var otherVal = MvcMegaForms.GetFormValue(otherProperty);
+    var otherVal = MvcMegaForms.GetFormValue(otherProperty).toLowerCase();
     for (var i = 0; i < otherVal.length; i++) {
-        var currValue = otherVal[i];
+        var currValue = otherVal[i].toLowerCase();
         if (currValue == dependentvalue) {
             return false;
         }
@@ -69,9 +69,9 @@ $.validator.addMethod('requiredifnotcontains', function (val, element, dependent
     }
     var modelPrefix = element.name.substr(0, element.name.lastIndexOf(".") + 1);
     var otherProperty = $("[name='" + modelPrefix + dependentproperty + "']");
-    var otherVal = MvcMegaForms.GetFormValue(otherProperty);
+    var otherVal = MvcMegaForms.GetFormValue(otherProperty).toLowerCase();
     for (var i = 0; i < otherVal.length; i++) {
-        var currValue = otherVal[i];
+        var currValue = otherVal[i].toLowerCase();
         if (currValue == dependentvalue) {
             return true;
         }
@@ -110,7 +110,6 @@ MvcMegaForms.ApplyChangeVisually = function (dependentProperty, otherProperty, t
 MvcMegaForms.ConditionMetForChangeVisually = function (dependantProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull) {
     var conditionMet = false;
     var val = MvcMegaForms.GetFormValue(otherProperty);
-
     if (val == null && value != null) {
         //value is null, condition is met if we wanted it to be met when null
         conditionMet = conditionPassesIfNull;
@@ -131,6 +130,8 @@ MvcMegaForms.ConditionMetForChangeVisually = function (dependantProperty, otherP
         conditionMet = conditionPassesIfNull;
     } else //both are not null
     {
+        val = val.toString().toLowerCase();
+        value = value.toString().toLowerCase();
         switch (ifOperator) {
             case "equals":
                 conditionMet = val == value;
@@ -152,7 +153,7 @@ MvcMegaForms.ConditionMetForChangeVisually = function (dependantProperty, otherP
                 break;
             case "contains":
                 for (var iMet = 0; iMet < val.length; iMet++) {
-                    var currContainsItem = val[iMet];
+                    var currContainsItem = val[iMet].toLowerCase();
                     if (currContainsItem == value) {
                         conditionMet = true;
                         break;
@@ -162,7 +163,7 @@ MvcMegaForms.ConditionMetForChangeVisually = function (dependantProperty, otherP
             case "notcontains":
                 conditionMet = true;
                 for (var iNotMet = 0; iNotMet < val.length; iNotMet++) {
-                    var currNotContainsItem = val[iNotMet];
+                    var currNotContainsItem = val[iNotMet].toLowerCase();
                     if (currNotContainsItem == value) {
                         conditionMet = false;
                         break;
@@ -279,6 +280,9 @@ MvcMegaForms.GetFormValue = function (formControl) {
     var val;
     if (formControl.is(':checkbox')) {
         val = formControl.is(':checked') ? 'true' : 'false';
+    }
+    else if (formControl.is(':radio')) {
+        val = $("input:radio[name='" + formControl.attr('name') + "']:checked").val();
     } else {
         val = formControl.val();
     }
