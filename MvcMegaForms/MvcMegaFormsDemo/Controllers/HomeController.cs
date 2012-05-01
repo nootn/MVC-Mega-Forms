@@ -31,5 +31,23 @@ namespace MvcMegaFormsDemo.Controllers
             model.PopulateAllTestDropDownItems();
             return View(model);
         }
+
+        public ActionResult EditorForModel()
+        {
+            var model = new ComplicatedForm();
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditorForModel(ComplicatedForm model)
+        {
+            if (ModelState.IsValid)
+            {
+                TempData.Add("success", "Successfully submitted form!");
+                return RedirectToAction("EditorForModel");
+            }
+            model.PopulateAllTestDropDownItems();
+            return View(model);
+        }
     }
 }
