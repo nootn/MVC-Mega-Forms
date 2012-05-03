@@ -1,16 +1,16 @@
 ﻿/*
 Copyright (c) 2012 Andrew Newton (http://about.me/nootn)
-
+ 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
+ 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
+ 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 var MvcMegaForms = MvcMegaForms || {};
 
 $(document).ready(function () {
-    
+
     $(":input").each(function () {
         var to = $(this).attr('data-val-changevisually-to');
         if (to != null && to != '') {
@@ -36,7 +36,7 @@ $(document).ready(function () {
 
             parentList.attr("childid", $(this).attr('id'));
 
-            parentList.live("change.cascade", function() {
+            parentList.live("change.cascade", function () {
                 MvcMegaForms.SetupCascadingDropDown($(this));
             });
 
@@ -197,6 +197,14 @@ MvcMegaForms.SetupCascadingDropDown = function (parentList) {
     if (childOfChild != null && childOfChild != '') {
         childList.change();
     }
+    else {
+        //find if there are any form elements that depend on the child one for changevisually
+        var indexOfLastDot = childList.attr("name").lastIndexOf(".");
+        var childNameWithoutPrefix = childList.attr('name').substr((indexOfLastDot < 0 ? -1 : indexOfLastDot) + 1);
+        if ($(":input[data-val-changevisually-otherpropertyname='" + childNameWithoutPrefix + "']").length > 0) {
+            childList.change();
+        }
+    }
 };
 
 MvcMegaForms.CascadeDropDown = function (parentList) {
@@ -288,3 +296,4 @@ MvcMegaForms.GetFormValue = function (formControl) {
     }
     return val;
 };
+ 
