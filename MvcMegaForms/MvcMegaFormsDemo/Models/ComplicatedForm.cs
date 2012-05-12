@@ -76,12 +76,14 @@ namespace MvcMegaFormsDemo.Models
         public string TheNextHidingField { get; set; }
 
         //This will show as a checkbox on the screen - checking it will enable "TheNextDisabledField"
-        public bool EnableTheNextDisabledField { get; set; }
+        public bool EnableTheNextDisabledOrHiddenField { get; set; }
 
-        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Disabled, "EnableTheNextDisabledField", ChangeVisuallyAttribute.DisplayChangeIf.Equals, false, false)]
-        public string TheNextDisabledField { get; set; }
+        public string TypeHideToHideOrDisableToDisableNextField { get; set; }
 
-
+        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Disabled, "EnableTheNextDisabledOrHiddenField", ChangeVisuallyAttribute.DisplayChangeIf.Equals, false, false)]
+        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Disabled, "TypeHideToHideOrDisableToDisableNextField", ChangeVisuallyAttribute.DisplayChangeIf.Equals, "Disable", false)]
+        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "TypeHideToHideOrDisableToDisableNextField", ChangeVisuallyAttribute.DisplayChangeIf.Equals, "Hide", false)]
+        public string TheNextDisabledOrHiddenField { get; set; }
 
         [HiddenInput]
         public int ComplicatedFormId { get; set; }

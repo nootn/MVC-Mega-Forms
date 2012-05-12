@@ -10,40 +10,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 var MvcMegaForms = MvcMegaForms || {};
 
 $(document).ready(function () {
-
-    $(":input").each(function () {
-        var to = $(this).attr('data-val-changevisually-to');
-        if (to != null && to != '') {
-            var otherPropertyName = $(this).attr('data-val-changevisually-otherpropertyname');
-            var ifOperator = $(this).attr('data-val-changevisually-ifoperator');
-            var value = $(this).attr('data-val-changevisually-value');
-            var conditionPassesIfNull = $(this).attr('data-val-changevisually-conditionpassesifnull');
-
-            var dependentProperty = $(this);
-
-            var otherProperty = $("[name='" + dependentProperty.attr('name').substr(0, dependentProperty.attr("name").lastIndexOf(".") + 1) + otherPropertyName + "']");
-
-            otherProperty.live("change.changevisually", function () {
-                MvcMegaForms.ApplyChangeVisually(dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull);
-            });
-
-            otherProperty.change();
-        }
-
-        var parentId = $(this).attr("parentListId");
-        if (parentId != null && parentId != '') {
-            var parentList = $("[name='" + $(this).attr("name").substr(0, $(this).attr("name").lastIndexOf(".") + 1) + parentId + "']");
-
-            parentList.attr("childid", $(this).attr('id'));
-
-            parentList.live("change.cascade", function () {
-                MvcMegaForms.SetupCascadingDropDown($(this));
-            });
-
-            parentList.change();
-        }
-    });
-
+    MvcMegaForms.AttachEvents();
 });
 
 $.validator.addMethod('requiredifcontains', function (val, element, dependentproperty, dependentvalue) {
@@ -80,36 +47,127 @@ $.validator.addMethod('requiredifnotcontains', function (val, element, dependent
 });
 $.validator.unobtrusive.adapters.addSingleVal('requiredifnotcontains', 'dependentproperty', 'dependentvalue', 'requiredifnotcontains');
 
+MvcMegaForms.AttachEvents = function () {
+    $(":input").each(function () {
+        var tos = $(this).attr('data-val-changevisually-to');
+        if (tos != null && tos != '') {
+            var toValues = tos.split("~");
+            var otherPropertyNames = $(this).attr('data-val-changevisually-otherpropertyname').split("~");
+            var ifOperators = $(this).attr('data-val-changevisually-ifoperator').split("~");
+            var values = $(this).attr('data-val-changevisually-value').split("~");
+            var conditionPassesIfNulls = $(this).attr('data-val-changevisually-conditionpassesifnull').split("~");
+
+            var dependentProperty = $(this);
+
+            //Get each unique other property name
+            var uniqueOtherPropertyNames = $.unique(otherPropertyNames.slice());
+
+            //go through each 'other' field and hook up the change event
+            for (var iOuter = 0; iOuter < uniqueOtherPropertyNames.length; iOuter++) {
+                var fullName = dependentProperty.attr('name').substr(0, dependentProperty.attr("name").lastIndexOf(".") + 1) + uniqueOtherPropertyNames[iOuter];
+                var otherProperty = $("[name='" + fullName + "']");
+                otherProperty.change({ otherPropertyOuterInitialName: uniqueOtherPropertyNames[iOuter], otherPropertyFullName: fullName }, function (event) {
+                    for (var iInner = 0; iInner < otherPropertyNames.length; iInner++) {
+                        if (otherPropertyNames[iInner] == event.data.otherPropertyOuterInitialName) {
+                            var currentOtherProperty = $("[name='" + event.data.otherPropertyFullName + "']");
+                            if (MvcMegaForms.ApplyChangeVisually(dependentProperty, currentOtherProperty, toValues[iInner], ifOperators[iInner], values[iInner], conditionPassesIfNulls[iInner])) {
+                                break; //a condition has passed, don't process the rest
+                            }
+                        }
+                    }
+                });
+
+                otherProperty.change();
+            }
+        }
+
+        var parentId = $(this).attr("parentListId");
+        if (parentId != null && parentId != '') {
+            var parentList = $("[name='" + $(this).attr("name").substr(0, $(this).attr("name").lastIndexOf(".") + 1) + parentId + "']");
+
+            parentList.attr("childid", $(this).attr('id'));
+
+            parentList.change(function () {
+                MvcMegaForms.SetupCascadingDropDown($(this));
+            });
+
+            parentList.change();
+        }
+    });
+};
+
 MvcMegaForms.ApplyChangeVisually = function (dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull) {
     var parentSelector = MegaFormsChangeVisuallyJQueryParentContainerSelector == null ? '.editor-field' : MegaFormsChangeVisuallyJQueryParentContainerSelector;
     var container = dependentProperty.parents(parentSelector);
     if (container == null) {
         alert('MvcMegaForms-ChangeVisually Critical Error: Unable to find parent container with selector: ', +parentSelector + ' for property ' + dependantProperty);
+        return false;
     } else {
+        var showEffect = MegaFormsChangeVisuallyJQueryShowEffect == null ? 'fast' : MegaFormsChangeVisuallyJQueryShowEffect;
+        var hideEffect = MegaFormsChangeVisuallyJQueryHideEffect == null ? 'fast' : MegaFormsChangeVisuallyJQueryHideEffect;
+
         var conditionMet = MvcMegaForms.ConditionMetForChangeVisually(dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull);
-        if (to == 'hidden') {
-            if (conditionMet) {
-                var hideEffect = MegaFormsChangeVisuallyJQueryHideEffect == null ? 'fast' : MegaFormsChangeVisuallyJQueryHideEffect;
+        if (conditionMet) {
+            if (to == 'hidden') {
+                //hide
                 container.hide(hideEffect);
-            } else {
-                var showEffect = MegaFormsChangeVisuallyJQueryShowEffect == null ? 'fast' : MegaFormsChangeVisuallyJQueryShowEffect;
-                container.show(showEffect);
-            }
-        } else {
-            if (conditionMet) {
-                dependentProperty.attr('disabled', 'disabled');
-                dependentProperty.addClass('ui-state-disabled');
-            } else {
+
+                //enable
                 dependentProperty.removeAttr('disabled');
                 dependentProperty.removeClass('ui-state-disabled');
             }
+            else {
+                //show  
+                container.show(showEffect);
+                
+                //disable
+                dependentProperty.attr('disabled', 'disabled');
+                dependentProperty.addClass('ui-state-disabled');
+            }
         }
+        else {
+            //show
+            container.show(showEffect);
+            
+            //enable
+            dependentProperty.removeAttr('disabled');
+            dependentProperty.removeClass('ui-state-disabled');
+        }
+
+//        if (to == 'hidden') {
+//            if (conditionMet) {
+//                var hideEffect = MegaFormsChangeVisuallyJQueryHideEffect == null ? 'fast' : MegaFormsChangeVisuallyJQueryHideEffect;
+//                container.hide(hideEffect);
+//            } else {
+//                var showEffect = MegaFormsChangeVisuallyJQueryShowEffect == null ? 'fast' : MegaFormsChangeVisuallyJQueryShowEffect;
+//                container.show(showEffect);
+//            }
+//        } else {
+//            if (conditionMet) {
+//                dependentProperty.attr('disabled', 'disabled');
+//                dependentProperty.addClass('ui-state-disabled');
+//            } else {
+//                dependentProperty.removeAttr('disabled');
+//                dependentProperty.removeClass('ui-state-disabled');
+//            }
+//        }
+        return conditionMet;
     }
 };
 
 MvcMegaForms.ConditionMetForChangeVisually = function (dependantProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull) {
     var conditionMet = false;
+    conditionPassesIfNull = conditionPassesIfNull.toLowerCase() == 'true'; //it was a string, make it a bool
     var val = MvcMegaForms.GetFormValue(otherProperty);
+
+    //treat empty string as null
+    if (val == '') {
+        val = null;
+    }
+    if (value == '') {
+        value = null;
+    }
+
     if (val == null && value != null) {
         //value is null, condition is met if we wanted it to be met when null
         conditionMet = conditionPassesIfNull;
@@ -201,9 +259,12 @@ MvcMegaForms.SetupCascadingDropDown = function (parentList) {
         //find if there are any form elements that depend on the child one for changevisually
         var indexOfLastDot = childList.attr("name").lastIndexOf(".");
         var childNameWithoutPrefix = childList.attr('name').substr((indexOfLastDot < 0 ? -1 : indexOfLastDot) + 1);
-        if ($(":input[data-val-changevisually-otherpropertyname='" + childNameWithoutPrefix + "']").length > 0) {
-            childList.change();
-        }
+        $(":input[data-val-changevisually-otherpropertyname]").each(function () {
+            var valArray = $(this).attr("data-val-changevisually-otherpropertyname").split("~");
+            if ($.inArray(childNameWithoutPrefix, valArray)) {
+                childList.change();
+            }
+        });
     }
 };
 

@@ -36,14 +36,19 @@
                 @Html.ValidationMessageFor(m => m.TheNextHidingField)
             </li>
             <li class="container">
-                @Html.LabelFor(m => m.EnableTheNextDisabledField)
-                @Html.CheckBoxFor(m => m.EnableTheNextDisabledField)
-                @Html.ValidationMessageFor(m => m.EnableTheNextDisabledField)
+                @Html.LabelFor(m => m.EnableTheNextDisabledOrHiddenField)
+                @Html.CheckBoxFor(m => m.EnableTheNextDisabledOrHiddenField)
+                @Html.ValidationMessageFor(m => m.EnableTheNextDisabledOrHiddenField)
             </li>
             <li class="container">
-                @Html.LabelFor(m => m.TheNextDisabledField)
-                @Html.TextBoxFor(m => m.TheNextDisabledField)
-                @Html.ValidationMessageFor(m => m.TheNextDisabledField)
+                @Html.LabelFor(m => m.TypeHideToHideOrDisableToDisableNextField)
+                @Html.TextBoxFor(m => m.TypeHideToHideOrDisableToDisableNextField)
+                @Html.ValidationMessageFor(m => m.TypeHideToHideOrDisableToDisableNextField)
+            </li>
+            <li class="container">
+                @Html.LabelFor(m => m.TheNextDisabledOrHiddenField)
+                @Html.TextBoxFor(m => m.TheNextDisabledOrHiddenField)
+                @Html.ValidationMessageFor(m => m.TheNextDisabledOrHiddenField)
             </li>
             <li class="container">
                 @Html.LabelFor(m => m.EqualToInitial)

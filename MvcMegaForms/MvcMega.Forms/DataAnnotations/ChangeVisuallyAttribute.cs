@@ -10,6 +10,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 
 namespace MvcMega.Forms.DataAnnotations
@@ -17,6 +19,8 @@ namespace MvcMega.Forms.DataAnnotations
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class ChangeVisuallyAttribute : ValidationAttribute, IClientValidatable
     {
+        private const string Separator = "~";
+
         public enum ChangeTo
         {
             Hidden,
@@ -66,11 +70,39 @@ namespace MvcMega.Forms.DataAnnotations
                 ValidationType = "changevisually",
             };
 
-            rule.ValidationParameters.Add("to", To.ToString().ToLower());
-            rule.ValidationParameters.Add("otherpropertyname", WhenOtherPropertyName);
-            rule.ValidationParameters.Add("ifoperator", If.ToString().ToLower());
-            rule.ValidationParameters.Add("value", Value == null ? null : Value.ToString().ToLower());
-            rule.ValidationParameters.Add("conditionpassesifnull", ConditionPassesIfNull);
+            var toValues = new List<string>();
+            var whenOtherPropertyNameValues = new List<string>();
+            var ifValues = new List<string>();
+            var valueValues = new List<string>();
+            var conditionPassesIfNullValues = new List<string>();
+
+            var allChangeVisuallyAttributesOnThisProperty = metadata.ContainerType.GetProperty(metadata.PropertyName).GetCustomAttributes(typeof(ChangeVisuallyAttribute), true).Reverse().ToList();
+            if (allChangeVisuallyAttributesOnThisProperty.Count > 1)
+            {
+                foreach (var currAttr in allChangeVisuallyAttributesOnThisProperty)
+                {
+                    var attr = (ChangeVisuallyAttribute)currAttr;
+                    toValues.Add(attr.To.ToString());
+                    whenOtherPropertyNameValues.Add(attr.WhenOtherPropertyName);
+                    ifValues.Add(attr.If.ToString());
+                    valueValues.Add(attr.Value == null ? string.Empty : attr.Value.ToString());
+                    conditionPassesIfNullValues.Add(attr.ConditionPassesIfNull.ToString());
+                }
+            }
+            else
+            {
+                toValues.Add(To.ToString());
+                whenOtherPropertyNameValues.Add(WhenOtherPropertyName);
+                ifValues.Add(If.ToString());
+                valueValues.Add(Value == null ? string.Empty : Value.ToString());
+                conditionPassesIfNullValues.Add(ConditionPassesIfNull.ToString());
+            }
+
+            rule.ValidationParameters.Add("to", string.Join(Separator, toValues).ToLower());
+            rule.ValidationParameters.Add("otherpropertyname", string.Join(Separator, whenOtherPropertyNameValues));
+            rule.ValidationParameters.Add("ifoperator", string.Join(Separator, ifValues).ToLower());
+            rule.ValidationParameters.Add("value", string.Join(Separator, valueValues).ToLower());
+            rule.ValidationParameters.Add("conditionpassesifnull", string.Join(Separator, conditionPassesIfNullValues).ToLower());
 
             yield return rule;
         }
