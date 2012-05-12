@@ -280,6 +280,8 @@ MvcMegaForms.CascadeDropDown = function (parentList) {
         childList.hide(hideEffect);
     }
 
+    var initialVal = MvcMegaForms.GetFormValue(childList);
+
     childList.val(null);
     childList.empty();
 
@@ -323,14 +325,24 @@ MvcMegaForms.CascadeDropDown = function (parentList) {
             }
         } else if (state == MvcMegaForms.CascadeStringStatus.EndChildValueWithNext) {
             if (currChildId != "") {
-                childList.append($('<option></option>').val(currChildId).html(currChildValue));
+                if (currChildId == initialVal) {
+                    childList.append($('<option selected="selected"></option>').val(currChildId).html(currChildValue));
+                }
+                else {
+                    childList.append($('<option></option>').val(currChildId).html(currChildValue));
+                }
             }
             state = MvcMegaForms.CascadeStringStatus.StartChildId;
             currChildId = "";
             currChildValue = "";
         } else if (state == MvcMegaForms.CascadeStringStatus.EndChildValue) {
             if (currChildId != "") {
-                childList.append($('<option></option>').val(currChildId).html(currChildValue));
+                if (currChildId == initialVal) {
+                    childList.append($('<option selected="selected"></option>').val(currChildId).html(currChildValue));
+                }
+                else {
+                    childList.append($('<option></option>').val(currChildId).html(currChildValue));
+                }
             }
             state = MvcMegaForms.CascadeStringStatus.StartParentId;
             currParentId = "";
