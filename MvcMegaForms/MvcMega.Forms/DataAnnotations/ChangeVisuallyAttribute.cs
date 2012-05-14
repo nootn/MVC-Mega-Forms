@@ -76,10 +76,13 @@ namespace MvcMega.Forms.DataAnnotations
             var valueValues = new List<string>();
             var conditionPassesIfNullValues = new List<string>();
 
-            var allChangeVisuallyAttributesOnThisProperty = metadata.ContainerType.GetProperty(metadata.PropertyName).GetCustomAttributes(typeof(ChangeVisuallyAttribute), true).Reverse().ToList();
-            if (allChangeVisuallyAttributesOnThisProperty.Count > 1)
+            var prop = metadata == null || metadata.ContainerType == null
+                           ? null
+                           : metadata.ContainerType.GetProperty(metadata.PropertyName);
+            var allChangeVisuallyAttributesOnThisProperty = prop == null ? null : prop.GetCustomAttributes(typeof(ChangeVisuallyAttribute), true);
+            if (allChangeVisuallyAttributesOnThisProperty != null && allChangeVisuallyAttributesOnThisProperty.Length > 1)
             {
-                foreach (var currAttr in allChangeVisuallyAttributesOnThisProperty)
+                foreach (var currAttr in allChangeVisuallyAttributesOnThisProperty.Reverse())
                 {
                     var attr = (ChangeVisuallyAttribute)currAttr;
                     toValues.Add(attr.To.ToString());
