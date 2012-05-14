@@ -9,6 +9,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -18,34 +19,43 @@ namespace MvcMega.Forms.MVC.Html
 {
     public static class SelectExtensions
     {
+        
         public static MvcHtmlString DropDownChildListFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper,
                                                                             Expression<Func<TModel, TProperty>>
                                                                                 expression,
-                                                                            CascadingSelectList selectList)
+                                                                            CascadingSelectList selectList, string optionLabel = null, Dictionary<string, object> htmlAttributes = null)
         {
             var combosValue = GetCombosAttributeValue(selectList);
 
+            if (htmlAttributes == null)
+            {
+                htmlAttributes = new Dictionary<string, object>();
+            }
+
+            htmlAttributes.Add("combos", combosValue);
+            htmlAttributes.Add("parentListId", selectList.ParentSelectListPropertyName);
+
             return System.Web.Mvc.Html.SelectExtensions.DropDownListFor(
-                htmlHelper, expression, selectList, null,
-                new
-                    {
-                        combos = combosValue,
-                        parentListId = selectList.ParentSelectListPropertyName
-                    });
+                htmlHelper, expression, selectList, optionLabel,
+                htmlAttributes);
         }
 
 
-        public static MvcHtmlString DropDownChildList(this HtmlHelper htmlHelper, string name, CascadingSelectList selectList)
+        public static MvcHtmlString DropDownChildList(this HtmlHelper htmlHelper, string name, CascadingSelectList selectList, string optionLabel = null, Dictionary<string, object> htmlAttributes = null)
         {
             var combosValue = GetCombosAttributeValue(selectList);
 
+            if (htmlAttributes == null)
+            {
+                htmlAttributes = new Dictionary<string, object>();
+            }
+
+            htmlAttributes.Add("combos", combosValue);
+            htmlAttributes.Add("parentListId", selectList.ParentSelectListPropertyName);
+
             return System.Web.Mvc.Html.SelectExtensions.DropDownList(
-                htmlHelper, name, selectList, null,
-                new
-                {
-                    combos = combosValue,
-                    parentListId = selectList.ParentSelectListPropertyName
-                });
+                htmlHelper, name, selectList, optionLabel,
+                htmlAttributes);
         }
 
 
