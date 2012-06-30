@@ -9,8 +9,36 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 var MvcMegaForms = MvcMegaForms || {};
 
+var MvcMegaFormsLeavingPageDueToSubmit = false;
+
 $(document).ready(function () {
     MvcMegaForms.AttachEvents();
+
+    if (typeof MegaFormsDetectAllFormChanges !== 'undefined' && MegaFormsDetectAllFormChanges == true) {
+        //wire up submit buttons
+        $("input:submit").each(function () {
+            var $me = $(this);
+            $me.click(function () {
+                MvcMegaFormsLeavingPageDueToSubmit = true;
+            });
+        });
+    }
+});
+
+$(window).bind("beforeunload", function (event) {
+    if (typeof MegaFormsDetectAllFormChanges !== 'undefined' && MegaFormsDetectAllFormChanges == true
+        && !MvcMegaFormsLeavingPageDueToSubmit) {
+        var doNoLeaveMessage = '';
+        $("form").each(function () {
+            doNoLeaveMessage = MvcMegaForms.AlertFormChanged($(this));
+            if (doNoLeaveMessage != '') {
+                return;
+            }
+        });
+        if (doNoLeaveMessage != '') {
+            return doNoLeaveMessage;
+        }
+    }
 });
 
 $.validator.addMethod('requiredifcontains', function (val, element, dependentproperty, dependentvalue) {
@@ -119,7 +147,7 @@ MvcMegaForms.ApplyChangeVisually = function (dependentProperty, otherProperty, t
             else {
                 //show  
                 container.show(showEffect);
-                
+
                 //disable
                 dependentProperty.attr('disabled', 'disabled');
                 dependentProperty.addClass('ui-state-disabled');
@@ -128,29 +156,11 @@ MvcMegaForms.ApplyChangeVisually = function (dependentProperty, otherProperty, t
         else {
             //show
             container.show(showEffect);
-            
+
             //enable
             dependentProperty.removeAttr('disabled');
             dependentProperty.removeClass('ui-state-disabled');
         }
-
-//        if (to == 'hidden') {
-//            if (conditionMet) {
-//                var hideEffect = MegaFormsChangeVisuallyJQueryHideEffect == null ? 'fast' : MegaFormsChangeVisuallyJQueryHideEffect;
-//                container.hide(hideEffect);
-//            } else {
-//                var showEffect = MegaFormsChangeVisuallyJQueryShowEffect == null ? 'fast' : MegaFormsChangeVisuallyJQueryShowEffect;
-//                container.show(showEffect);
-//            }
-//        } else {
-//            if (conditionMet) {
-//                dependentProperty.attr('disabled', 'disabled');
-//                dependentProperty.addClass('ui-state-disabled');
-//            } else {
-//                dependentProperty.removeAttr('disabled');
-//                dependentProperty.removeClass('ui-state-disabled');
-//            }
-//        }
         return conditionMet;
     }
 };
@@ -369,4 +379,67 @@ MvcMegaForms.GetFormValue = function (formControl) {
     }
     return val;
 };
- 
+
+MvcMegaForms.FormControlValueHasChanged = function (formControl) {
+    var $formControl = $(formControl);
+
+    if ($formControl.is(':checkbox')) {
+        return (formControl.checked != formControl.defaultChecked);
+    }
+    else if ($formControl.is(':radio')) {
+        return (formControl.checked != formControl.defaultChecked);
+    }
+    else if ($formControl.is('select') && $formControl.attr('multiple') == 'multiple') {
+        if (formControl.options == null || formControl.options.length <= 0) {
+            return false;
+        }
+        var allCndMet = false;
+        for (var i = 0; i < formControl.options.length; i++) {
+            var currOpt = formControl.options[i];
+            allCndMet = allCndMet || (currOpt.selected != currOpt.defaultSelected);
+        }
+        return allCndMet;
+    }
+    else if ($formControl.is('select')) {
+        if (formControl.options == null || formControl.options.length <= 0) {
+            return false;
+        }
+        return !(formControl.options[formControl.selectedIndex].defaultSelected);
+    }
+    else {
+        return (formControl.value != formControl.defaultValue);
+    }
+};
+
+MvcMegaForms.FormFieldIdChanged = function ($form) {
+    var changedId = null;
+    $form.find('input').each(function () {
+        //specifically leave 'this' as non-jquery
+        if (MvcMegaForms.FormControlValueHasChanged(this)) {
+            changedId = this.id == null ? this.name : this.id;
+            return;
+        }
+    });
+    if (changedId == null) {
+        $form.find('select').each(function () {
+            //specifically leave 'this' as non-jquery
+            if (MvcMegaForms.FormControlValueHasChanged(this)) {
+                changedId = this.id == null ? this.name : this.id;
+                return;
+            }
+        });
+    }
+    return changedId;
+};
+
+MvcMegaForms.AlertFormChanged = function ($form) {
+    var changedId = MvcMegaForms.FormFieldIdChanged($form);
+    if (changedId != null) {
+        var confMsg = "At least one unsaved value has changed ('" + changedId + "'), are you sure you want to leave the page?";
+        if (typeof MegaFormsDetectChangesWarningMessage !== 'undefined' && MegaFormsDetectChangesWarningMessage != '') {
+            confMsg = MegaFormsDetectChangesWarningMessage;
+        }
+        return confMsg;
+    }
+    return '';
+};

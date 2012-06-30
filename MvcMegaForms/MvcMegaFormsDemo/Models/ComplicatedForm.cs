@@ -22,6 +22,7 @@ namespace MvcMegaFormsDemo.Models
         public ComplicatedForm()
         {
             PopulateAllTestDropDownItems();
+            TestSelectedDropDownItemId = 1; //this is for the detect form changes..
         }
 
         public void PopulateAllTestDropDownItems()
