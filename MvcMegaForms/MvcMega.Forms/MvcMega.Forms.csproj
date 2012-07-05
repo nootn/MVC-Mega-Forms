@@ -53,6 +53,8 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -119,7 +121,12 @@
     <Compile Include="DataAnnotations\RequiredIfContains.cs" />
     <Compile Include="MVC\CascadingSelectList.cs" />
     <Compile Include="MVC\ChildSelectListItem.cs" />
+    <Compile Include="MVC\ControlGroup.cs" />
+    <Compile Include="MVC\Controls.cs" />
+    <Compile Include="MVC\HelpInline.cs" />
+    <Compile Include="MVC\Html\HtmlExtensions.cs" />
     <Compile Include="MVC\Html\SelectExtensions.cs" />
+    <Compile Include="MVC\MvcHtmlContainerBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

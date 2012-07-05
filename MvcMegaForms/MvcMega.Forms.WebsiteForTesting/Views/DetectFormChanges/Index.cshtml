@@ -1,0 +1,47 @@
+﻿@using MvcMega.Forms.MVC.Html
+@model MvcMega.Forms.WebsiteForTesting.Models.ComplicatedForm
+@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary(true, "Please correct the errors and try again.")
+    <fieldset>
+        <legend>Please fill in the form</legend>
+        @using (Html.BeginControlGroup())
+        {
+            @Html.ControlLabelFor(m => m.ShowTheNextHidingField)
+            using (Html.BeginControls())
+            {
+            <label>@Html.RadioButtonFor(m => m.ShowTheNextHidingField, true, new { id = "ShowTheNextHidingFieldTrue" })
+                Yes</label>
+            <label>@Html.RadioButtonFor(m => m.ShowTheNextHidingField, false, new { id = "ShowTheNextHidingFieldFalse" })
+                No</label>
+                using (Html.BeginHelpInline())
+                {
+            @Html.ValidationMessageFor(m => m.ShowTheNextHidingField)
+                }
+            }
+        }
+        @Html.ControlBundleFor(m => m.TheNextHidingField)
+        @Html.ControlBundleFor(m => m.EnableTheNextDisabledOrHiddenField)
+        @Html.ControlBundleFor(m => m.TypeHideToHideOrDisableToDisableNextField)
+        @Html.ControlBundleFor(m => m.TheNextDisabledOrHiddenField)
+        @Html.ControlBundleFor(m => m.EqualToInitial)
+        @Html.ControlBundleFor(m => m.EqualToSecond)
+        @Html.ControlBundleFor(m => m.EqualToSecondDisableIfSet)
+        @Html.ControlBundleFor(m => m.ShowNextField)
+        @Html.ControlBundleFor(m => m.NextField)
+        @Html.ControlBundleFor(m => m.TestSelectedDropDownItemId, Html.DropDownListFor(m => m.TestSelectedDropDownItemId, Model.AllTestDropDownItems))
+        @Html.ControlBundleFor(m => m.DropDownOther)
+        @Html.ControlBundleFor(m => m.TestSelectedMultiSelectItemIds, Html.ListBoxFor(m => m.TestSelectedMultiSelectItemIds, Model.AllTestDropDownItems))
+        @Html.ControlBundleFor(m => m.MultiSelectOther)
+        @Html.ControlBundleFor(m => m.OnlySupplyIfMultiSelectDoesNotContainTwo)
+        @Html.ControlBundleFor(m => m.ParentItemId, Html.DropDownListFor(m => m.ParentItemId, Model.AllParentItems))
+        @Html.ControlBundleFor(m => m.ChildItemId, Html.DropDownChildListFor(m => m.ChildItemId, Model.AllChildItems))
+        @Html.ControlBundleFor(m => m.ChildOfChildItemId, Html.DropDownChildListFor(m => m.ChildOfChildItemId, Model.AllChildOfChildItems))
+        @Html.ControlBundleFor(m => m.FirstSubDetails.HasValue)
+        @Html.ControlBundleFor(m => m.FirstSubDetails.TheValue)
+        @Html.ControlBundleFor(m => m.SecondSubDetails.HasValue)
+        @Html.ControlBundleFor(m => m.SecondSubDetails.TheValue)
+        @Html.HiddenFor(m => m.ComplicatedFormId)
+        <input type="submit" value="submit" />
+    </fieldset>
+}

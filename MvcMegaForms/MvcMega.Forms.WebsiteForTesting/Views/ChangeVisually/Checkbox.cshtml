@@ -1,0 +1,6 @@
+﻿@using MvcMega.Forms.MVC.Html
+@model MvcMega.Forms.WebsiteForTesting.Models.ChangeVisuallyScreens.CheckboxModel
+
+@Html.ControlBundleFor(_ => _.TickCheckboxToShowNextField, Html.CheckBoxFor(_ => _.TickCheckboxToShowNextField))
+@Html.ControlBundleFor(_ => _.NextField)
+
