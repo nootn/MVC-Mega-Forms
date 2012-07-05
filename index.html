@@ -62,6 +62,14 @@
 <p>You may optionally supply some global javascript variable to change the behavior that occurs when the child list values change.  It will hide and show the child list just to visually indicate it has changed, so the variables are the jQuery animations to pass through to the hide() and show() methods...</p>
 <script src="https://gist.github.com/2473983.js?file=CustomJavascriptConfiguration.js"></script>
 <p>That's it!  When you change the parent list, the child list should shrink and grow with a refreshed collection of child items.</p>
+      
+<hr />
+<h3>Detect Form Changes - Quick Start</h3>
+<p>There is built in support for functionality where form data is changes without the form being submitted, a browser confirmation box can be shown before a user moves away from the screen to check if they are sure they want to leave the screen while the unsubmitted form values have changed.</p>
+<p>This is quite easy to turn on and off globally, just set the javascript variable "MegaFormsDetectAllFormChanges" to true or false (true to turn it on, or false for off)</p>
+<p>You can also customize the confirmation message, just set the javascript variable "MegaFormsDetectChangesWarningMessage" to be a string of the message you want to show.  If empty or not supplied, the default message will be shown.</p>
+
+        
       </section>
     </div>
 
