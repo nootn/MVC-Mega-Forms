@@ -19,6 +19,7 @@ namespace MvcMega.Forms.MVC.Html
 {
     public static class HtmlExtensions
     {
+        //These css class constants are handy for use with Twitter Bootstrap v2 (and above hopefully)
         public const string DefaultControlGroupClass = "control-group";
         public const string DefaultControlsClass = "controls";
         public const string DefaultHelpInlineClass = "help-inline";
@@ -89,6 +90,129 @@ namespace MvcMega.Forms.MVC.Html
             IDictionary<string, object> helpInlineHtmlAttributes = null)
         {
             return ControlBundleFor(htmlHelper, expression, htmlHelper.EditorFor(expression), controlGroupClass,
+                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+        }
+
+        public static MvcHtmlString ControlBundleTextBoxFor<TModel, TValue>(
+            this HtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, TValue>> expression,
+            string controlGroupClass = DefaultControlGroupClass,
+            IDictionary<string, object> controlGroupHtmlAttributes = null,
+            string labelClass = DefaultLabelClass,
+            IDictionary<string, object> labelHtmlAttributes = null,
+            string controlsClass = DefaultControlsClass,
+            IDictionary<string, object> controlsHtmlAttributes = null,
+            string helpInlineClass = DefaultHelpInlineClass,
+            IDictionary<string, object> helpInlineHtmlAttributes = null)
+        {
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.TextBoxFor(expression), controlGroupClass,
+                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+        }
+
+        public static MvcHtmlString ControlBundleCheckBoxFor<TModel>(
+            this HtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, bool>> expression,
+            string controlGroupClass = DefaultControlGroupClass,
+            IDictionary<string, object> controlGroupHtmlAttributes = null,
+            string labelClass = DefaultLabelClass,
+            IDictionary<string, object> labelHtmlAttributes = null,
+            string controlsClass = DefaultControlsClass,
+            IDictionary<string, object> controlsHtmlAttributes = null,
+            string helpInlineClass = DefaultHelpInlineClass,
+            IDictionary<string, object> helpInlineHtmlAttributes = null)
+        {
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.CheckBoxFor(expression), controlGroupClass,
+                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+        }
+
+        public static MvcHtmlString ControlBundlePasswordFor<TModel, TValue>(
+            this HtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, TValue>> expression,
+            string controlGroupClass = DefaultControlGroupClass,
+            IDictionary<string, object> controlGroupHtmlAttributes = null,
+            string labelClass = DefaultLabelClass,
+            IDictionary<string, object> labelHtmlAttributes = null,
+            string controlsClass = DefaultControlsClass,
+            IDictionary<string, object> controlsHtmlAttributes = null,
+            string helpInlineClass = DefaultHelpInlineClass,
+            IDictionary<string, object> helpInlineHtmlAttributes = null)
+        {
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.PasswordFor(expression), controlGroupClass,
+                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+        }
+
+        public static MvcHtmlString ControlBundleRadioButtonFor<TModel, TValue>(
+            this HtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, TValue>> expression,
+            object value,
+            string controlGroupClass = DefaultControlGroupClass,
+            IDictionary<string, object> controlGroupHtmlAttributes = null,
+            string labelClass = DefaultLabelClass,
+            IDictionary<string, object> labelHtmlAttributes = null,
+            string controlsClass = DefaultControlsClass,
+            IDictionary<string, object> controlsHtmlAttributes = null,
+            string helpInlineClass = DefaultHelpInlineClass,
+            IDictionary<string, object> helpInlineHtmlAttributes = null)
+        {
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.RadioButtonFor(expression, value), controlGroupClass,
+                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+        }
+
+        public static MvcHtmlString ControlBundleDropDownListFor<TModel, TValue>(
+            this HtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, TValue>> expression,
+            IEnumerable<SelectListItem> selectList,
+            string controlGroupClass = DefaultControlGroupClass,
+            IDictionary<string, object> controlGroupHtmlAttributes = null,
+            string labelClass = DefaultLabelClass,
+            IDictionary<string, object> labelHtmlAttributes = null,
+            string controlsClass = DefaultControlsClass,
+            IDictionary<string, object> controlsHtmlAttributes = null,
+            string helpInlineClass = DefaultHelpInlineClass,
+            IDictionary<string, object> helpInlineHtmlAttributes = null)
+        {
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.DropDownListFor(expression, selectList), controlGroupClass,
+                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+        }
+
+        public static MvcHtmlString ControlBundleDropDownChildListFor<TModel, TValue>(
+            this HtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, TValue>> expression,
+            CascadingSelectList selectList,
+            string controlGroupClass = DefaultControlGroupClass,
+            IDictionary<string, object> controlGroupHtmlAttributes = null,
+            string labelClass = DefaultLabelClass,
+            IDictionary<string, object> labelHtmlAttributes = null,
+            string controlsClass = DefaultControlsClass,
+            IDictionary<string, object> controlsHtmlAttributes = null,
+            string helpInlineClass = DefaultHelpInlineClass,
+            IDictionary<string, object> helpInlineHtmlAttributes = null)
+        {
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.DropDownChildListFor(expression, selectList), controlGroupClass,
+                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+        }
+
+        public static MvcHtmlString ControlBundleListBoxFor<TModel, TValue>(
+            this HtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, TValue>> expression,
+            IEnumerable<SelectListItem> selectList,
+            string controlGroupClass = DefaultControlGroupClass,
+            IDictionary<string, object> controlGroupHtmlAttributes = null,
+            string labelClass = DefaultLabelClass,
+            IDictionary<string, object> labelHtmlAttributes = null,
+            string controlsClass = DefaultControlsClass,
+            IDictionary<string, object> controlsHtmlAttributes = null,
+            string helpInlineClass = DefaultHelpInlineClass,
+            IDictionary<string, object> helpInlineHtmlAttributes = null)
+        {
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.ListBoxFor(expression, selectList), controlGroupClass,
                                     controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
                                     controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
         }
