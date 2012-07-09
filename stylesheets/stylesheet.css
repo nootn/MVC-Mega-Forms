@@ -148,7 +148,7 @@ blockquote {
   padding-left: 10px;
   border-left: 1px dotted #666;
 }
-
+/*
 pre {
   background: rgba(0, 0, 0, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -162,7 +162,7 @@ pre {
   overflow: auto;
   overflow-y: hidden;
 }
-
+*/
 table {
   width: 100%;
   margin: 0 0 20px 0;
