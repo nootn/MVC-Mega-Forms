@@ -1,6 +1,6 @@
 ﻿@using MvcMega.Forms.MVC.Html
 @model MvcMega.Forms.WebsiteForTesting.Models.ComplicatedForm
-@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @class = "detect-changes" }))
 {
     @Html.ValidationSummary(true, "Please correct the errors and try again.")
     <fieldset>
@@ -44,4 +44,8 @@
         @Html.HiddenFor(m => m.ComplicatedFormId)
         <input type="submit" value="submit" />
     </fieldset>
+    <input type="submit" value="Submit Form" />
+    <br/>@Html.ActionLink("Navigate back to this page (should detect changes if any)", "Index")
+    <br/>@Html.ActionLink("Navigate back to this page (not detecting changes within form)", "Index", null, new { @class = "ignore-detect-changes" })
 }
+<br/>@Html.ActionLink("Navigate back to this page (not detecting changes outside form)", "Index", null, new { @class = "ignore-detect-changes" })

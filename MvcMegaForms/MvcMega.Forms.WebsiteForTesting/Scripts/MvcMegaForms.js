@@ -9,59 +9,44 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 var MvcMegaForms = MvcMegaForms || {};
 
-var MvcMegaFormsLeavingPageDueToSubmit = false;
+var MvcMegaFormsLeavingPageDueToSubmitOrIgnore = false;
 
 $(document).ready(function () {
     MvcMegaForms.AttachEvents();
-
-    if (typeof MegaFormsDetectAllFormChanges != undefined && MegaFormsDetectAllFormChanges === true) {
-        //wire up submit buttons
-        $("input:submit").each(function () {
-            var $me = $(this);
-            $me.click(function () {
-                MvcMegaFormsLeavingPageDueToSubmit = true;
-            });
-        });
-
-        //ensure all selects that have options have a selected option (otherwise it will always say they changed)
-        $("select").each(function () {
-            var $me = $(this);
-            if ($me.attr('multiple') === undefined && $me.find('option').length > 0) {
-                var foundDefaultSelected = false;
-                $me.find('option').each(function () {
-                    if (this.defaultSelected) {
-                        foundDefaultSelected = true;
-                        return;
-                    }
-                });
-                if (!foundDefaultSelected) {
-                    var $firstOption = $me.find("option:first-child");
-                    $firstOption.attr("selected", true);
-                    $firstOption.attr("defaultSelected", true);
-                }
-            }
-        });
-    }
+    MvcMegaForms.ConfigureDetectChanges();
 });
 
 $(window).bind("beforeunload", function (event) {
-    if (typeof MegaFormsDetectAllFormChanges != undefined && MegaFormsDetectAllFormChanges === true
-        && !MvcMegaFormsLeavingPageDueToSubmit) {
-        var doNoLeaveMessage = '';
-        $("form").each(function () {
-            doNoLeaveMessage = MvcMegaForms.AlertFormChanged($(this));
-            if (doNoLeaveMessage !== '') {
-                return;
+    if (!MvcMegaFormsLeavingPageDueToSubmitOrIgnore) {
+        var formSearch = "form";
+        var hasPossibleFormsDetecting = true;
+        if (typeof MegaFormsDetectAllFormChanges === undefined || MegaFormsDetectAllFormChanges === false) {
+            if (typeof MegaFormsDetectChangesFormClass === undefined || MegaFormsDetectChangesFormClass === '') {
+                //there is no detect changes option available
+                hasPossibleFormsDetecting = false;
             }
-        });
-        if (doNoLeaveMessage !== '') {
-            return doNoLeaveMessage;
+            formSearch += "." + MegaFormsDetectChangesFormClass;
+        }
+
+        if (hasPossibleFormsDetecting) {
+            var doNoLeaveMessage = '';
+            $(formSearch).each(function() {
+                doNoLeaveMessage = MvcMegaForms.AlertFormChanged($(this));
+                if (doNoLeaveMessage !== '') {
+                    return;
+                }
+            });
+            if (doNoLeaveMessage !== '') {
+                return doNoLeaveMessage;
+            }
         }
     }
+
+
 });
 
 if ($.validator !== undefined) {
-    $.validator.addMethod('requiredifcontains', function(val, element, dependentproperty, dependentvalue) {
+    $.validator.addMethod('requiredifcontains', function (val, element, dependentproperty, dependentvalue) {
         if (val !== null && $.trim(val) !== '' && val != undefined) {
             return false;
         }
@@ -78,7 +63,7 @@ if ($.validator !== undefined) {
     });
     $.validator.unobtrusive.adapters.addSingleVal('requiredifcontains', 'dependentproperty', 'dependentvalue', 'requiredifcontains');
 
-    $.validator.addMethod('requiredifnotcontains', function(val, element, dependentproperty, dependentvalue) {
+    $.validator.addMethod('requiredifnotcontains', function (val, element, dependentproperty, dependentvalue) {
         if (val !== null && $.trim(val) !== '') {
             return false;
         }
@@ -95,6 +80,59 @@ if ($.validator !== undefined) {
     });
     $.validator.unobtrusive.adapters.addSingleVal('requiredifnotcontains', 'dependentproperty', 'dependentvalue', 'requiredifnotcontains');
 }
+
+MvcMegaForms.ConfigureDetectChanges = function () {
+
+    var formSearch = "form";
+    if (typeof MegaFormsDetectAllFormChanges === undefined || MegaFormsDetectAllFormChanges === false) {
+        if (typeof MegaFormsDetectChangesFormClass === undefined || MegaFormsDetectChangesFormClass === '') {
+            //there is no detect changes option available
+            return;
+        }
+        formSearch += "." + MegaFormsDetectChangesFormClass;
+    }
+
+    $(formSearch).each(function () {
+        var $form = $(this);
+
+        //wire up submit buttons
+        $form.find("input:submit").each(function () {
+            var $me = $(this);
+            $me.click(function () {
+                MvcMegaFormsLeavingPageDueToSubmitOrIgnore = true;
+            });
+        });
+
+        //ensure all selects that have options have a selected option (otherwise it will always say they changed)
+        $form.find("select").each(function () {
+            var $me = $(this);
+            if ($me.attr('multiple') === undefined && $me.find('option').length > 0) {
+                var foundDefaultSelected = false;
+                $me.find('option').each(function () {
+                    if (this.defaultSelected) {
+                        foundDefaultSelected = true;
+                        return;
+                    }
+                });
+                if (!foundDefaultSelected) {
+                    var $firstOption = $me.find("option:first-child");
+                    $firstOption.attr("selected", true);
+                    $firstOption.attr("defaultSelected", true);
+                }
+            }
+        });
+    });
+
+    if (typeof MegaFormsIgnoreDetectChangesClass != undefined && MegaFormsIgnoreDetectChangesClass != null && MegaFormsIgnoreDetectChangesClass != '') {
+        //wire up any other items to ignore which could be anywhere on the screen, not within a form
+        $("." + MegaFormsIgnoreDetectChangesClass).each(function () {
+            var $me = $(this);
+            $me.click(function () {
+                MvcMegaFormsLeavingPageDueToSubmitOrIgnore = true;
+            });
+        });
+    }
+};
 
 MvcMegaForms.AttachEvents = function () {
     $(":input").each(function () {
@@ -191,11 +229,11 @@ MvcMegaForms.ConditionMetForChangeVisually = function (dependantProperty, otherP
     conditionPassesIfNull = conditionPassesIfNull.toLowerCase() === 'true'; //it was a string, make it a bool
     var val = MvcMegaForms.GetFormValue(otherProperty);
 
-    //treat empty string as null
-    if (val === '') {
+    //treat empty string or undefined as null
+    if (val === '' || val === undefined) {
         val = null;
     }
-    if (value === '') {
+    if (value === '' || val === undefined) {
         value = null;
     }
 
