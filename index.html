@@ -36,41 +36,54 @@
 
 <p>To see progress on the project - what's done, in progress and upcoming, check out the <a href="https://trello.com/board/mvc-mega-forms/4f80dfdad096c0a82e10b37f">Trello board</a>.</p>
 
+<p>To request features or report bugs, please use the <a href="https://github.com/nootn/MVC-Mega-Forms/issues">Github issue tracker</a>.  You can also leave feedback or other comments at the bottom of this page.</p>
 <hr />
-<h3>Quick Start</h3>
-<p>First, install the Nuget package into your ASP.NET MVC 4 Web Application</p>
-<script src="https://gist.github.com/2470080.js?file=NuGet.ps1"></script>
+<h3>Quick Start Tutorials:</h3>
+<ul class="nav nav-tabs" id="contents">
+  <li class="active"><a href="#install">Install</a></li>
+  <li><a href="#changevisually">Change Visually</a></li>
+  <li><a href="#cascadingselectlist">Cascading Select List (Drop Down List)</a></li>
+  <li><a href="#detectformchanges">Detect Form Changes</a></li>
+</ul>
+ 
+<div class="tab-content">
+  <div class="tab-pane active" id="install">
+  <h3>Install - Quick Start</h3>
+	<p>First, install the Nuget package into your ASP.NET MVC 4 Web Application</p>
+	<script src="https://gist.github.com/2470080.js?file=NuGet.ps1"></script>
+  </div>
+  <div class="tab-pane" id="changevisually">
+	<h3>Change Visually - Quick Start</h3>
+	<p>The 'ChangeVisually' attribute allows you to either show/hide or enable/disable a form field based on another form field within the same Model.</p>
+	<p>The first step is to create a Model.  Add some fields that have a ChangeVisually attribute - play around with the different options within the attribute...</p>
+	<script src="https://gist.github.com/2470080.js?file=SampleModel.cs"></script>
+	<p>Next, create the view which renders a form for the Model.  You need to wrap everything related to a particular form field (E.g. the label, the input itself and any validation/help) in some sort of container with some sort of identifier that jQuery can find (E.g. give it a class).  In the example below, see the 'li' elements that have the class 'container' as an example...</p>
+	<script src="https://gist.github.com/2470080.js?file=SampleRazorView.cshtml"></script>
+	<p>You should set the javascript global variable 'MegaFormsChangeVisuallyJQueryParentContainerSelector' to tell the library how to identify your form field container.  The example below uses '.container' indicating it's class is 'container'.  Optionally you can also specify some jQuery animations to use when hiding and showing fields...</p>
+	<script src="https://gist.github.com/2470080.js?file=CustomJavascriptConfiguration.js"></script>
+	<p>That's it!  If you check the checkboxes you should see the behavior, the first text box hiding and showing and the second enabling and disabling</p>
 
-<hr />
-<h3>Change Visually - Quick Start</h3>
-<p>The 'ChangeVisually' attribute allows you to either show/hide or enable/disable a form field based on another form field within the same Model.</p>
-<p>The first step is to create a Model.  Add some fields that have a ChangeVisually attribute - play around with the different options within the attribute...</p>
-<script src="https://gist.github.com/2470080.js?file=SampleModel.cs"></script>
-<p>Next, create the view which renders a form for the Model.  You need to wrap everything related to a particular form field (E.g. the label, the input itself and any validation/help) in some sort of container with some sort of identifier that jQuery can find (E.g. give it a class).  In the example below, see the 'li' elements that have the class 'container' as an example...</p>
-<script src="https://gist.github.com/2470080.js?file=SampleRazorView.cshtml"></script>
-<p>You should set the javascript global variable 'MegaFormsChangeVisuallyJQueryParentContainerSelector' to tell the library how to identify your form field container.  The example below uses '.container' indicating it's class is 'container'.  Optionally you can also specify some jQuery animations to use when hiding and showing fields...</p>
-<script src="https://gist.github.com/2470080.js?file=CustomJavascriptConfiguration.js"></script>
-<p>That's it!  If you check the checkboxes you should see the behavior, the first text box hiding and showing and the second enabling and disabling</p>
-
-<hr />
-<h3>Cascading Select List (Drop Down List) - Quick Start</h3>
-<p>The 'CascadingSelectList' class allows you specify a list that only shows certain items based on a parent list selection.  The usual scenario for doing this involves an ajax call back to the server to retrieve the list of child items once a parent item is selected.  That is usually OK unless you need to support javascript being turned off.  This solution will gracefully degrade if javascript is off by just showing all child items.  The only downside over an ajax approach is that the initial size of the HTML will be larger as all child items are shown.  For small lists this solution is ideal, but for increasingly large lists an ajax approach may be more suitable to increase page load time.</p>
-<p>On your Model, create two properties for your parent list (one to store all values and one to store the selected value), then do the same for your child list.  However, on the child list, make it a 'CascadingSelectList' instead of the usualy 'List<SelectListItem>'.  When setting up the child items, you just need to set 'ParentSelectListPropertyName' to be the property name of the selected parent list.  Then add each ChildSelectListItem, ensuring you set the 'ParentValue' to be the value that the parent list must have for this child item to show.  If a child item should show for multiple parent items, you need to add it multiple times - one for each ParentValue...</p>
-<script src="https://gist.github.com/2473983.js?file=SampleModel.cs"></script>
-<p>Next, create the view which renders a form for the Model.  The only difference to a normal form is that you must use '@Html.DropDownChildListFor' to render the child list.</p>
-<script src="https://gist.github.com/2473983.js?file=SampleRazorView.cshtml"></script>
-<p>You may optionally supply some global javascript variable to change the behavior that occurs when the child list values change.  It will hide and show the child list just to visually indicate it has changed, so the variables are the jQuery animations to pass through to the hide() and show() methods...</p>
-<script src="https://gist.github.com/2473983.js?file=CustomJavascriptConfiguration.js"></script>
-<p>That's it!  When you change the parent list, the child list should shrink and grow with a refreshed collection of child items.</p>
-      
-<hr />
-<h3>Detect Form Changes - Quick Start</h3>
-<p>There is built in support for functionality where form data is changes without the form being submitted, a browser confirmation box can be shown before a user moves away from the screen to check if they are sure they want to leave the screen while the unsubmitted form values have changed.</p>
-<p>This is quite easy to turn on and off globally, just set the javascript variable "MegaFormsDetectAllFormChanges" to true or false (true to turn it on, or false for off)</p>
-<p>To turn on for particular forms only, set the javascript variable "MegaFormsDetectAllFormChanges" to false, and add the class "detect-changes" to any forms that are relevant.  This class can be altered to whatever you need by changing the "MegaFormsDetectChangesFormClass" javascript variable.</p>
-<p>If you have links in your screens that navigate people away but you want to ignore any form change detection.  A good example is a "Clear" button on a form which refreshes the page back to it's original state.  To allow particular elements to be ignored, set their class to "ignore-detect-changes".  This class can be altered to whatever you need by changing the "MegaFormsIgnoreDetectChangesClass" javascript variable.</p>
-<p>You can also customize the confirmation message, just set the javascript variable "MegaFormsDetectChangesWarningMessage" to be a string of the message you want to show.  If empty or not supplied, the default message will be shown.</p>
-
+  </div>
+  <div class="tab-pane" id="cascadingselectlist">
+	<h3>Cascading Select List (Drop Down List) - Quick Start</h3>
+	<p>The 'CascadingSelectList' class allows you specify a list that only shows certain items based on a parent list selection.  The usual scenario for doing this involves an ajax call back to the server to retrieve the list of child items once a parent item is selected.  That is usually OK unless you need to support javascript being turned off.  This solution will gracefully degrade if javascript is off by just showing all child items.  The only downside over an ajax approach is that the initial size of the HTML will be larger as all child items are shown.  For small lists this solution is ideal, but for increasingly large lists an ajax approach may be more suitable to increase page load time.</p>
+	<p>On your Model, create two properties for your parent list (one to store all values and one to store the selected value), then do the same for your child list.  However, on the child list, make it a 'CascadingSelectList' instead of the usualy 'List<SelectListItem>'.  When setting up the child items, you just need to set 'ParentSelectListPropertyName' to be the property name of the selected parent list.  Then add each ChildSelectListItem, ensuring you set the 'ParentValue' to be the value that the parent list must have for this child item to show.  If a child item should show for multiple parent items, you need to add it multiple times - one for each ParentValue...</p>
+	<script src="https://gist.github.com/2473983.js?file=SampleModel.cs"></script>
+	<p>Next, create the view which renders a form for the Model.  The only difference to a normal form is that you must use '@Html.DropDownChildListFor' to render the child list.</p>
+	<script src="https://gist.github.com/2473983.js?file=SampleRazorView.cshtml"></script>
+	<p>You may optionally supply some global javascript variable to change the behavior that occurs when the child list values change.  It will hide and show the child list just to visually indicate it has changed, so the variables are the jQuery animations to pass through to the hide() and show() methods...</p>
+	<script src="https://gist.github.com/2473983.js?file=CustomJavascriptConfiguration.js"></script>
+	<p>That's it!  When you change the parent list, the child list should shrink and grow with a refreshed collection of child items.</p>	 
+  </div>
+  <div class="tab-pane" id="detectformchanges">
+	<h3>Detect Form Changes - Quick Start</h3>
+	<p>There is built in support for functionality where form data is changes without the form being submitted, a browser confirmation box can be shown before a user moves away from the screen to check if they are sure they want to leave the screen while the unsubmitted form values have changed.</p>
+	<p>This is quite easy to turn on and off globally, just set the javascript variable "MegaFormsDetectAllFormChanges" to true or false (true to turn it on, or false for off)</p>
+	<p>To turn on for particular forms only, set the javascript variable "MegaFormsDetectAllFormChanges" to false, and add the class "detect-changes" to any forms that are relevant.  This class can be altered to whatever you need by changing the "MegaFormsDetectChangesFormClass" javascript variable.</p>
+	<p>If you have links in your screens that navigate people away but you want to ignore any form change detection.  A good example is a "Clear" button on a form which refreshes the page back to it's original state.  To allow particular elements to be ignored, set their class to "ignore-detect-changes".  This class can be altered to whatever you need by changing the "MegaFormsIgnoreDetectChangesClass" javascript variable.</p>
+	<p>You can also customize the confirmation message, just set the javascript variable "MegaFormsDetectChangesWarningMessage" to be a string of the message you want to show.  If empty or not supplied, the default message will be shown.</p>
+  </div>
+</div>
 <hr />
 <h3>Comments - Please Leave Feedback or Thoughts</h3>
         <div id="disqus_thread"></div>
@@ -97,6 +110,14 @@
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
-
+		  <script  type="text/javascript"
+    src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js">
+</script>
+<script type="text/javascript" src="http://current.bootstrapcdn.com/bootstrap-v204/js/bootstrap-tab.js"></script>
+<script type="text/javascript">
+$(function () {
+    $('#contents a:last').tab('show');
+  })
+</script>
   </body>
 </html>
