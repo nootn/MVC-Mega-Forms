@@ -20,8 +20,8 @@ $(window).bind("beforeunload", function (event) {
     if (!MvcMegaFormsLeavingPageDueToSubmitOrIgnore) {
         var formSearch = "form";
         var hasPossibleFormsDetecting = true;
-        if (typeof MegaFormsDetectAllFormChanges === undefined || MegaFormsDetectAllFormChanges === false) {
-            if (typeof MegaFormsDetectChangesFormClass === undefined || MegaFormsDetectChangesFormClass === '') {
+        if (MvcMegaForms.IsNullOrUndefined(MegaFormsDetectAllFormChanges) || MegaFormsDetectAllFormChanges === false) {
+            if (MvcMegaForms.IsNullOrUndefined(MegaFormsDetectChangesFormClass) || MegaFormsDetectChangesFormClass === '') {
                 //there is no detect changes option available
                 hasPossibleFormsDetecting = false;
             }
@@ -47,7 +47,7 @@ $(window).bind("beforeunload", function (event) {
 
 if ($.validator !== undefined) {
     $.validator.addMethod('requiredifcontains', function (val, element, dependentproperty, dependentvalue) {
-        if (val !== null && $.trim(val) !== '' && val != undefined) {
+        if (!MvcMegaForms.IsNullOrUndefined(val)) {
             return false;
         }
         var modelPrefix = element.name.substr(0, element.name.lastIndexOf(".") + 1);
@@ -64,7 +64,7 @@ if ($.validator !== undefined) {
     $.validator.unobtrusive.adapters.addSingleVal('requiredifcontains', 'dependentproperty', 'dependentvalue', 'requiredifcontains');
 
     $.validator.addMethod('requiredifnotcontains', function (val, element, dependentproperty, dependentvalue) {
-        if (val !== null && $.trim(val) !== '') {
+        if (!MvcMegaForms.IsNullOrUndefined(val)) {
             return false;
         }
         var modelPrefix = element.name.substr(0, element.name.lastIndexOf(".") + 1);
@@ -84,8 +84,8 @@ if ($.validator !== undefined) {
 MvcMegaForms.ConfigureDetectChanges = function () {
 
     var formSearch = "form";
-    if (typeof MegaFormsDetectAllFormChanges === undefined || MegaFormsDetectAllFormChanges === false) {
-        if (typeof MegaFormsDetectChangesFormClass === undefined || MegaFormsDetectChangesFormClass === '') {
+    if (MvcMegaForms.IsNullOrUndefined(MegaFormsDetectAllFormChanges) || MegaFormsDetectAllFormChanges === false) {
+        if (MvcMegaForms.IsNullOrUndefined(MegaFormsDetectChangesFormClass) || MegaFormsDetectChangesFormClass === '') {
             //there is no detect changes option available
             return;
         }
@@ -106,7 +106,7 @@ MvcMegaForms.ConfigureDetectChanges = function () {
         //ensure all selects that have options have a selected option (otherwise it will always say they changed)
         $form.find("select").each(function () {
             var $me = $(this);
-            if ($me.attr('multiple') === undefined && $me.find('option').length > 0) {
+            if (MvcMegaForms.IsNullOrUndefined($me.attr('multiple')) && $me.find('option').length > 0) {
                 var foundDefaultSelected = false;
                 $me.find('option').each(function () {
                     if (this.defaultSelected) {
@@ -123,7 +123,7 @@ MvcMegaForms.ConfigureDetectChanges = function () {
         });
     });
 
-    if (typeof MegaFormsIgnoreDetectChangesClass != undefined && MegaFormsIgnoreDetectChangesClass != null && MegaFormsIgnoreDetectChangesClass != '') {
+    if (!MvcMegaForms.IsNullOrUndefined(MegaFormsIgnoreDetectChangesClass)) {
         //wire up any other items to ignore which could be anywhere on the screen, not within a form
         $("." + MegaFormsIgnoreDetectChangesClass).each(function () {
             var $me = $(this);
@@ -137,7 +137,7 @@ MvcMegaForms.ConfigureDetectChanges = function () {
 MvcMegaForms.AttachEvents = function () {
     $(":input").each(function () {
         var tos = $(this).attr('data-val-changevisually-to');
-        if (typeof tos !== 'undefined') {
+        if (!MvcMegaForms.IsNullOrUndefined(tos)) {
             var toValues = tos.split("~");
             var otherPropertyNames = $(this).attr('data-val-changevisually-otherpropertyname').split("~");
             var ifOperators = $(this).attr('data-val-changevisually-ifoperator').split("~");
@@ -169,7 +169,7 @@ MvcMegaForms.AttachEvents = function () {
         }
 
         var parentId = $(this).attr("parentListId");
-        if (typeof parentId !== 'undefined') {
+        if (!MvcMegaForms.IsNullOrUndefined(parentId)) {
             var parentList = $("[name='" + $(this).attr("name").substr(0, $(this).attr("name").lastIndexOf(".") + 1) + parentId + "']");
 
             parentList.attr("childid", $(this).attr('id'));
@@ -184,14 +184,14 @@ MvcMegaForms.AttachEvents = function () {
 };
 
 MvcMegaForms.ApplyChangeVisually = function (dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull) {
-    var parentSelector = MegaFormsChangeVisuallyJQueryParentContainerSelector === null ? '.editor-field' : MegaFormsChangeVisuallyJQueryParentContainerSelector;
+    var parentSelector = MvcMegaForms.IsNullOrUndefined(MegaFormsChangeVisuallyJQueryParentContainerSelector) ? '.editor-field' : MegaFormsChangeVisuallyJQueryParentContainerSelector;
     var container = dependentProperty.parents(parentSelector);
-    if (container === null) {
+    if (MvcMegaForms.IsNullOrUndefined(container)) {
         alert('MvcMegaForms-ChangeVisually Critical Error: Unable to find parent container with selector: ', +parentSelector + ' for property ' + dependantProperty);
         return false;
     } else {
-        var showEffect = MegaFormsChangeVisuallyJQueryShowEffect === null ? 'fast' : MegaFormsChangeVisuallyJQueryShowEffect;
-        var hideEffect = MegaFormsChangeVisuallyJQueryHideEffect === null ? 'fast' : MegaFormsChangeVisuallyJQueryHideEffect;
+        var showEffect = MvcMegaForms.IsNullOrUndefined(MegaFormsChangeVisuallyJQueryShowEffect) ? 'fast' : MegaFormsChangeVisuallyJQueryShowEffect;
+        var hideEffect = MvcMegaForms.IsNullOrUndefined(MegaFormsChangeVisuallyJQueryHideEffect) ? 'fast' : MegaFormsChangeVisuallyJQueryHideEffect;
 
         var conditionMet = MvcMegaForms.ConditionMetForChangeVisually(dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull);
         if (conditionMet) {
@@ -321,7 +321,7 @@ MvcMegaForms.SetupCascadingDropDown = function (parentList) {
 
     //if this child has a child one, it's change event will not fire, so we must call it manually
     var childOfChild = childList.attr('childid');
-    if (typeof childOfChild !== 'undefined') {
+    if (!MvcMegaForms.IsNullOrUndefined(childOfChild)) {
         childList.change();
     }
     else {
@@ -345,7 +345,7 @@ MvcMegaForms.CascadeDropDown = function (parentList) {
 
     var isChildVisible = childList.is(":visible");
     if (isChildVisible) {
-        var hideEffect = MegaFormsCascadeJQueryHideEffect === null ? 'fast' : MegaFormsCascadeJQueryHideEffect;
+        var hideEffect = MvcMegaForms.IsNullOrUndefined(MegaFormsCascadeJQueryHideEffect) ? 'fast' : MegaFormsCascadeJQueryHideEffect;
         childList.hide(hideEffect);
     }
 
@@ -359,7 +359,7 @@ MvcMegaForms.CascadeDropDown = function (parentList) {
     var currChildId = "";
     var currChildValue = "";
     for (var i = 0; i < combos.length; i++) {
-        var val = combos[i];
+        var val = combos.charAt(i);
 
         //set state
         if (val === "{") {
@@ -421,22 +421,36 @@ MvcMegaForms.CascadeDropDown = function (parentList) {
     }
 
     if (isChildVisible) {
-        var showEffect = MegaFormsCascadeJQueryShowEffect === null ? 'fast' : MegaFormsCascadeJQueryShowEffect;
+        var showEffect = MvcMegaForms.IsNullOrUndefined(MegaFormsCascadeJQueryShowEffect) ? 'fast' : MegaFormsCascadeJQueryShowEffect;
         childList.show(showEffect);
     }
 };
 
 MvcMegaForms.GetFormValue = function (formControl) {
-    var val;
-    if (formControl.is(':checkbox')) {
-        val = formControl.is(':checked') ? 'true' : 'false';
+
+    //ensure it's not null or undefined before we begin
+    if (MvcMegaForms.IsNullOrUndefined(formControl)) {
+        throw "Undefined form control supplied";
     }
-    else if (formControl.is(':radio')) {
-        val = $("input:radio[name='" + formControl.attr('name') + "']:checked").val();
+
+    //ensure we have a jquery object to deal with
+    var $formControl = formControl instanceof jQuery ? formControl : $(formControl);
+
+    //get the value different ways based on the type of form control
+    var val;
+    if ($formControl.is(':checkbox')) {
+        val = $formControl.is(':checked') ? true : false;
+    }
+    else if ($formControl.is(':radio')) {
+        val = $("input:radio[name='" + $formControl.attr('name') + "']:checked").val();
     } else {
-        val = formControl.val();
+        val = $formControl.val();
     }
     return val;
+};
+
+MvcMegaForms.IsNullOrUndefined = function (item) {
+    return (item == null || item === undefined || typeof item == 'undefined');
 };
 
 MvcMegaForms.FormControlValueHasChanged = function (formControl) {
@@ -448,8 +462,8 @@ MvcMegaForms.FormControlValueHasChanged = function (formControl) {
     else if ($formControl.is(':radio')) {
         return (formControl.checked !== formControl.defaultChecked);
     }
-    else if ($formControl.is('select') && $formControl.attr('multiple') !== undefined) {
-        if (formControl.options === null || formControl.options.length <= 0) {
+    else if ($formControl.is('select') && !MvcMegaForms.IsNullOrUndefined($formControl.attr('multiple'))) {
+        if (MvcMegaForms.IsNullOrUndefined(formControl.options) || formControl.options.length <= 0) {
             return false;
         }
         var allCndMet = false;
@@ -460,7 +474,7 @@ MvcMegaForms.FormControlValueHasChanged = function (formControl) {
         return allCndMet;
     }
     else if ($formControl.is('select')) {
-        if (formControl.options === null || formControl.options.length <= 0) {
+        if (MvcMegaForms.IsNullOrUndefined(formControl.options) || formControl.options.length <= 0) {
             return false;
         }
         return !(formControl.options[formControl.selectedIndex].defaultSelected);
@@ -475,15 +489,15 @@ MvcMegaForms.FormFieldIdChanged = function ($form) {
     $form.find('input').each(function () {
         //specifically leave 'this' as non-jquery
         if (MvcMegaForms.FormControlValueHasChanged(this)) {
-            changedId = this.id === null ? this.name === null ? '[unknown]' : this.name : this.id;
+            changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
             return;
         }
     });
-    if (changedId === null) {
+    if (MvcMegaForms.IsNullOrUndefined(changedId)) {
         $form.find('select').each(function () {
             //specifically leave 'this' as non-jquery
             if (MvcMegaForms.FormControlValueHasChanged(this)) {
-                changedId = this.id === null ? this.name === null ? '[unknown]' : this.name : this.id;
+                changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
                 return;
             }
         });
@@ -493,9 +507,9 @@ MvcMegaForms.FormFieldIdChanged = function ($form) {
 
 MvcMegaForms.AlertFormChanged = function ($form) {
     var changedId = MvcMegaForms.FormFieldIdChanged($form);
-    if (changedId !== null) {
+    if (!MvcMegaForms.IsNullOrUndefined(changedId)) {
         var confMsg = "At least one unsaved value has changed ('" + changedId + "'), are you sure you want to leave the page?";
-        if (MegaFormsDetectChangesWarningMessage !== null && MegaFormsDetectChangesWarningMessage !== '') {
+        if (!MvcMegaForms.IsNullOrUndefined(MegaFormsDetectChangesWarningMessage) && MegaFormsDetectChangesWarningMessage != '') {
             confMsg = MegaFormsDetectChangesWarningMessage;
         }
         return confMsg;

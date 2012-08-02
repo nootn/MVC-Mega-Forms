@@ -11,6 +11,11 @@ namespace MVCMega.Forms.FunctionalTests.Pages
             return NavigateTo<CheckboxPage>(By.LinkText("Checkbox"));
         }
 
+        public TextboxPage GoToTextboxPage()
+        {
+            return NavigateTo<TextboxPage>(By.LinkText("Textbox"));
+        }
+
 
         //public MainNavigationMenuComponent MainMenu
         //{

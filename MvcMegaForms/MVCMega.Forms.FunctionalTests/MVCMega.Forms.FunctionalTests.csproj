@@ -99,7 +99,9 @@
     <Compile Include="ChangeVisually\CheckboxFieldsCanBeHookedUp.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ChangeVisually\TextboxFieldsCanBeHookedUp.cs" />
     <Compile Include="Pages\ChangeVisually\CheckboxPage.cs" />
+    <Compile Include="Pages\ChangeVisually\TextboxPage.cs" />
     <Compile Include="Pages\HomePage.cs">
       <SubType>Code</SubType>
     </Compile>

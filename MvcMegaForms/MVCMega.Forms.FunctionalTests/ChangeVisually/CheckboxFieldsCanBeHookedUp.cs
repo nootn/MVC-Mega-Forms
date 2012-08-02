@@ -16,11 +16,11 @@ namespace MVCMega.Forms.FunctionalTests.ChangeVisually
         SoThat = "So that my forms will be awesome")]
     public class CheckboxFieldsCanBeHookedUp
     {
-        private CheckboxPage _checkboxPage;
+        private CheckboxPage _page;
 
         private void GivenUserIsOnTheCheckboxPage()
         {
-            _checkboxPage = Application
+            _page = Application
                 .HomePage
                 .GoToCheckboxPage();
         }
@@ -29,12 +29,12 @@ namespace MVCMega.Forms.FunctionalTests.ChangeVisually
         {
             var model = new CheckboxModel();
             model.TickCheckboxToShowNextField = true;
-            _checkboxPage.FillWithModel(model);
+            _page.FillWithModel(model);
         }
 
         private void ThenNextFieldIsShown()
         {
-            var elem = _checkboxPage.AssertThatElements(By.Id("NextField"));
+            var elem = _page.AssertThatElements(By.Id("NextField"));
 
             //TODO: assert that elem exists and is not hidden (I.e. check html attributes..)
             

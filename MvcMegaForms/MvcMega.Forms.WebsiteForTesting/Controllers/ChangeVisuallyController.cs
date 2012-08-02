@@ -19,5 +19,10 @@ namespace MvcMega.Forms.WebsiteForTesting.Controllers
         {
             return View();
         }
+
+        public ActionResult Textbox()
+        {
+            return View();
+        }
     }
 }

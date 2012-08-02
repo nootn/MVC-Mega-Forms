@@ -1,0 +1,11 @@
+﻿@using MvcMega.Forms.MVC.Html
+@model MvcMega.Forms.WebsiteForTesting.Models.ChangeVisuallyScreens.TextboxModel
+
+@Html.ControlBundleTextBoxFor(_ => _.MakeNotEmptyToShowNextField1)
+@Html.ControlBundleFor(_ => _.NextField1)
+
+@Html.ControlBundleTextBoxFor(_ => _.MakeYesToShowNextField2)
+@Html.ControlBundleFor(_ => _.NextField2)
+
+@Html.ControlBundleTextBoxFor(_ => _.MakeNumberLessThan3ToShowNextField3)
+@Html.ControlBundleFor(_ => _.NextField3)
