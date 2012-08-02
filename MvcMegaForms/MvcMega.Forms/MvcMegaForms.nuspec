@@ -2,7 +2,8 @@
 <package>
   <metadata>
     <id>MvcMegaForms</id>
-    <version>0.0.0.12</version>
+    <version>0.0.0.13</version>
+    <releaseNotes>* Fixes some cross browser compatibility issues (tested on latest Chrome, Firefox, IE9 and IE9 Compatibility mode).  * Adds handy new javascript helper method "MvcMegaForms.IsNullOrUndefined(item)" for checking if a JavaScript value is null or undefined cross browser.</releaseNotes>
     <authors>http://about.me/nootn</authors>
     <owners>http://about.me/nootn</owners>
     <projectUrl>http://nootn.github.com/MVC-Mega-Forms/</projectUrl>
