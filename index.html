@@ -137,7 +137,23 @@ $(function () {
 	  e.preventDefault();
 	  $(this).tab('show');
 	})
+	
+	var defaultTab = getParameterByName('defaultTab');
+	if (defaultTab != null && defaultTab.length > 0){
+		$('#contents a[href="#' + defaultTab " '"]').tab('show');
+	}
   })
+function getParameterByName(name)
+{
+  name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+  var regexS = "[\\?&]" + name + "=([^&#]*)";
+  var regex = new RegExp(regexS);
+  var results = regex.exec(window.location.search);
+  if(results == null)
+    return "";
+  else
+    return decodeURIComponent(results[1].replace(/\+/g, " "));
+}
 </script>
   </body>
 </html>
