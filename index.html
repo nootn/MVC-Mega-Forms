@@ -6,7 +6,7 @@
 
     <!--<link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />-->
     <!--<link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />-->
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--<link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />-->
 	<link rel="stylesheet" type="text/css" href="http://current.bootstrapcdn.com/bootstrap-v204/css/bootstrap-combined.min.css" media="screen" />
     <title>Mvc-mega-forms by nootn</title>
   </head>
@@ -139,10 +139,10 @@ $(function () {
 	})
 	
 	var defaultTab = getParameterByName('defaultTab');
-	if (defaultTab != null && defaultTab.length > 0){
+	if (defaultTab == null || defaultTab.length <= 0){
 		defaultTab = 'install';
 	}
-	$('#contents a[href="#' + defaultTab + '"]').addClass('active');
+	$('#contents a[href="#' + defaultTab + '"]').parent().addClass('active');
   })
 function getParameterByName(name)
 {
