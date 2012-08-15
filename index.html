@@ -45,7 +45,7 @@
 <hr />
 <h2>Quick Start Tutorials:</h2>
 <ul class="nav nav-tabs" id="contents">
-  <li class="active"><a href="#install">Install</a></li>
+  <li><a href="#install">Install</a></li>
   <li><a href="#changevisually">Change Visually</a></li>
   <li><a href="#cascadingselectlist">Cascading Select List (Drop Down List)</a></li>
   <li><a href="#detectformchanges">Detect Form Changes</a></li>
@@ -140,8 +140,9 @@ $(function () {
 	
 	var defaultTab = getParameterByName('defaultTab');
 	if (defaultTab != null && defaultTab.length > 0){
-		$('#contents a[href="#' + defaultTab " '"]').tab('show');
+		defaultTab = 'install';
 	}
+	$('#contents a[href="#' + defaultTab " '"]').addClass('active');
   })
 function getParameterByName(name)
 {
