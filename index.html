@@ -138,7 +138,8 @@ $(function () {
 	  $(this).tab('show');
 	})
 	
-	var activeTab = $('[href=' + location.hash + ']');
+	var hash = location.hash == null || location.hash == '' ? 'install' : location.hash
+	var activeTab = $('[href=' + hash + ']');
 	activeTab && activeTab.tab('show');
   })
 </script>
