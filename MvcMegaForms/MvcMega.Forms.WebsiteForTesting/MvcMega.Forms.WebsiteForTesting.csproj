@@ -170,6 +170,7 @@
     <Content Include="Scripts\jasmine-samples\PlayerSpec.js" />
     <Content Include="Scripts\jasmine-samples\Song.js" />
     <Content Include="Scripts\jasmine-samples\SpecHelper.js" />
+    <Content Include="Scripts\jasmine-tests\ConditionMetForChangeVisually.js" />
     <Content Include="Scripts\jasmine-tests\IsNullOrUndefinedSpec.js" />
     <Content Include="Scripts\jasmine-tests\GetFormValueSpec.js" />
     <Content Include="Scripts\jasmine\jasmine-html.js" />

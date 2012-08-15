@@ -25,6 +25,7 @@ namespace MvcMega.Forms.DataAnnotations
         {
             Hidden,
             Disabled,
+            Readonly,
         }
 
         public enum DisplayChangeIf
@@ -48,6 +49,13 @@ namespace MvcMega.Forms.DataAnnotations
             ConditionPassesIfNull = conditionPassesIfNull;
         }
 
+        public enum ComparisonValueType
+        {
+            String,
+            Number,
+            DateTime,
+        }
+
         public ChangeTo To { get; set; }
 
         public string WhenOtherPropertyName { get; set; }
@@ -57,6 +65,17 @@ namespace MvcMega.Forms.DataAnnotations
         public object Value { get; set; }
 
         public bool ConditionPassesIfNull { get; set; }
+
+        public ComparisonValueType ValueTypeToCompare { get; set; }
+
+        /// <summary>
+        ///This should be used if ValueTypeToCompare == ComparisonValueType.DateTime to let it know what the format of the date is.
+        ///
+        ///If specified, a format string that must be matched exactly by the stringDate using the available Format Strings, and any other text. If not specified, the method will automatically attempt to match any of the following formats:
+        /// y-M-d    MMM d, y    MMM d,y    y-MMM-d    d-MMM-y    MMM d    MMM-d    d-MMM    M/d/y    M-d-y    M.d.y    M/d    M-d    d/M/y    d-M-y    d.M.y    d/M    d-M   
+        /// (from  http://www.javascripttoolbox.com/lib/date/documentation.php)
+        /// </summary>
+        public string ValueFormat { get; set; }
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
@@ -75,6 +94,8 @@ namespace MvcMega.Forms.DataAnnotations
             var ifValues = new List<string>();
             var valueValues = new List<string>();
             var conditionPassesIfNullValues = new List<string>();
+            var valueTypeToCompareValues = new List<string>();
+            var valueFormatValues = new List<string>();
 
             var prop = metadata == null || metadata.ContainerType == null
                            ? null
@@ -90,6 +111,8 @@ namespace MvcMega.Forms.DataAnnotations
                     ifValues.Add(attr.If.ToString());
                     valueValues.Add(attr.Value == null ? string.Empty : attr.Value.ToString());
                     conditionPassesIfNullValues.Add(attr.ConditionPassesIfNull.ToString());
+                    valueTypeToCompareValues.Add(attr.ValueTypeToCompare.ToString());
+                    valueFormatValues.Add(attr.ValueFormat ?? string.Empty);
                 }
             }
             else
@@ -99,6 +122,8 @@ namespace MvcMega.Forms.DataAnnotations
                 ifValues.Add(If.ToString());
                 valueValues.Add(Value == null ? string.Empty : Value.ToString());
                 conditionPassesIfNullValues.Add(ConditionPassesIfNull.ToString());
+                valueTypeToCompareValues.Add(ValueTypeToCompare.ToString());
+                valueFormatValues.Add(ValueFormat ?? string.Empty);
             }
 
             rule.ValidationParameters.Add("to", string.Join(Separator, toValues).ToLower());
@@ -106,6 +131,8 @@ namespace MvcMega.Forms.DataAnnotations
             rule.ValidationParameters.Add("ifoperator", string.Join(Separator, ifValues).ToLower());
             rule.ValidationParameters.Add("value", string.Join(Separator, valueValues).ToLower());
             rule.ValidationParameters.Add("conditionpassesifnull", string.Join(Separator, conditionPassesIfNullValues).ToLower());
+            rule.ValidationParameters.Add("valuetypetocompare", string.Join(Separator, valueTypeToCompareValues).ToLower());
+            rule.ValidationParameters.Add("valueformat", string.Join(Separator, valueFormatValues));
 
             yield return rule;
         }

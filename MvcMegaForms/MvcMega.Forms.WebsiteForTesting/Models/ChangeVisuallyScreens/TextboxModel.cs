@@ -29,10 +29,16 @@ namespace MvcMega.Forms.WebsiteForTesting.Models.ChangeVisuallyScreens
         public string NextField2 { get; set; }
 
 
-        public string MakeNumberLessThan3ToShowNextField3 { get; set; }
+        public string MakeNumberLessThan10ToShowNextField3 { get; set; }
 
-        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "MakeNumberLessThan3ToShowNextField3",
-            ChangeVisuallyAttribute.DisplayChangeIf.GreaterThanOrEquals, "3", true)]
+        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "MakeNumberLessThan10ToShowNextField3",
+            ChangeVisuallyAttribute.DisplayChangeIf.GreaterThanOrEquals, "10", true, ValueTypeToCompare = ChangeVisuallyAttribute.ComparisonValueType.Number)]
         public string NextField3 { get; set; }
+
+        public string MakeDateGreaterThan10Dec2012ToShowNextField4 { get; set; }
+
+        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "MakeDateGreaterThan10Dec2012ToShowNextField4",
+            ChangeVisuallyAttribute.DisplayChangeIf.LessThanOrEquals, "Dec 10, 2012", true, ValueTypeToCompare = ChangeVisuallyAttribute.ComparisonValueType.DateTime, ValueFormat = "MMM d, y")]
+        public string NextField4 { get; set; }
     }
 }

@@ -78,11 +78,12 @@ namespace MvcMega.Forms.WebsiteForTesting.Models
         //This will show as a checkbox on the screen - checking it will enable "TheNextDisabledField"
         public bool EnableTheNextDisabledOrHiddenField { get; set; }
 
-        public string TypeHideToHideOrDisableToDisableNextField { get; set; }
+        public string TypeHideToHideOrDisableOrReadonly { get; set; }
 
         [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Disabled, "EnableTheNextDisabledOrHiddenField", ChangeVisuallyAttribute.DisplayChangeIf.Equals, false, false)]
-        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Disabled, "TypeHideToHideOrDisableToDisableNextField", ChangeVisuallyAttribute.DisplayChangeIf.Equals, "Disable", false)]
-        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "TypeHideToHideOrDisableToDisableNextField", ChangeVisuallyAttribute.DisplayChangeIf.Equals, "Hide", false)]
+        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Disabled, "TypeHideToHideOrDisableOrReadonly", ChangeVisuallyAttribute.DisplayChangeIf.Equals, "Disable", false)]
+        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "TypeHideToHideOrDisableOrReadonly", ChangeVisuallyAttribute.DisplayChangeIf.Equals, "Hide", false)]
+        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Readonly, "TypeHideToHideOrDisableOrReadonly", ChangeVisuallyAttribute.DisplayChangeIf.Equals, "Readonly", false)]
         public string TheNextDisabledOrHiddenField { get; set; }
 
         [HiddenInput]

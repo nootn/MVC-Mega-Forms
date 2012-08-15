@@ -1,4 +1,4 @@
-describe("IsNullOrUndefined", function () {
+describe("IsNullOrUndefined method", function () {
 
     describe("Null and Undefined values return true, all other values return false", function () {
         it("should return true if null", function () {

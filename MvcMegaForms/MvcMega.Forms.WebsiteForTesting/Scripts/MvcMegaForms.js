@@ -143,6 +143,8 @@ MvcMegaForms.AttachEvents = function () {
             var ifOperators = $(this).attr('data-val-changevisually-ifoperator').split("~");
             var values = $(this).attr('data-val-changevisually-value').split("~");
             var conditionPassesIfNulls = $(this).attr('data-val-changevisually-conditionpassesifnull').split("~");
+            var valueTypeToCompares = $(this).attr('data-val-changevisually-valuetypetocompare').split("~");
+            var valueFormats = $(this).attr('data-val-changevisually-valueformat').split("~");
 
             var dependentProperty = $(this);
 
@@ -157,7 +159,7 @@ MvcMegaForms.AttachEvents = function () {
                     for (var iInner = 0; iInner < otherPropertyNames.length; iInner++) {
                         if (otherPropertyNames[iInner] === event.data.otherPropertyOuterInitialName) {
                             var currentOtherProperty = $("[name='" + event.data.otherPropertyFullName + "']");
-                            if (MvcMegaForms.ApplyChangeVisually(dependentProperty, currentOtherProperty, toValues[iInner], ifOperators[iInner], values[iInner], conditionPassesIfNulls[iInner])) {
+                            if (MvcMegaForms.ApplyChangeVisually(dependentProperty, currentOtherProperty, toValues[iInner], ifOperators[iInner], values[iInner], conditionPassesIfNulls[iInner], valueTypeToCompares[iInner], valueFormats[iInner])) {
                                 break; //a condition has passed, don't process the rest
                             }
                         }
@@ -183,7 +185,7 @@ MvcMegaForms.AttachEvents = function () {
     });
 };
 
-MvcMegaForms.ApplyChangeVisually = function (dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull) {
+MvcMegaForms.ApplyChangeVisually = function (dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull, valueTypeToCompare, valueFormat) {
     var parentSelector = MvcMegaForms.IsNullOrUndefined(MegaFormsChangeVisuallyJQueryParentContainerSelector) ? '.editor-field' : MegaFormsChangeVisuallyJQueryParentContainerSelector;
     var container = dependentProperty.parents(parentSelector);
     if (MvcMegaForms.IsNullOrUndefined(container)) {
@@ -192,8 +194,11 @@ MvcMegaForms.ApplyChangeVisually = function (dependentProperty, otherProperty, t
     } else {
         var showEffect = MvcMegaForms.IsNullOrUndefined(MegaFormsChangeVisuallyJQueryShowEffect) ? 'fast' : MegaFormsChangeVisuallyJQueryShowEffect;
         var hideEffect = MvcMegaForms.IsNullOrUndefined(MegaFormsChangeVisuallyJQueryHideEffect) ? 'fast' : MegaFormsChangeVisuallyJQueryHideEffect;
+        var disabledOrReadonlyCssClass = MvcMegaForms.IsNullOrUndefined(MegaFormsDisabledOrReadonlyCssClass) ? 'ui-state-disabled' : MegaFormsDisabledOrReadonlyCssClass;
 
-        var conditionMet = MvcMegaForms.ConditionMetForChangeVisually(dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull);
+        var otherPropValue = MvcMegaForms.GetFormValue(otherProperty);
+
+        var conditionMet = MvcMegaForms.ConditionMetForChangeVisually(ifOperator, value, otherPropValue, conditionPassesIfNull, valueTypeToCompare, valueFormat);
         if (conditionMet) {
             if (to === 'hidden') {
                 //hide
@@ -201,15 +206,26 @@ MvcMegaForms.ApplyChangeVisually = function (dependentProperty, otherProperty, t
 
                 //enable
                 dependentProperty.removeAttr('disabled');
-                dependentProperty.removeClass('ui-state-disabled');
+                dependentProperty.removeAttr('readonly');
+                dependentProperty.removeClass(disabledOrReadonlyCssClass);
             }
-            else {
+            else if (to === 'disabled') {
                 //show  
                 container.show(showEffect);
+                dependentProperty.removeAttr('readonly');
 
                 //disable
                 dependentProperty.attr('disabled', 'disabled');
-                dependentProperty.addClass('ui-state-disabled');
+                dependentProperty.addClass(disabledOrReadonlyCssClass);
+            }
+            else if (to === 'readonly') {
+                //show  
+                container.show(showEffect);
+                dependentProperty.removeAttr('disabled');
+
+                //disable
+                dependentProperty.attr('readonly', 'readonly');
+                dependentProperty.addClass(disabledOrReadonlyCssClass);
             }
         }
         else {
@@ -218,30 +234,48 @@ MvcMegaForms.ApplyChangeVisually = function (dependentProperty, otherProperty, t
 
             //enable
             dependentProperty.removeAttr('disabled');
-            dependentProperty.removeClass('ui-state-disabled');
+            dependentProperty.removeAttr('readonly');
+            dependentProperty.removeClass(disabledOrReadonlyCssClass);
         }
         return conditionMet;
     }
 };
 
-MvcMegaForms.ConditionMetForChangeVisually = function (dependantProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull) {
+MvcMegaForms.ConditionMetForChangeVisually = function (ifOperator, expectedValue, actualValue, conditionPassesIfNull, valueTypeToCompare, valueFormat) {
+
+    //ensure it's not null or undefined before we begin
+    if (MvcMegaForms.IsNullOrUndefined(ifOperator)) {
+        throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: ifOperator was not supplied";
+    }
+
     var conditionMet = false;
-    conditionPassesIfNull = conditionPassesIfNull.toLowerCase() === 'true'; //it was a string, make it a bool
-    var val = MvcMegaForms.GetFormValue(otherProperty);
+    conditionPassesIfNull = !(MvcMegaForms.IsNullOrUndefined(conditionPassesIfNull)) && conditionPassesIfNull.toString().toLowerCase() === 'true'; //it was a string, make it a bool
 
     //treat empty string or undefined as null
-    if (val === '' || val === undefined) {
-        val = null;
+    if (actualValue === '' || actualValue === undefined || typeof actualValue == 'undefined') {
+        actualValue = null;
     }
-    if (value === '' || val === undefined) {
-        value = null;
+    if (expectedValue === '' || expectedValue === undefined || typeof expectedValue == 'undefined') {
+        expectedValue = null;
     }
 
-    if (val === null && value !== null) {
-        //value is null, condition is met if we wanted it to be met when null
+    //if the actual value is an empty array, treat it as null
+    var actualValueIsArray = MvcMegaForms.IsArray(actualValue);
+    if (actualValueIsArray) {
+        if (actualValue.length <= 0) {
+            actualValue = null;
+        }
+    }
+
+    if (MvcMegaForms.IsArray(expectedValue)) {
+        throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Array data type for expectedValue is not supported at this time.  expectedValue supplied was: " + expectedValue;
+    }
+
+    if (actualValue === null && expectedValue !== null) {
+        //expectedValue is null, condition is met if we wanted it to be met when null
         conditionMet = conditionPassesIfNull;
-    } else if (val !== null && value === null) {
-        //the value is not null, but we were looking for a null, determine what to do
+    } else if (actualValue !== null && expectedValue === null) {
+        //the expectedValue is not null, but we were looking for a null, determine what to do
         switch (ifOperator) {
             case "equals":
                 conditionMet = false; //we wanted a null and it was not
@@ -250,56 +284,223 @@ MvcMegaForms.ConditionMetForChangeVisually = function (dependantProperty, otherP
                 conditionMet = true; //we did not want a null and it was not
                 break;
             default:
-                alert('MvcMegaForms-ChangeVisually Critical Error: When checking for a null value, DisplayChangeIf must be Equals or NotEquals, supplied if operator was ' + ifOperator);
+                throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: When checking for a null expectedValue, DisplayChangeIf must be Equals or NotEquals, supplied ifOperator was ' + ifOperator;
         }
-    } else if (val === null && value === null) {
+    } else if (actualValue === null && expectedValue === null) {
         //both are null, condition is met if we wanted it to be met when null
         conditionMet = conditionPassesIfNull;
     } else //both are not null
     {
-        val = val.toString().toLowerCase();
-        value = value.toString().toLowerCase();
-        switch (ifOperator) {
-            case "equals":
-                conditionMet = val === value;
-                break;
-            case "notequals":
-                conditionMet = val !== value;
-                break;
-            case "greaterthan":
-                conditionMet = val > value;
-                break;
-            case "greaterthanorequals":
-                conditionMet = val >= value;
-                break;
-            case "lessthan":
-                conditionMet = val < value;
-                break;
-            case "lessthanorequals":
-                conditionMet = val <= value;
-                break;
-            case "contains":
-                for (var iMet = 0; iMet < val.length; iMet++) {
-                    var currContainsItem = val[iMet].toLowerCase();
-                    if (currContainsItem === value) {
-                        conditionMet = true;
-                        break;
+        if (actualValueIsArray) {
+            //verify that if the actual value is an array, we are only dealing with contains/notcontains
+            if (ifOperator != "contains" && ifOperator != "notcontains") {
+                throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: When actualValue is an array (E.g. value of a multi-select), DisplayChangeIf must be Contains or NotContains, supplied ifOperator was ' + ifOperator;
+            }
+        }
+
+        expectedValue = expectedValue.toString().toLowerCase();
+
+        //verify value types (if not known, assume string therefore no checks to do)
+        switch (valueTypeToCompare) {
+            case "number":
+                if (isNaN(expectedValue)) {
+                    throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'number', but expectedValue was not a number: " + expectedValue;
+                }
+
+                if (!actualValueIsArray) {
+                    if (isNaN(actualValue)) {
+                        throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'number', but actualValue was not a number: " + actualValue;
+                    }
+                    actualValue = parseFloat(actualValue.toString());
+                }
+                else {
+                    for (var i = 0; i < actualValue.length; i++) {
+                        if (isNaN(actualValue[i])) {
+                            throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'number', but an item in the actualValue array was not a number: " + actualValue[i];
+                        }
+                        actualValue[i] = parseFloat(actualValue[i].toString());
                     }
                 }
-                break;
-            case "notcontains":
-                conditionMet = true;
-                for (var iNotMet = 0; iNotMet < val.length; iNotMet++) {
-                    var currNotContainsItem = val[iNotMet].toLowerCase();
-                    if (currNotContainsItem === value) {
-                        conditionMet = false;
+                expectedValue = parseFloat(expectedValue.toString());
+
+                switch (ifOperator) {
+                    case "equals":
+                        conditionMet = actualValue === expectedValue;
                         break;
+                    case "notequals":
+                        conditionMet = actualValue !== expectedValue;
+                        break;
+                    case "greaterthan":
+                        conditionMet = actualValue > expectedValue;
+                        break;
+                    case "greaterthanorequals":
+                        conditionMet = actualValue >= expectedValue;
+                        break;
+                    case "lessthan":
+                        conditionMet = actualValue < expectedValue;
+                        break;
+                    case "lessthanorequals":
+                        conditionMet = actualValue <= expectedValue;
+                        break;
+                    case "contains":
+                        if (!actualValueIsArray) {
+                            conditionMet = actualValue === expectedValue; //same as equals
+                        }
+                        else {
+                            for (var iMet = 0; iMet < actualValue.length; iMet++) {
+                                var currContainsItem = actualValue[iMet];
+                                if (currContainsItem === expectedValue) {
+                                    conditionMet = true;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    case "notcontains":
+                        if (!actualValueIsArray) {
+                            conditionMet = actualValue !== expectedValue; //same as not equals
+                        }
+                        else {
+                            conditionMet = true;
+                            for (var iNotMet = 0; iNotMet < actualValue.length; iNotMet++) {
+                                var currNotContainsItem = actualValue[iNotMet];
+                                if (currNotContainsItem === expectedValue) {
+                                    conditionMet = false;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
+                }
+
+                break;
+            case "datetime":
+                if (!Date.isValid(expectedValue, valueFormat)) {
+                    throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'datetime', but expectedValue does not fit the specified date format: " + expectedValue + " was not a valid DateTime in the specified format: " + valueFormat;
+                }
+
+                if (!actualValueIsArray) {
+                    if (!Date.isValid(actualValue, valueFormat)) {
+                        throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'datetime', but actualValue: " + actualValue + " was not a valid DateTime in the specified format: " + valueFormat;
+                    }
+                    actualValue = Date.parseString(actualValue.toString(), valueFormat);
+                }
+                else {
+                    for (var i = 0; i < actualValue.length; i++) {
+                        if (!Date.isValid(actualValue[i], valueFormat)) {
+                            throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'datetime', but an item in the actualValue array '" + actualValue[i] + "' was not a valid DateTime in the specified format: " + valueFormat;
+                        }
+                        actualValue[i] = Date.parseString(actualValue[i].toString(), valueFormat);
                     }
                 }
+                expectedValue = Date.parseString(expectedValue.toString(), valueFormat);
+
+                switch (ifOperator) {
+                    case "equals":
+                        conditionMet = actualValue.equals(expectedValue);
+                        break;
+                    case "notequals":
+                        conditionMet = !actualValue.equals(expectedValue);
+                        break;
+                    case "greaterthan":
+                        conditionMet = actualValue.isAfter(expectedValue);
+                        break;
+                    case "greaterthanorequals":
+                        conditionMet = actualValue.equals(expectedValue) || actualValue.isAfter(expectedValue);
+                        break;
+                    case "lessthan":
+                        conditionMet = actualValue.isBefore(expectedValue);
+                        break;
+                    case "lessthanorequals":
+                        conditionMet = actualValue.equals(expectedValue) || actualValue.isBefore(expectedValue);
+                        break;
+                    case "contains":
+                        if (!actualValueIsArray) {
+                            conditionMet = actualValue.equals(expectedValue); //same as equals
+                        }
+                        else {
+                            for (var iMet = 0; iMet < actualValue.length; iMet++) {
+                                var currContainsItem = actualValue[iMet];
+                                if (currContainsItem.equals(expectedValue)) {
+                                    conditionMet = true;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    case "notcontains":
+                        if (!actualValueIsArray) {
+                            conditionMet = !actualValue.equals(expectedValue); //same as not equals
+                        }
+                        else {
+                            conditionMet = true;
+                            for (var iNotMet = 0; iNotMet < actualValue.length; iNotMet++) {
+                                var currNotContainsItem = actualValue[iNotMet];
+                                if (currNotContainsItem.equals(expectedValue)) {
+                                    conditionMet = false;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
+                }
+
                 break;
             default:
-                alert('MvcMegaForms-ChangeVisually Critical Error: Unknown DisplayChangeIf supplied ' + ifOperator);
+                //must be a string
+                if (!actualValueIsArray) {
+                    actualValue = actualValue.toString().toLowerCase();
+                }
+                expectedValue = expectedValue.toString().toLowerCase();
+                switch (ifOperator) {
+                    case "equals":
+                        conditionMet = actualValue === expectedValue;
+                        break;
+                    case "notequals":
+                        conditionMet = actualValue !== expectedValue;
+                        break;
+                    case "greaterthan":
+                        conditionMet = actualValue > expectedValue;
+                        break;
+                    case "greaterthanorequals":
+                        conditionMet = actualValue >= expectedValue;
+                        break;
+                    case "lessthan":
+                        conditionMet = actualValue < expectedValue;
+                        break;
+                    case "lessthanorequals":
+                        conditionMet = actualValue <= expectedValue;
+                        break;
+                    case "contains":
+                        for (var iMet = 0; iMet < actualValue.length; iMet++) {
+                            var currContainsItem = actualValue[iMet].toString().toLowerCase();
+                            if (currContainsItem === expectedValue) {
+                                conditionMet = true;
+                                break;
+                            }
+                        }
+                        break;
+                    case "notcontains":
+                        conditionMet = true;
+                        for (var iNotMet = 0; iNotMet < actualValue.length; iNotMet++) {
+                            var currNotContainsItem = actualValue[iNotMet].toString().toLowerCase();
+                            if (currNotContainsItem === expectedValue) {
+                                conditionMet = false;
+                                break;
+                            }
+                        }
+                        break;
+                    default:
+                        throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
+                }
+                break;
         }
+
+
     }
     return conditionMet;
 };
@@ -427,15 +628,15 @@ MvcMegaForms.CascadeDropDown = function (parentList) {
 };
 
 MvcMegaForms.GetFormValue = function (formControl) {
-    
+
     //ensure it's not null or undefined before we begin
     if (MvcMegaForms.IsNullOrUndefined(formControl)) {
         throw "Undefined form control supplied";
     }
-    
+
     //ensure we have a jquery object to deal with
     var $formControl = formControl instanceof jQuery ? formControl : $(formControl);
-    
+
     //get the value different ways based on the type of form control
     var val;
     if ($formControl.is(':checkbox')) {
@@ -451,6 +652,10 @@ MvcMegaForms.GetFormValue = function (formControl) {
 
 MvcMegaForms.IsNullOrUndefined = function (item) {
     return (item == null || item === undefined || typeof item == 'undefined');
+};
+
+MvcMegaForms.IsArray = function (item) {
+    return (Object.prototype.toString.call(item) === '[object Array]');
 };
 
 MvcMegaForms.FormControlValueHasChanged = function (formControl) {
@@ -516,3 +721,453 @@ MvcMegaForms.AlertFormChanged = function ($form) {
     }
     return '';
 };
+
+
+// START DATE JS
+// ===================================================================
+/**
+* Copyright (c)2005-2009 Matt Kruse (javascripttoolbox.com)
+* 
+* Dual licensed under the MIT and GPL licenses. 
+* This basically means you can use this code however you want for
+* free, but don't claim to have written it yourself!
+* Donations always accepted: http://www.JavascriptToolbox.com/donate/
+* 
+* Please do not link to the .js files on javascripttoolbox.com from
+* your site. Copy the files locally to your server instead.
+* 
+*/
+/*
+Date functions
+
+These functions are used to parse, format, and manipulate Date objects.
+See documentation and examples at http://www.JavascriptToolbox.com/lib/date/
+
+*/
+Date.$VERSION = 1.02;
+
+// Utility function to append a 0 to single-digit numbers
+Date.LZ = function (x) { return (x < 0 || x > 9 ? "" : "0") + x };
+// Full month names. Change this for local month names
+Date.monthNames = new Array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+// Month abbreviations. Change this for local month names
+Date.monthAbbreviations = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+// Full day names. Change this for local month names
+Date.dayNames = new Array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+// Day abbreviations. Change this for local month names
+Date.dayAbbreviations = new Array('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
+// Used for parsing ambiguous dates like 1/2/2000 - default to preferring 'American' format meaning Jan 2.
+// Set to false to prefer 'European' format meaning Feb 1
+Date.preferAmericanFormat = true;
+
+// If the getFullYear() method is not defined, create it
+if (!Date.prototype.getFullYear) {
+    Date.prototype.getFullYear = function () { var yy = this.getYear(); return (yy < 1900 ? yy + 1900 : yy); };
+}
+
+// Parse a string and convert it to a Date object.
+// If no format is passed, try a list of common formats.
+// If string cannot be parsed, return null.
+// Avoids regular expressions to be more portable.
+Date.parseString = function (val, format) {
+    // If no format is specified, try a few common formats
+    if (typeof (format) == "undefined" || format == null || format == "") {
+        var generalFormats = new Array('y-M-d', 'MMM d, y', 'MMM d,y', 'y-MMM-d', 'd-MMM-y', 'MMM d', 'MMM-d', 'd-MMM');
+        var monthFirst = new Array('M/d/y', 'M-d-y', 'M.d.y', 'M/d', 'M-d');
+        var dateFirst = new Array('d/M/y', 'd-M-y', 'd.M.y', 'd/M', 'd-M');
+        var checkList = new Array(generalFormats, Date.preferAmericanFormat ? monthFirst : dateFirst, Date.preferAmericanFormat ? dateFirst : monthFirst);
+        for (var i = 0; i < checkList.length; i++) {
+            var l = checkList[i];
+            for (var j = 0; j < l.length; j++) {
+                var d = Date.parseString(val, l[j]);
+                if (d != null) {
+                    return d;
+                }
+            }
+        }
+        return null;
+    };
+
+    this.isInteger = function (val) {
+        for (var i = 0; i < val.length; i++) {
+            if ("1234567890".indexOf(val.charAt(i)) == -1) {
+                return false;
+            }
+        }
+        return true;
+    };
+    this.getInt = function (str, i, minlength, maxlength) {
+        for (var x = maxlength; x >= minlength; x--) {
+            var token = str.substring(i, i + x);
+            if (token.length < minlength) {
+                return null;
+            }
+            if (this.isInteger(token)) {
+                return token;
+            }
+        }
+        return null;
+    };
+    val = val + "";
+    format = format + "";
+    var i_val = 0;
+    var i_format = 0;
+    var c = "";
+    var token = "";
+    var token2 = "";
+    var x, y;
+    var year = new Date().getFullYear();
+    var month = 1;
+    var date = 1;
+    var hh = 0;
+    var mm = 0;
+    var ss = 0;
+    var ampm = "";
+    while (i_format < format.length) {
+        // Get next token from format string
+        c = format.charAt(i_format);
+        token = "";
+        while ((format.charAt(i_format) == c) && (i_format < format.length)) {
+            token += format.charAt(i_format++);
+        }
+        // Extract contents of value based on format token
+        if (token == "yyyy" || token == "yy" || token == "y") {
+            if (token == "yyyy") {
+                x = 4; y = 4;
+            }
+            if (token == "yy") {
+                x = 2; y = 2;
+            }
+            if (token == "y") {
+                x = 2; y = 4;
+            }
+            year = this.getInt(val, i_val, x, y);
+            if (year == null) {
+                return null;
+            }
+            i_val += year.length;
+            if (year.length == 2) {
+                if (year > 70) {
+                    year = 1900 + (year - 0);
+                }
+                else {
+                    year = 2000 + (year - 0);
+                }
+            }
+        }
+        else if (token == "MMM" || token == "NNN") {
+            month = 0;
+            var names = (token == "MMM" ? (Date.monthNames.concat(Date.monthAbbreviations)) : Date.monthAbbreviations);
+            for (var i = 0; i < names.length; i++) {
+                var month_name = names[i];
+                if (val.substring(i_val, i_val + month_name.length).toLowerCase() == month_name.toLowerCase()) {
+                    month = (i % 12) + 1;
+                    i_val += month_name.length;
+                    break;
+                }
+            }
+            if ((month < 1) || (month > 12)) {
+                return null;
+            }
+        }
+        else if (token == "EE" || token == "E") {
+            var names = (token == "EE" ? Date.dayNames : Date.dayAbbreviations);
+            for (var i = 0; i < names.length; i++) {
+                var day_name = names[i];
+                if (val.substring(i_val, i_val + day_name.length).toLowerCase() == day_name.toLowerCase()) {
+                    i_val += day_name.length;
+                    break;
+                }
+            }
+        }
+        else if (token == "MM" || token == "M") {
+            month = this.getInt(val, i_val, token.length, 2);
+            if (month == null || (month < 1) || (month > 12)) {
+                return null;
+            }
+            i_val += month.length;
+        }
+        else if (token == "dd" || token == "d") {
+            date = this.getInt(val, i_val, token.length, 2);
+            if (date == null || (date < 1) || (date > 31)) {
+                return null;
+            }
+            i_val += date.length;
+        }
+        else if (token == "hh" || token == "h") {
+            hh = this.getInt(val, i_val, token.length, 2);
+            if (hh == null || (hh < 1) || (hh > 12)) {
+                return null;
+            }
+            i_val += hh.length;
+        }
+        else if (token == "HH" || token == "H") {
+            hh = this.getInt(val, i_val, token.length, 2);
+            if (hh == null || (hh < 0) || (hh > 23)) {
+                return null;
+            }
+            i_val += hh.length;
+        }
+        else if (token == "KK" || token == "K") {
+            hh = this.getInt(val, i_val, token.length, 2);
+            if (hh == null || (hh < 0) || (hh > 11)) {
+                return null;
+            }
+            i_val += hh.length;
+            hh++;
+        }
+        else if (token == "kk" || token == "k") {
+            hh = this.getInt(val, i_val, token.length, 2);
+            if (hh == null || (hh < 1) || (hh > 24)) {
+                return null;
+            }
+            i_val += hh.length;
+            hh--;
+        }
+        else if (token == "mm" || token == "m") {
+            mm = this.getInt(val, i_val, token.length, 2);
+            if (mm == null || (mm < 0) || (mm > 59)) {
+                return null;
+            }
+            i_val += mm.length;
+        }
+        else if (token == "ss" || token == "s") {
+            ss = this.getInt(val, i_val, token.length, 2);
+            if (ss == null || (ss < 0) || (ss > 59)) {
+                return null;
+            }
+            i_val += ss.length;
+        }
+        else if (token == "a") {
+            if (val.substring(i_val, i_val + 2).toLowerCase() == "am") {
+                ampm = "AM";
+            }
+            else if (val.substring(i_val, i_val + 2).toLowerCase() == "pm") {
+                ampm = "PM";
+            }
+            else {
+                return null;
+            }
+            i_val += 2;
+        }
+        else {
+            if (val.substring(i_val, i_val + token.length) != token) {
+                return null;
+            }
+            else {
+                i_val += token.length;
+            }
+        }
+    }
+    // If there are any trailing characters left in the value, it doesn't match
+    if (i_val != val.length) {
+        return null;
+    }
+    // Is date valid for month?
+    if (month == 2) {
+        // Check for leap year
+        if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) { // leap year
+            if (date > 29) {
+                return null;
+            }
+        }
+        else {
+            if (date > 28) {
+                return null;
+            }
+        }
+    }
+    if ((month == 4) || (month == 6) || (month == 9) || (month == 11)) {
+        if (date > 30) {
+            return null;
+        }
+    }
+    // Correct hours value
+    if (hh < 12 && ampm == "PM") {
+        hh = hh - 0 + 12;
+    }
+    else if (hh > 11 && ampm == "AM") {
+        hh -= 12;
+    }
+    return new Date(year, month - 1, date, hh, mm, ss);
+};
+
+// Check if a date string is valid
+Date.isValid = function (val, format) {
+    return (Date.parseString(val, format) != null);
+};
+
+// Check if a date object is before another date object
+Date.prototype.isBefore = function (date2) {
+    if (date2 == null) {
+        return false;
+    }
+    return (this.getTime() < date2.getTime());
+};
+
+// Check if a date object is after another date object
+Date.prototype.isAfter = function (date2) {
+    if (date2 == null) {
+        return false;
+    }
+    return (this.getTime() > date2.getTime());
+};
+
+// Check if two date objects have equal dates and times
+Date.prototype.equals = function (date2) {
+    if (date2 == null) {
+        return false;
+    }
+    return (this.getTime() == date2.getTime());
+};
+
+// Check if two date objects have equal dates, disregarding times
+Date.prototype.equalsIgnoreTime = function (date2) {
+    if (date2 == null) {
+        return false;
+    }
+    var d1 = new Date(this.getTime()).clearTime();
+    var d2 = new Date(date2.getTime()).clearTime();
+    return (d1.getTime() == d2.getTime());
+};
+
+// Format a date into a string using a given format string
+Date.prototype.format = function (format) {
+    format = format + "";
+    var result = "";
+    var i_format = 0;
+    var c = "";
+    var token = "";
+    var y = this.getYear() + "";
+    var M = this.getMonth() + 1;
+    var d = this.getDate();
+    var E = this.getDay();
+    var H = this.getHours();
+    var m = this.getMinutes();
+    var s = this.getSeconds();
+    var yyyy, yy, MMM, MM, dd, hh, h, mm, ss, ampm, HH, H, KK, K, kk, k;
+    // Convert real date parts into formatted versions
+    var value = new Object();
+    if (y.length < 4) {
+        y = "" + (+y + 1900);
+    }
+    value["y"] = "" + y;
+    value["yyyy"] = y;
+    value["yy"] = y.substring(2, 4);
+    value["M"] = M;
+    value["MM"] = Date.LZ(M);
+    value["MMM"] = Date.monthNames[M - 1];
+    value["NNN"] = Date.monthAbbreviations[M - 1];
+    value["d"] = d;
+    value["dd"] = Date.LZ(d);
+    value["E"] = Date.dayAbbreviations[E];
+    value["EE"] = Date.dayNames[E];
+    value["H"] = H;
+    value["HH"] = Date.LZ(H);
+    if (H == 0) {
+        value["h"] = 12;
+    }
+    else if (H > 12) {
+        value["h"] = H - 12;
+    }
+    else {
+        value["h"] = H;
+    }
+    value["hh"] = Date.LZ(value["h"]);
+    value["K"] = value["h"] - 1;
+    value["k"] = value["H"] + 1;
+    value["KK"] = Date.LZ(value["K"]);
+    value["kk"] = Date.LZ(value["k"]);
+    if (H > 11) {
+        value["a"] = "PM";
+    }
+    else {
+        value["a"] = "AM";
+    }
+    value["m"] = m;
+    value["mm"] = Date.LZ(m);
+    value["s"] = s;
+    value["ss"] = Date.LZ(s);
+    while (i_format < format.length) {
+        c = format.charAt(i_format);
+        token = "";
+        while ((format.charAt(i_format) == c) && (i_format < format.length)) {
+            token += format.charAt(i_format++);
+        }
+        if (typeof (value[token]) != "undefined") {
+            result = result + value[token];
+        }
+        else {
+            result = result + token;
+        }
+    }
+    return result;
+};
+
+// Get the full name of the day for a date
+Date.prototype.getDayName = function () {
+    return Date.dayNames[this.getDay()];
+};
+
+// Get the abbreviation of the day for a date
+Date.prototype.getDayAbbreviation = function () {
+    return Date.dayAbbreviations[this.getDay()];
+};
+
+// Get the full name of the month for a date
+Date.prototype.getMonthName = function () {
+    return Date.monthNames[this.getMonth()];
+};
+
+// Get the abbreviation of the month for a date
+Date.prototype.getMonthAbbreviation = function () {
+    return Date.monthAbbreviations[this.getMonth()];
+};
+
+// Clear all time information in a date object
+Date.prototype.clearTime = function () {
+    this.setHours(0);
+    this.setMinutes(0);
+    this.setSeconds(0);
+    this.setMilliseconds(0);
+    return this;
+};
+
+// Add an amount of time to a date. Negative numbers can be passed to subtract time.
+Date.prototype.add = function (interval, number) {
+    if (typeof (interval) == "undefined" || interval == null || typeof (number) == "undefined" || number == null) {
+        return this;
+    }
+    number = +number;
+    if (interval == 'y') { // year
+        this.setFullYear(this.getFullYear() + number);
+    }
+    else if (interval == 'M') { // Month
+        this.setMonth(this.getMonth() + number);
+    }
+    else if (interval == 'd') { // Day
+        this.setDate(this.getDate() + number);
+    }
+    else if (interval == 'w') { // Weekday
+        var step = (number > 0) ? 1 : -1;
+        while (number != 0) {
+            this.add('d', step);
+            while (this.getDay() == 0 || this.getDay() == 6) {
+                this.add('d', step);
+            }
+            number -= step;
+        }
+    }
+    else if (interval == 'h') { // Hour
+        this.setHours(this.getHours() + number);
+    }
+    else if (interval == 'm') { // Minute
+        this.setMinutes(this.getMinutes() + number);
+    }
+    else if (interval == 's') { // Second
+        this.setSeconds(this.getSeconds() + number);
+    }
+    return this;
+};
+// END DATE JS
+// ===================================================================
