@@ -87,9 +87,10 @@ namespace MvcMega.Forms.MVC.Html
             string controlsClass = DefaultControlsClass,
             IDictionary<string, object> controlsHtmlAttributes = null,
             string helpInlineClass = DefaultHelpInlineClass,
-            IDictionary<string, object> helpInlineHtmlAttributes = null)
+            IDictionary<string, object> helpInlineHtmlAttributes = null,
+            string templateName = "")
         {
-            return ControlBundleFor(htmlHelper, expression, htmlHelper.EditorFor(expression), controlGroupClass,
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.EditorFor(expression, templateName), controlGroupClass,
                                     controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
                                     controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
         }
@@ -107,6 +108,24 @@ namespace MvcMega.Forms.MVC.Html
             IDictionary<string, object> helpInlineHtmlAttributes = null)
         {
             return ControlBundleFor(htmlHelper, expression, htmlHelper.TextBoxFor(expression), controlGroupClass,
+                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+        }
+
+        public static MvcHtmlString ControlBundleTextAreaFor<TModel, TValue>(
+            this HtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, TValue>> expression,
+            string controlGroupClass = DefaultControlGroupClass,
+            IDictionary<string, object> controlGroupHtmlAttributes = null,
+            string labelClass = DefaultLabelClass,
+            IDictionary<string, object> labelHtmlAttributes = null,
+            string controlsClass = DefaultControlsClass,
+            IDictionary<string, object> controlsHtmlAttributes = null,
+            string helpInlineClass = DefaultHelpInlineClass,
+            IDictionary<string, object> helpInlineHtmlAttributes = null,
+            int rows = 4, int columns = 20)
+        {
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.TextAreaFor(expression, rows, columns, null), controlGroupClass,
                                     controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
                                     controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
         }

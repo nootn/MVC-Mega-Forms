@@ -151,8 +151,7 @@ MvcMegaForms.AttachEvents = function () {
             iInner,
             currentOtherProperty,
             parentId,
-            parentList,
-            processChangeVis;
+            parentList;
 
         tos = $(this).attr('data-val-changevisually-to');
         if (!MvcMegaForms.IsNullOrUndefined(tos)) {
@@ -165,22 +164,20 @@ MvcMegaForms.AttachEvents = function () {
             valueFormats = $(this).attr('data-val-changevisually-valueformat').split("~");
             dependentProperty = $(this);
             uniqueOtherPropertyNames = $.unique(otherPropertyNames.slice()); //Get each unique other property name
-            processChangeVis = function (event) {
-                for (iInner = 0; iInner < otherPropertyNames.length; iInner += 1) {
-                    if (otherPropertyNames[iInner] === event.data.otherPropertyOuterInitialName) {
-                        currentOtherProperty = $("[name='" + event.data.otherPropertyFullName + "']");
-                        if (MvcMegaForms.ApplyChangeVisually(dependentProperty, currentOtherProperty, toValues[iInner], ifOperators[iInner], values[iInner], conditionPassesIfNulls[iInner], valueTypeToCompares[iInner], valueFormats[iInner])) {
-                            break; //a condition has passed, don't process the rest
-                        }
-                    }
-                }
-            };
             //go through each 'other' field and hook up the change event
             for (iOuter = 0; iOuter < uniqueOtherPropertyNames.length; iOuter += 1) {
                 fullName = dependentProperty.attr('name').substr(0, dependentProperty.attr("name").lastIndexOf(".") + 1) + uniqueOtherPropertyNames[iOuter];
                 otherProperty = $("[name='" + fullName + "']");
-                otherProperty.change({ otherPropertyOuterInitialName: uniqueOtherPropertyNames[iOuter], otherPropertyFullName: fullName },
-                    processChangeVis(event));
+                otherProperty.change({ otherPropertyOuterInitialName: uniqueOtherPropertyNames[iOuter], otherPropertyFullName: fullName }, function (event) {
+                    for (var iInner = 0; iInner < otherPropertyNames.length; iInner++) {
+                        if (otherPropertyNames[iInner] === event.data.otherPropertyOuterInitialName) {
+                            var currentOtherProperty = $("[name='" + event.data.otherPropertyFullName + "']");
+                            if (MvcMegaForms.ApplyChangeVisually(dependentProperty, currentOtherProperty, toValues[iInner], ifOperators[iInner], values[iInner], conditionPassesIfNulls[iInner], valueTypeToCompares[iInner], valueFormats[iInner])) {
+                                break; //a condition has passed, don't process the rest
+                            }
+                        }
+                    }
+                });
                 otherProperty.change();
             }
         }
@@ -256,12 +253,12 @@ MvcMegaForms.ApplyChangeVisually = function (dependentProperty, otherProperty, t
 };
 
 MvcMegaForms.ConditionMetForChangeVisually = function (ifOperator, expectedValue, actualValue, conditionPassesIfNull, valueTypeToCompare, valueFormat) {
-    //"use strict";
+    "use strict";
     //ensure it's not null or undefined before we begin
     if (MvcMegaForms.IsNullOrUndefined(ifOperator)) {
         throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: ifOperator was not supplied";
     }
-
+    
     var conditionMet = false,
         actualValueIsArray,
         i,
@@ -278,7 +275,7 @@ MvcMegaForms.ConditionMetForChangeVisually = function (ifOperator, expectedValue
     if (expectedValue === '' || MvcMegaForms.IsNullOrUndefined(expectedValue)) {
         expectedValue = null;
     }
-
+    
     //if the actual value is an empty array, treat it as null
     actualValueIsArray = MvcMegaForms.IsArray(actualValue);
     if (actualValueIsArray) {
@@ -360,7 +357,7 @@ MvcMegaForms.ConditionMetForChangeVisually = function (ifOperator, expectedValue
             case "lessthanorequals":
                 conditionMet = actualValue <= expectedValue;
                 break;
-            case "contains":
+                case "contains":
                 if (!actualValueIsArray) {
                     conditionMet = actualValue === expectedValue; //same as equals
                 } else {
@@ -488,7 +485,7 @@ MvcMegaForms.ConditionMetForChangeVisually = function (ifOperator, expectedValue
             case "lessthanorequals":
                 conditionMet = actualValue <= expectedValue;
                 break;
-            case "contains":
+                case "contains":
                 for (iMet = 0; iMet < actualValue.length; iMet += 1) {
                     currContainsItem = actualValue[iMet].toString().toLowerCase();
                     if (currContainsItem === expectedValue) {
@@ -732,6 +729,13 @@ MvcMegaForms.FormFieldIdChanged = function ($form) {
     "use strict";
     var changedId = null;
     $form.find('input').each(function () {
+        //specifically leave 'this' as non-jquery
+        if (MvcMegaForms.FormControlValueHasChanged(this)) {
+            changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
+            return;
+        }
+    });
+    $form.find('textarea').each(function () {
         //specifically leave 'this' as non-jquery
         if (MvcMegaForms.FormControlValueHasChanged(this)) {
             changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
