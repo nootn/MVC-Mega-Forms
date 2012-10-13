@@ -41,6 +41,7 @@
         @Html.ControlBundleFor(m => m.FirstSubDetails.TheValue)
         @Html.ControlBundleFor(m => m.SecondSubDetails.HasValue)
         @Html.ControlBundleFor(m => m.SecondSubDetails.TheValue)
+        @Html.ControlBundleFor(m => m.TimeOfDayForMaskTesting)
         @Html.HiddenFor(m => m.ComplicatedFormId)
         <input type="submit" value="submit" />
     </fieldset>
@@ -49,3 +50,15 @@
     <br/>@Html.ActionLink("Navigate back to this page (not detecting changes within form)", "Index", null, new { @class = "ignore-detect-changes" })
 }
 <br/>@Html.ActionLink("Navigate back to this page (not detecting changes outside form)", "Index", null, new { @class = "ignore-detect-changes" })
+
+@section scripts
+{
+    <script type="text/javascript" src="./../../Scripts/jquery.maskedinput-1.3.min.js"></script>
+    <script type="text/javascript">
+        $ctrlToMask =  $('#TimeOfDayForMaskTesting');
+        $ctrlToMask.mask('99:99', { placeholder: '' });
+        
+        //Add this line to ensure DetectFormChanges works - need the 'defaultValue' to be the value after masking
+        $ctrlToMask.get(0).defaultValue = $ctrlToMask.val();
+    </script>
+}
