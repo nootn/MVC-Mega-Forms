@@ -236,6 +236,24 @@ namespace MvcMega.Forms.MVC.Html
                                     controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
         }
 
+        public static MvcHtmlString ControlBundleListBoxChildFor<TModel, TValue>(
+            this HtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, TValue>> expression,
+            CascadingSelectList selectList,
+            string controlGroupClass = DefaultControlGroupClass,
+            IDictionary<string, object> controlGroupHtmlAttributes = null,
+            string labelClass = DefaultLabelClass,
+            IDictionary<string, object> labelHtmlAttributes = null,
+            string controlsClass = DefaultControlsClass,
+            IDictionary<string, object> controlsHtmlAttributes = null,
+            string helpInlineClass = DefaultHelpInlineClass,
+            IDictionary<string, object> helpInlineHtmlAttributes = null)
+        {
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.ListBoxChildFor(expression, selectList), controlGroupClass,
+                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+        }
+
         public static MvcHtmlString ControlBundleFor<TModel, TValue>(
             this HtmlHelper<TModel> htmlHelper,
             Expression<Func<TModel, TValue>> expression,

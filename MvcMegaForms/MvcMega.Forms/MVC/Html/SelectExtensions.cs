@@ -34,7 +34,7 @@ namespace MvcMega.Forms.MVC.Html
 
             htmlAttributes.Add("combos", combosValue);
             htmlAttributes.Add("parentListId", selectList.ParentSelectListPropertyName);
-
+            
             return System.Web.Mvc.Html.SelectExtensions.DropDownListFor(
                 htmlHelper, expression, selectList, optionLabel,
                 htmlAttributes);
@@ -56,6 +56,41 @@ namespace MvcMega.Forms.MVC.Html
             return System.Web.Mvc.Html.SelectExtensions.DropDownList(
                 htmlHelper, name, selectList, optionLabel,
                 htmlAttributes);
+        }
+
+        public static MvcHtmlString ListBoxChildFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper,
+                                                                            Expression<Func<TModel, TProperty>>
+                                                                                expression,
+                                                                            CascadingSelectList selectList,  Dictionary<string, object> htmlAttributes = null)
+        {
+            var combosValue = GetCombosAttributeValue(selectList);
+
+            if (htmlAttributes == null)
+            {
+                htmlAttributes = new Dictionary<string, object>();
+            }
+
+            htmlAttributes.Add("combos", combosValue);
+            htmlAttributes.Add("parentListId", selectList.ParentSelectListPropertyName);
+
+            return System.Web.Mvc.Html.SelectExtensions.ListBoxFor(
+                htmlHelper, expression, selectList, htmlAttributes);
+        }
+
+        public static MvcHtmlString ListBoxChild(this HtmlHelper htmlHelper, string name, CascadingSelectList selectList, Dictionary<string, object> htmlAttributes = null)
+        {
+            var combosValue = GetCombosAttributeValue(selectList);
+
+            if (htmlAttributes == null)
+            {
+                htmlAttributes = new Dictionary<string, object>();
+            }
+
+            htmlAttributes.Add("combos", combosValue);
+            htmlAttributes.Add("parentListId", selectList.ParentSelectListPropertyName);
+
+            return System.Web.Mvc.Html.SelectExtensions.ListBox(
+                htmlHelper, name, selectList, htmlAttributes);
         }
 
 

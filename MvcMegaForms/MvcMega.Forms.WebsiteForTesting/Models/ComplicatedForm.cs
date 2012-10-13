@@ -135,7 +135,7 @@ namespace MvcMega.Forms.WebsiteForTesting.Models
         public CascadingSelectList AllChildOfChildItems { get; set; }
 
         [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "ChildItemId", ChangeVisuallyAttribute.DisplayChangeIf.Equals, 0, true)]
-        public int ChildOfChildItemId { get; set; }
+        public int[] ChildOfChildItemIds { get; set; }
 
         public SubDetails FirstSubDetails { get; set; }
 

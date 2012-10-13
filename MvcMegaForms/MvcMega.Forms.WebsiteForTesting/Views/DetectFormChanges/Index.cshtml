@@ -36,7 +36,7 @@
         @Html.ControlBundleFor(m => m.OnlySupplyIfMultiSelectDoesNotContainTwo)
         @Html.ControlBundleDropDownListFor(m => m.ParentItemId, Model.AllParentItems)
         @Html.ControlBundleDropDownChildListFor(m => m.ChildItemId, Model.AllChildItems)
-        @Html.ControlBundleDropDownChildListFor(m => m.ChildOfChildItemId, Model.AllChildOfChildItems)
+        @Html.ControlBundleListBoxChildFor(m => m.ChildOfChildItemIds, Model.AllChildOfChildItems)
         @Html.ControlBundleFor(m => m.FirstSubDetails.HasValue)
         @Html.ControlBundleFor(m => m.FirstSubDetails.TheValue)
         @Html.ControlBundleFor(m => m.SecondSubDetails.HasValue)
