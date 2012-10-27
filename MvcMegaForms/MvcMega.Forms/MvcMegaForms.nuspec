@@ -2,13 +2,12 @@
 <package>
   <metadata>
     <id>MvcMegaForms</id>
-    <version>0.0.0.14</version>
+    <version>0.0.0.15</version>
     <releaseNotes>
-      * Adds new option "ReadOnly" (in addition to Hide and Disable);
-      * Supports 'Number' and 'DateTime' formats when comparing (E.g. GreaterThan, even if string, you can now say compare as number);
-      * More unit testing on JavaScript methods to cater for more edge cases - stability improved;
-      * Incorporates http://www.javascripttoolbox.com/lib/date/ functions;
-      * New helper method MvcMegaForms.IsArray for checking if an object is an array
+      * Refactors JS using JSLint rules
+      * Adds support for TextArea checking on DetectFormChanges
+      * Adds ControlBundleListBoxChildFor so that you can have a list box cascaded
+      * Adds new validation attributes RequiredIfContainsOneOf and RequiredIfNotContainsOneOf to allow checking if multiple values exist (logical OR)
     </releaseNotes>
     <authors>http://about.me/nootn</authors>
     <owners>http://about.me/nootn</owners>
