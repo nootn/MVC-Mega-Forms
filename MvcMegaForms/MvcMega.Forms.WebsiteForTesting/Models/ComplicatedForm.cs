@@ -126,6 +126,10 @@ namespace MvcMega.Forms.WebsiteForTesting.Models
         public string OnlySupplyIfMultiSelectDoesNotContainTwo { get; set; }
 
 
+        [RequiredIfContainsOneOf("TestSelectedMultiSelectItemIds", new object[] { 1, 2 })]
+        public string RequiredIfOneOrTwo { get; set; }
+
+
         public List<SelectListItem> AllParentItems { get; set; }
 
         public int ParentItemId { get; set; }

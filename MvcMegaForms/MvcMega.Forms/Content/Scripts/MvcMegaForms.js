@@ -45,39 +45,40 @@ $(window).bind("beforeunload", function () {
 
 });
 
-if ($.validator !== undefined) {
-    $.validator.addMethod('requiredifcontains', function (val, element, dependentproperty, dependentvalue) {
-        "use strict";
-        if (!MvcMegaForms.IsNullOrUndefined(val)) {
-            return false;
-        }
-        var modelPrefix = element.name.substr(0, element.name.lastIndexOf(".") + 1), otherProperty = $("[name='" + modelPrefix + dependentproperty + "']"), otherVal = MvcMegaForms.GetFormValue(otherProperty).toLowerCase(), i, currValue;
-        for (i = 0; i < otherVal.length; i += 1) {
-            currValue = otherVal[i].toLowerCase();
-            if (currValue === dependentvalue) {
-                return false;
-            }
-        }
-        return true;
-    });
-    $.validator.unobtrusive.adapters.addSingleVal('requiredifcontains', 'dependentproperty', 'dependentvalue', 'requiredifcontains');
+//TODO: get client side required if validation working
+//if ($.validator !== undefined) {
+//    $.validator.addMethod('requiredifcontains', function (val, element, dependentproperty, dependentvalue) {
+//        "use strict";
+//        if (!MvcMegaForms.IsNullOrUndefined(val)) {
+//            return false;
+//        }
+//        var modelPrefix = element.name.substr(0, element.name.lastIndexOf(".") + 1), otherProperty = $("[name='" + modelPrefix + dependentproperty + "']"), otherVal = MvcMegaForms.GetFormValue(otherProperty).toLowerCase(), i, currValue;
+//        for (i = 0; i < otherVal.length; i += 1) {
+//            currValue = otherVal[i].toLowerCase();
+//            if (currValue === dependentvalue) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    });
+//    $.validator.unobtrusive.adapters.addSingleVal('requiredifcontains', 'dependentproperty', 'dependentvalue', 'requiredifcontains');
 
-    $.validator.addMethod('requiredifnotcontains', function (val, element, dependentproperty, dependentvalue) {
-        "use strict";
-        if (!MvcMegaForms.IsNullOrUndefined(val)) {
-            return false;
-        }
-        var modelPrefix = element.name.substr(0, element.name.lastIndexOf(".") + 1), otherProperty = $("[name='" + modelPrefix + dependentproperty + "']"), otherVal = MvcMegaForms.GetFormValue(otherProperty).toLowerCase(), i, currValue;
-        for (i = 0; i < otherVal.length; i += 1) {
-            currValue = otherVal[i].toLowerCase();
-            if (currValue === dependentvalue) {
-                return true;
-            }
-        }
-        return false;
-    });
-    $.validator.unobtrusive.adapters.addSingleVal('requiredifnotcontains', 'dependentproperty', 'dependentvalue', 'requiredifnotcontains');
-}
+//    $.validator.addMethod('requiredifnotcontains', function (val, element, dependentproperty, dependentvalue) {
+//        "use strict";
+//        if (!MvcMegaForms.IsNullOrUndefined(val)) {
+//            return false;
+//        }
+//        var modelPrefix = element.name.substr(0, element.name.lastIndexOf(".") + 1), otherProperty = $("[name='" + modelPrefix + dependentproperty + "']"), otherVal = MvcMegaForms.GetFormValue(otherProperty).toLowerCase(), i, currValue;
+//        for (i = 0; i < otherVal.length; i += 1) {
+//            currValue = otherVal[i].toLowerCase();
+//            if (currValue === dependentvalue) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    });
+//    $.validator.unobtrusive.adapters.addSingleVal('requiredifnotcontains', 'dependentproperty', 'dependentvalue', 'requiredifnotcontains');
+//}
 
 MvcMegaForms.ConfigureDetectChanges = function () {
     "use strict";

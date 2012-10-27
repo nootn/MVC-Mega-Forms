@@ -22,7 +22,6 @@ namespace MvcMega.Forms.DataAnnotations
         public RequiredIfNotContains(string dependentProperty, object dependentValue)
         {
             if (dependentProperty == null) throw new ArgumentNullException("dependentProperty");
-            if (dependentValue == null) throw new ArgumentNullException("dependentValue");
 
             DependentProperty = dependentProperty;
             DependentValue = dependentValue;

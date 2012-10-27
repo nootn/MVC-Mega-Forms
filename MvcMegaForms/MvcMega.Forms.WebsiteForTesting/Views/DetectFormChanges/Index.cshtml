@@ -1,6 +1,6 @@
 ﻿@using MvcMega.Forms.MVC.Html
 @model MvcMega.Forms.WebsiteForTesting.Models.ComplicatedForm
-@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @class = "detect-changes" }))
+@using (Html.BeginForm("Index", "DetectFormChanges", FormMethod.Post, new { @class = "detect-changes" }))
 {
     @Html.ValidationSummary(true, "Please correct the errors and try again.")
     <fieldset>
@@ -34,6 +34,7 @@
         @Html.ControlBundleListBoxFor(m => m.TestSelectedMultiSelectItemIds, Model.AllTestDropDownItems)
         @Html.ControlBundleFor(m => m.MultiSelectOther)
         @Html.ControlBundleFor(m => m.OnlySupplyIfMultiSelectDoesNotContainTwo)
+        @Html.ControlBundleFor(m => m.RequiredIfOneOrTwo)
         @Html.ControlBundleDropDownListFor(m => m.ParentItemId, Model.AllParentItems)
         @Html.ControlBundleDropDownChildListFor(m => m.ChildItemId, Model.AllChildItems)
         @Html.ControlBundleListBoxChildFor(m => m.ChildOfChildItemIds, Model.AllChildOfChildItems)
@@ -43,7 +44,6 @@
         @Html.ControlBundleFor(m => m.SecondSubDetails.TheValue)
         @Html.ControlBundleFor(m => m.TimeOfDayForMaskTesting)
         @Html.HiddenFor(m => m.ComplicatedFormId)
-        <input type="submit" value="submit" />
     </fieldset>
     <input type="submit" value="Submit Form" />
     <br/>@Html.ActionLink("Navigate back to this page (should detect changes if any)", "Index")

@@ -13,23 +13,24 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace MvcMega.Forms.DataAnnotations
 {
-    public class RequiredIfContains : ValidationAttribute, IClientValidatable
+    public class RequiredIfNotContainsOneOf : ValidationAttribute, IClientValidatable
     {
-        public RequiredIfContains(string dependentProperty, object dependentValue)
+        public RequiredIfNotContainsOneOf(string dependentProperty, object[] dependentValues)
         {
             if (dependentProperty == null) throw new ArgumentNullException("dependentProperty");
 
             DependentProperty = dependentProperty;
-            DependentValue = dependentValue;
+            DependentValues = dependentValues;
         }
 
         public string DependentProperty { get; set; }
 
-        public object DependentValue { get; set; }
+        public object[] DependentValues { get; set; }
 
         public bool AllowEmptyStrings { get; set; }
 
@@ -40,11 +41,11 @@ namespace MvcMega.Forms.DataAnnotations
         {
             var rule = new ModelClientValidationRule
                            {
-                               ValidationType = "requiredifcontains",
+                               ValidationType = "requiredifnotcontainsoneof",
                            };
 
             rule.ValidationParameters.Add("dependentproperty", DependentProperty);
-            rule.ValidationParameters.Add("dependentvalue", DependentValue);
+            rule.ValidationParameters.Add("dependentvalues", DependentValues);
 
             yield return rule;
         }
@@ -65,7 +66,7 @@ namespace MvcMega.Forms.DataAnnotations
         {
             if (!IsFieldSupplied(value))
             {
-                if (DependentValue == null) throw new InvalidOperationException("DependentValue must not be null");
+                if (DependentValues == null) throw new InvalidOperationException("DependentValues must not be null");
 
                 var otherPropertyInfo = validationContext.ObjectType.GetProperty(DependentProperty);
                 if (otherPropertyInfo == null)
@@ -88,22 +89,28 @@ namespace MvcMega.Forms.DataAnnotations
                     var conditionMet = false;
                     var en = ((IEnumerable) val).GetEnumerator();
 
+                    object valueCausingConditionMet = string.Empty;
+
                     while (en.MoveNext() && !conditionMet)
                     {
-                        if (en.Current.Equals(DependentValue))
+                        foreach (var currValue in DependentValues)
                         {
-                            conditionMet = true;
+                            if (en.Current.Equals(currValue))
+                            {
+                                valueCausingConditionMet = currValue;
+                                conditionMet = true;
+                            }
                         }
                     }
 
-                    if (conditionMet)
+                    if (!conditionMet)
                     {
                         if (string.IsNullOrEmpty(ErrorMessageResourceName) && string.IsNullOrEmpty(ErrorMessage))
                         {
                             ErrorMessage = string.Format(CultureInfo.CurrentCulture,
                                                          "This field must be supplied because {0} contained the value '{1}'.",
                                                          DependentProperty,
-                                                         DependentValue);
+                                                         valueCausingConditionMet);
                         }
                         return new ValidationResult(ErrorMessage);
                     }
@@ -112,7 +119,7 @@ namespace MvcMega.Forms.DataAnnotations
                 {
                     throw new ApplicationException(
                         string.Format(
-                            "The type of value being compared must be IEnumerable when using RequiredIfContains attribute.  Type '{0}' is not IEnumerable",
+                            "The type of value being compared must be IEnumerable when using RequiredIfNotContainsOneOf attribute.  Type '{0}' is not IEnumerable",
                             val.GetType().FullName));
                 }
             }
