@@ -31,6 +31,7 @@
         @Html.ControlBundleFor(m => m.NextField)
         @Html.ControlBundleDropDownListFor(m => m.TestSelectedDropDownItemId, Model.AllTestDropDownItems)
         @Html.ControlBundleFor(m => m.DropDownOther)
+        @Html.ControlBundleFor(m => m.DropDownShowIfOneOrTwo)
         @Html.ControlBundleListBoxFor(m => m.TestSelectedMultiSelectItemIds, Model.AllTestDropDownItems)
         @Html.ControlBundleFor(m => m.MultiSelectOther)
         @Html.ControlBundleFor(m => m.OnlySupplyIfMultiSelectDoesNotContainTwo)
@@ -46,18 +47,18 @@
         @Html.HiddenFor(m => m.ComplicatedFormId)
     </fieldset>
     <input type="submit" value="Submit Form" />
-    <br/>@Html.ActionLink("Navigate back to this page (should detect changes if any)", "Index")
-    <br/>@Html.ActionLink("Navigate back to this page (not detecting changes within form)", "Index", null, new { @class = "ignore-detect-changes" })
+    <br />@Html.ActionLink("Navigate back to this page (should detect changes if any)", "Index")
+    <br />@Html.ActionLink("Navigate back to this page (not detecting changes within form)", "Index", null, new { @class = "ignore-detect-changes" })
 }
-<br/>@Html.ActionLink("Navigate back to this page (not detecting changes outside form)", "Index", null, new { @class = "ignore-detect-changes" })
+<br />@Html.ActionLink("Navigate back to this page (not detecting changes outside form)", "Index", null, new { @class = "ignore-detect-changes" })
 
 @section scripts
 {
     <script type="text/javascript" src="./../../Scripts/jquery.maskedinput-1.3.min.js"></script>
     <script type="text/javascript">
-        $ctrlToMask =  $('#TimeOfDayForMaskTesting');
+        $ctrlToMask = $('#TimeOfDayForMaskTesting');
         $ctrlToMask.mask('99:99', { placeholder: '' });
-        
+
         //Add this line to ensure DetectFormChanges works - need the 'defaultValue' to be the value after masking
         $ctrlToMask.get(0).defaultValue = $ctrlToMask.val();
     </script>

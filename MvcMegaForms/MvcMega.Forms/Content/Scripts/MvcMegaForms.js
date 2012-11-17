@@ -285,37 +285,12 @@ MvcMegaForms.ConditionMetForChangeVisually = function (ifOperator, expectedValue
         }
     }
 
-    if (MvcMegaForms.IsArray(expectedValue)) {
-        throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Array data type for expectedValue is not supported at this time.  expectedValue supplied was: " + expectedValue;
+    if (expectedValue != null && expectedValue.toString().lastIndexOf('[', 0) === 0) {
+        //appears to be an array, turn it into one
+        expectedValue = $.parseJSON(expectedValue.toString());
     }
-
-    if (actualValue === null && expectedValue !== null) {
-        //expectedValue is null, condition is met if we wanted it to be met when null
-        conditionMet = conditionPassesIfNull;
-    } else if (actualValue !== null && expectedValue === null) {
-        //the expectedValue is not null, but we were looking for a null, determine what to do
-        switch (ifOperator) {
-            case "equals":
-                conditionMet = false; //we wanted a null and it was not
-                break;
-            case "notequals":
-                conditionMet = true; //we did not want a null and it was not
-                break;
-            default:
-                throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: When checking for a null expectedValue, DisplayChangeIf must be Equals or NotEquals, supplied ifOperator was ' + ifOperator;
-        }
-    } else if (actualValue === null && expectedValue === null) {
-        //both are null, condition is met if we wanted it to be met when null
-        conditionMet = conditionPassesIfNull;
-    } else { //both are not null
-        if (actualValueIsArray) {
-            //verify that if the actual value is an array, we are only dealing with contains/notcontains
-            if (ifOperator !== "contains" && ifOperator !== "notcontains") {
-                throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: When actualValue is an array (E.g. value of a multi-select), DisplayChangeIf must be Contains or NotContains, supplied ifOperator was ' + ifOperator;
-            }
-        }
-
-        expectedValue = expectedValue.toString().toLowerCase();
+    if (MvcMegaForms.IsArray(expectedValue)) {
+        //throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Array data type for expectedValue is not supported at this time.  expectedValue supplied was: " + expectedValue;
 
         //verify value types (if not known, assume string therefore no checks to do)
         switch (valueTypeToCompare) {
@@ -341,55 +316,27 @@ MvcMegaForms.ConditionMetForChangeVisually = function (ifOperator, expectedValue
 
                 switch (ifOperator) {
                     case "equals":
-                        conditionMet = actualValue === expectedValue;
-                        break;
-                    case "notequals":
-                        conditionMet = actualValue !== expectedValue;
-                        break;
-                    case "greaterthan":
-                        conditionMet = actualValue > expectedValue;
-                        break;
-                    case "greaterthanorequals":
-                        conditionMet = actualValue >= expectedValue;
-                        break;
-                    case "lessthan":
-                        conditionMet = actualValue < expectedValue;
-                        break;
-                    case "lessthanorequals":
-                        conditionMet = actualValue <= expectedValue;
-                        break;
-                    case "contains":
-                        if (!actualValueIsArray) {
-                            conditionMet = actualValue === expectedValue; //same as equals
-                        } else {
-                            for (iMet = 0; iMet < actualValue.length; iMet += 1) {
-                                currContainsItem = actualValue[iMet];
-                                if (currContainsItem === expectedValue) {
-                                    conditionMet = true;
-                                    break;
-                                }
+                        for (iMet = 0; iMet < expectedValue.length; iMet += 1) {
+                            currContainsItem = expectedValue[iMet];
+                            if (currContainsItem === actualValue) {
+                                conditionMet = true;
+                                break;
                             }
                         }
                         break;
-                    case "notcontains":
-                        if (!actualValueIsArray) {
-                            conditionMet = actualValue !== expectedValue; //same as not equals
-                        } else {
-                            conditionMet = true;
-                            for (iNotMet = 0; iNotMet < actualValue.length; iNotMet += 1) {
-                                currNotContainsItem = actualValue[iNotMet];
-                                if (currNotContainsItem === expectedValue) {
-                                    conditionMet = false;
-                                    break;
-                                }
+                    case "notequals":
+                        conditionMet = true;
+                        for (iNotMet = 0; iNotMet < expectedValue.length; iNotMet += 1) {
+                            currNotContainsItem = expectedValue[iNotMet];
+                            if (currNotContainsItem === actualValue) {
+                                conditionMet = false;
+                                break;
                             }
                         }
                         break;
                     default:
-                        throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
+                        throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied when expectedValue was an array: ' + ifOperator;
                 }
-
-                break;
             case "datetime":
                 if (!Date.isValid(expectedValue, valueFormat)) {
                     throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'datetime', but expectedValue does not fit the specified date format: " + expectedValue + " was not a valid DateTime in the specified format: " + valueFormat;
@@ -412,103 +359,282 @@ MvcMegaForms.ConditionMetForChangeVisually = function (ifOperator, expectedValue
 
                 switch (ifOperator) {
                     case "equals":
-                        conditionMet = actualValue.equals(expectedValue);
-                        break;
-                    case "notequals":
-                        conditionMet = !actualValue.equals(expectedValue);
-                        break;
-                    case "greaterthan":
-                        conditionMet = actualValue.isAfter(expectedValue);
-                        break;
-                    case "greaterthanorequals":
-                        conditionMet = actualValue.equals(expectedValue) || actualValue.isAfter(expectedValue);
-                        break;
-                    case "lessthan":
-                        conditionMet = actualValue.isBefore(expectedValue);
-                        break;
-                    case "lessthanorequals":
-                        conditionMet = actualValue.equals(expectedValue) || actualValue.isBefore(expectedValue);
-                        break;
-                    case "contains":
-                        if (!actualValueIsArray) {
-                            conditionMet = actualValue.equals(expectedValue); //same as equals
-                        } else {
-                            for (iMet = 0; iMet < actualValue.length; iMet += 1) {
-                                currContainsItem = actualValue[iMet];
-                                if (currContainsItem.equals(expectedValue)) {
-                                    conditionMet = true;
-                                    break;
-                                }
-                            }
-                        }
-                        break;
-                    case "notcontains":
-                        if (!actualValueIsArray) {
-                            conditionMet = !actualValue.equals(expectedValue); //same as not equals
-                        } else {
-                            conditionMet = true;
-                            for (iNotMet = 0; iNotMet < actualValue.length; iNotMet += 1) {
-                                currNotContainsItem = actualValue[iNotMet];
-                                if (currNotContainsItem.equals(expectedValue)) {
-                                    conditionMet = false;
-                                    break;
-                                }
-                            }
-                        }
-                        break;
-                    default:
-                        throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
-                }
-
-                break;
-            default:
-                //must be a string
-                if (!actualValueIsArray) {
-                    actualValue = actualValue.toString().toLowerCase();
-                }
-                expectedValue = expectedValue.toString().toLowerCase();
-                switch (ifOperator) {
-                    case "equals":
-                        conditionMet = actualValue === expectedValue;
-                        break;
-                    case "notequals":
-                        conditionMet = actualValue !== expectedValue;
-                        break;
-                    case "greaterthan":
-                        conditionMet = actualValue > expectedValue;
-                        break;
-                    case "greaterthanorequals":
-                        conditionMet = actualValue >= expectedValue;
-                        break;
-                    case "lessthan":
-                        conditionMet = actualValue < expectedValue;
-                        break;
-                    case "lessthanorequals":
-                        conditionMet = actualValue <= expectedValue;
-                        break;
-                    case "contains":
-                        for (iMet = 0; iMet < actualValue.length; iMet += 1) {
-                            currContainsItem = actualValue[iMet].toString().toLowerCase();
-                            if (currContainsItem === expectedValue) {
+                        for (iMet = 0; iMet < expectedValue.length; iMet += 1) {
+                            currContainsItem = expectedValue[iMet];
+                            if (currContainsItem.equals(actualValue)) {
                                 conditionMet = true;
                                 break;
                             }
                         }
                         break;
-                    case "notcontains":
+                    case "notequals":
                         conditionMet = true;
-                        for (iNotMet = 0; iNotMet < actualValue.length; iNotMet += 1) {
-                            currNotContainsItem = actualValue[iNotMet].toString().toLowerCase();
-                            if (currNotContainsItem === expectedValue) {
+                        for (iNotMet = 0; iNotMet < expectedValue.length; iNotMet += 1) {
+                            currNotContainsItem = expectedValue[iNotMet];
+                            if (currNotContainsItem.equals(actualValue)) {
                                 conditionMet = false;
                                 break;
                             }
                         }
                         break;
                     default:
-                        throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
+                        throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied when expectedValue was an array: ' + ifOperator;
                 }
-                break;
+            default:
+                //must be a string
+                if (!actualValueIsArray) {
+                    actualValue = actualValue.toString().toLowerCase();
+                }
+                expectedValue = expectedValue.toString().toLowerCase();
+
+                switch (ifOperator) {
+                    case "equals":
+                        for (iMet = 0; iMet < expectedValue.length; iMet += 1) {
+                            currContainsItem = expectedValue[iMet].toString().toLowerCase();
+                            if (currContainsItem === actualValue) {
+                                conditionMet = true;
+                                break;
+                            }
+                        }
+                        break;
+                    case "notequals":
+                        conditionMet = true;
+                        for (iNotMet = 0; iNotMet < expectedValue.length; iNotMet += 1) {
+                            currNotContainsItem = expectedValue[iNotMet].toString().toLowerCase();
+                            if (currNotContainsItem === actualValue) {
+                                conditionMet = false;
+                                break;
+                            }
+                        }
+                        break;
+                    default:
+                        throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied when expectedValue was an array: ' + ifOperator;
+                }
+
+        }
+
+    } else {
+        if (actualValue === null && expectedValue !== null) {
+            //expectedValue is null, condition is met if we wanted it to be met when null
+            conditionMet = conditionPassesIfNull;
+        } else if (actualValue !== null && expectedValue === null) {
+            //the expectedValue is not null, but we were looking for a null, determine what to do
+            switch (ifOperator) {
+                case "equals":
+                    conditionMet = false; //we wanted a null and it was not
+                    break;
+                case "notequals":
+                    conditionMet = true; //we did not want a null and it was not
+                    break;
+                default:
+                    throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: When checking for a null expectedValue, DisplayChangeIf must be Equals or NotEquals, supplied ifOperator was ' + ifOperator;
+            }
+        } else if (actualValue === null && expectedValue === null) {
+            //both are null, condition is met if we wanted it to be met when null
+            conditionMet = conditionPassesIfNull;
+        } else { //both are not null
+            if (actualValueIsArray) {
+                //verify that if the actual value is an array, we are only dealing with contains/notcontains
+                if (ifOperator !== "contains" && ifOperator !== "notcontains") {
+                    throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: When actualValue is an array (E.g. value of a multi-select), DisplayChangeIf must be Contains or NotContains, supplied ifOperator was ' + ifOperator;
+                }
+            }
+
+            expectedValue = expectedValue.toString().toLowerCase();
+
+            //verify value types (if not known, assume string therefore no checks to do)
+            switch (valueTypeToCompare) {
+                case "number":
+                    if (isNaN(expectedValue)) {
+                        throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'number', but expectedValue was not a number: " + expectedValue;
+                    }
+
+                    if (!actualValueIsArray) {
+                        if (isNaN(actualValue)) {
+                            throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'number', but actualValue was not a number: " + actualValue;
+                        }
+                        actualValue = parseFloat(actualValue.toString());
+                    } else {
+                        for (i = 0; i < actualValue.length; i += 1) {
+                            if (isNaN(actualValue[i])) {
+                                throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'number', but an item in the actualValue array was not a number: " + actualValue[i];
+                            }
+                            actualValue[i] = parseFloat(actualValue[i].toString());
+                        }
+                    }
+                    expectedValue = parseFloat(expectedValue.toString());
+
+                    switch (ifOperator) {
+                        case "equals":
+                            conditionMet = actualValue === expectedValue;
+                            break;
+                        case "notequals":
+                            conditionMet = actualValue !== expectedValue;
+                            break;
+                        case "greaterthan":
+                            conditionMet = actualValue > expectedValue;
+                            break;
+                        case "greaterthanorequals":
+                            conditionMet = actualValue >= expectedValue;
+                            break;
+                        case "lessthan":
+                            conditionMet = actualValue < expectedValue;
+                            break;
+                        case "lessthanorequals":
+                            conditionMet = actualValue <= expectedValue;
+                            break;
+                        case "contains":
+                            if (!actualValueIsArray) {
+                                conditionMet = actualValue === expectedValue; //same as equals
+                            } else {
+                                for (iMet = 0; iMet < actualValue.length; iMet += 1) {
+                                    currContainsItem = actualValue[iMet];
+                                    if (currContainsItem === expectedValue) {
+                                        conditionMet = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        case "notcontains":
+                            if (!actualValueIsArray) {
+                                conditionMet = actualValue !== expectedValue; //same as not equals
+                            } else {
+                                conditionMet = true;
+                                for (iNotMet = 0; iNotMet < actualValue.length; iNotMet += 1) {
+                                    currNotContainsItem = actualValue[iNotMet];
+                                    if (currNotContainsItem === expectedValue) {
+                                        conditionMet = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        default:
+                            throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
+                    }
+
+                    break;
+                case "datetime":
+                    if (!Date.isValid(expectedValue, valueFormat)) {
+                        throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'datetime', but expectedValue does not fit the specified date format: " + expectedValue + " was not a valid DateTime in the specified format: " + valueFormat;
+                    }
+
+                    if (!actualValueIsArray) {
+                        if (!Date.isValid(actualValue, valueFormat)) {
+                            throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'datetime', but actualValue: " + actualValue + " was not a valid DateTime in the specified format: " + valueFormat;
+                        }
+                        actualValue = Date.parseString(actualValue.toString(), valueFormat);
+                    } else {
+                        for (i = 0; i < actualValue.length; i += 1) {
+                            if (!Date.isValid(actualValue[i], valueFormat)) {
+                                throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'datetime', but an item in the actualValue array '" + actualValue[i] + "' was not a valid DateTime in the specified format: " + valueFormat;
+                            }
+                            actualValue[i] = Date.parseString(actualValue[i].toString(), valueFormat);
+                        }
+                    }
+                    expectedValue = Date.parseString(expectedValue.toString(), valueFormat);
+
+                    switch (ifOperator) {
+                        case "equals":
+                            conditionMet = actualValue.equals(expectedValue);
+                            break;
+                        case "notequals":
+                            conditionMet = !actualValue.equals(expectedValue);
+                            break;
+                        case "greaterthan":
+                            conditionMet = actualValue.isAfter(expectedValue);
+                            break;
+                        case "greaterthanorequals":
+                            conditionMet = actualValue.equals(expectedValue) || actualValue.isAfter(expectedValue);
+                            break;
+                        case "lessthan":
+                            conditionMet = actualValue.isBefore(expectedValue);
+                            break;
+                        case "lessthanorequals":
+                            conditionMet = actualValue.equals(expectedValue) || actualValue.isBefore(expectedValue);
+                            break;
+                        case "contains":
+                            if (!actualValueIsArray) {
+                                conditionMet = actualValue.equals(expectedValue); //same as equals
+                            } else {
+                                for (iMet = 0; iMet < actualValue.length; iMet += 1) {
+                                    currContainsItem = actualValue[iMet];
+                                    if (currContainsItem.equals(expectedValue)) {
+                                        conditionMet = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        case "notcontains":
+                            if (!actualValueIsArray) {
+                                conditionMet = !actualValue.equals(expectedValue); //same as not equals
+                            } else {
+                                conditionMet = true;
+                                for (iNotMet = 0; iNotMet < actualValue.length; iNotMet += 1) {
+                                    currNotContainsItem = actualValue[iNotMet];
+                                    if (currNotContainsItem.equals(expectedValue)) {
+                                        conditionMet = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        default:
+                            throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
+                    }
+
+                    break;
+                default:
+                    //must be a string
+                    if (!actualValueIsArray) {
+                        actualValue = actualValue.toString().toLowerCase();
+                    }
+                    expectedValue = expectedValue.toString().toLowerCase();
+                    switch (ifOperator) {
+                        case "equals":
+                            conditionMet = actualValue === expectedValue;
+                            break;
+                        case "notequals":
+                            conditionMet = actualValue !== expectedValue;
+                            break;
+                        case "greaterthan":
+                            conditionMet = actualValue > expectedValue;
+                            break;
+                        case "greaterthanorequals":
+                            conditionMet = actualValue >= expectedValue;
+                            break;
+                        case "lessthan":
+                            conditionMet = actualValue < expectedValue;
+                            break;
+                        case "lessthanorequals":
+                            conditionMet = actualValue <= expectedValue;
+                            break;
+                        case "contains":
+                            for (iMet = 0; iMet < actualValue.length; iMet += 1) {
+                                currContainsItem = actualValue[iMet].toString().toLowerCase();
+                                if (currContainsItem === expectedValue) {
+                                    conditionMet = true;
+                                    break;
+                                }
+                            }
+                            break;
+                        case "notcontains":
+                            conditionMet = true;
+                            for (iNotMet = 0; iNotMet < actualValue.length; iNotMet += 1) {
+                                currNotContainsItem = actualValue[iNotMet].toString().toLowerCase();
+                                if (currNotContainsItem === expectedValue) {
+                                    conditionMet = false;
+                                    break;
+                                }
+                            }
+                            break;
+                        default:
+                            throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
+                    }
+                    break;
+            }
         }
     }
     return conditionMet;

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Web.Helpers;
 using System.Web.Mvc;
 
 namespace MvcMega.Forms.DataAnnotations
@@ -109,7 +110,19 @@ namespace MvcMega.Forms.DataAnnotations
                     toValues.Add(attr.To.ToString());
                     whenOtherPropertyNameValues.Add(attr.WhenOtherPropertyName);
                     ifValues.Add(attr.If.ToString());
-                    valueValues.Add(attr.Value == null ? string.Empty : attr.Value.ToString());
+                    var val = string.Empty;
+                    if (attr.Value != null)
+                    {
+                        if (attr.Value.GetType().IsArray)
+                        {
+                            val = Json.Encode(attr.Value);
+                        }
+                        else
+                        {
+                            val = attr.Value.ToString();
+                        }
+                    }
+                    valueValues.Add(val);
                     conditionPassesIfNullValues.Add(attr.ConditionPassesIfNull.ToString());
                     valueTypeToCompareValues.Add(attr.ValueTypeToCompare.ToString());
                     valueFormatValues.Add(attr.ValueFormat ?? string.Empty);
@@ -120,7 +133,19 @@ namespace MvcMega.Forms.DataAnnotations
                 toValues.Add(To.ToString());
                 whenOtherPropertyNameValues.Add(WhenOtherPropertyName);
                 ifValues.Add(If.ToString());
-                valueValues.Add(Value == null ? string.Empty : Value.ToString());
+                var val = string.Empty;
+                if (Value != null)
+                {
+                    if (Value.GetType().IsArray)
+                    {
+                        val = Json.Encode(Value);
+                    }
+                    else
+                    {
+                        val = Value.ToString();
+                    }
+                }
+                valueValues.Add(val);
                 conditionPassesIfNullValues.Add(ConditionPassesIfNull.ToString());
                 valueTypeToCompareValues.Add(ValueTypeToCompare.ToString());
                 valueFormatValues.Add(ValueFormat ?? string.Empty);

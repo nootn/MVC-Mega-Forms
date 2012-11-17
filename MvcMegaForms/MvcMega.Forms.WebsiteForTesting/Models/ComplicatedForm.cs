@@ -115,6 +115,9 @@ namespace MvcMega.Forms.WebsiteForTesting.Models
         [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "TestSelectedDropDownItemId", ChangeVisuallyAttribute.DisplayChangeIf.NotEquals, "3", true)]
         public string DropDownOther { get; set; }
 
+        [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "TestSelectedDropDownItemId", ChangeVisuallyAttribute.DisplayChangeIf.NotEquals, new[] { 1, 2 }, true)]
+        public string DropDownShowIfOneOrTwo { get; set; }
+
         public int[] TestSelectedMultiSelectItemIds { get; set; }
 
         [RequiredIfContains("TestSelectedMultiSelectItemIds", 3)]
@@ -124,7 +127,6 @@ namespace MvcMega.Forms.WebsiteForTesting.Models
         [RequiredIfNotContains("TestSelectedMultiSelectItemIds", 2)]
         [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Disabled, "TestSelectedMultiSelectItemIds", ChangeVisuallyAttribute.DisplayChangeIf.Contains, "2", true)]
         public string OnlySupplyIfMultiSelectDoesNotContainTwo { get; set; }
-
 
         [RequiredIfContainsOneOf("TestSelectedMultiSelectItemIds", new object[] { 1, 2 })]
         public string RequiredIfOneOrTwo { get; set; }
@@ -149,5 +151,7 @@ namespace MvcMega.Forms.WebsiteForTesting.Models
         public SubDetails SecondSubDetails { get; set; }
 
         public TimeSpan TimeOfDayForMaskTesting { get; set; }
+
+
     }
 }
