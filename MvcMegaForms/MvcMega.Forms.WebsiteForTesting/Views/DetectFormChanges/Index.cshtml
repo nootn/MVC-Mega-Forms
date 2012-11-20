@@ -59,7 +59,7 @@
             helpAtt.Add("help", "help");
         }
 
-        @Html.ControlBundleTextBoxFor(m=>m.PlainJaneFieldForStyleTesting, "controlGroupClass", groupAtt, "labelClass", labelAtt, "controlsClass", controlAtt, "helpInlineClass", helpAtt)
+        @Html.ControlBundleFor(m=>m.PlainJaneFieldForStyleTesting, new MvcHtmlString(@Html.TextBoxFor(p => p.PlainJaneFieldForStyleTesting, new { @class = "input-small", type = "number" }) + "<span class=\"add-on\">something</span>"), "controlGroupClass", groupAtt, "labelClass", labelAtt, "controlsClass", controlAtt, "helpInlineClass", helpAtt)
         @Html.HiddenFor(m => m.ComplicatedFormId)
     </fieldset>
     <input type="submit" value="Submit Form" />
