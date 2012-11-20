@@ -44,6 +44,22 @@
         @Html.ControlBundleFor(m => m.SecondSubDetails.HasValue)
         @Html.ControlBundleFor(m => m.SecondSubDetails.TheValue)
         @Html.ControlBundleFor(m => m.TimeOfDayForMaskTesting)
+        
+        @{
+            var groupAtt = new Dictionary<string, object>();
+            groupAtt.Add("group", "group");
+
+            var labelAtt = new Dictionary<string, object>();
+            labelAtt.Add("label", "label");
+
+            var controlAtt = new Dictionary<string, object>();
+            controlAtt.Add("control", "control");
+
+            var helpAtt = new Dictionary<string, object>();
+            helpAtt.Add("help", "help");
+        }
+
+        @Html.ControlBundleTextBoxFor(m=>m.PlainJaneFieldForStyleTesting, "controlGroupClass", groupAtt, "labelClass", labelAtt, "controlsClass", controlAtt, "helpInlineClass", helpAtt)
         @Html.HiddenFor(m => m.ComplicatedFormId)
     </fieldset>
     <input type="submit" value="Submit Form" />

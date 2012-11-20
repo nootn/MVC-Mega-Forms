@@ -271,7 +271,7 @@ namespace MvcMega.Forms.MVC.Html
             {
                 htmlHelper.ViewContext.Writer.Write(ControlLabelFor(htmlHelper, expression, labelClass,
                                                                     labelHtmlAttributes));
-                using (BeginControls(htmlHelper))
+                using (BeginControls(htmlHelper, controlsClass, controlsHtmlAttributes))
                 {
                     htmlHelper.ViewContext.Writer.Write(control);
                     using (BeginHelpInline(htmlHelper, helpInlineClass, helpInlineHtmlAttributes))

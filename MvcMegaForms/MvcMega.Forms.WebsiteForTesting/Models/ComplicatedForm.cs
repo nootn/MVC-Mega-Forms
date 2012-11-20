@@ -152,6 +152,6 @@ namespace MvcMega.Forms.WebsiteForTesting.Models
 
         public TimeSpan TimeOfDayForMaskTesting { get; set; }
 
-
+        public string PlainJaneFieldForStyleTesting { get; set; }
     }
 }
