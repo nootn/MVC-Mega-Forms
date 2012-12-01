@@ -8,6 +8,8 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // */
 
+using System;
+using System.Linq;
 using System.Web.Mvc;
 using MvcMega.Forms.WebsiteForTesting.Models;
 
@@ -18,6 +20,19 @@ namespace MvcMega.Forms.WebsiteForTesting.Controllers
         public ActionResult Index()
         {
             var model = new ComplicatedForm();
+
+            model.ParentItemId =
+                model.AllParentItems.Where(_ => _.Text == "Parent 2").Select(_ => Convert.ToInt32(_.Value)).First();
+            model.ChildItemId =
+                model.AllChildItems.Where(_ => _.ParentValue == model.ParentItemId.ToString() && _.Value != "0")
+                     .Select(_ => Convert.ToInt32(_.Value))
+                     .First();
+            model.ChildOfChildItemIds =
+                model.AllChildOfChildItems.Where(_ => _.ParentValue == model.ChildItemId.ToString() && _.Value != "0")
+                     .Take(2)
+                     .Select(_ => Convert.ToInt32(_.Value))
+                     .ToArray();
+
             return View(model);
         }
 
