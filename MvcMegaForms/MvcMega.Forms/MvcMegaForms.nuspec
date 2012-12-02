@@ -2,12 +2,9 @@
 <package>
   <metadata>
     <id>MvcMegaForms</id>
-    <version>0.0.0.15</version>
+    <version>0.0.0.16</version>
     <releaseNotes>
-      * Refactors JS using JSLint rules
-      * Adds support for TextArea checking on DetectFormChanges
-      * Adds ControlBundleListBoxChildFor so that you can have a list box cascaded
-      * Adds new validation attributes RequiredIfContainsOneOf and RequiredIfNotContainsOneOf to allow checking if multiple values exist (logical OR)
+      * Fixes issue with ChildListBox not having values pre-selected when set initially
     </releaseNotes>
     <authors>http://about.me/nootn</authors>
     <owners>http://about.me/nootn</owners>
