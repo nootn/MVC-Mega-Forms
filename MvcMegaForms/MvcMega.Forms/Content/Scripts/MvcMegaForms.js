@@ -754,24 +754,12 @@ MvcMegaForms.CascadeDropDown = function (parentList) {
                 currChildId = "";
             }
         } else if (state === MvcMegaForms.CascadeStringStatus.EndChildValueWithNext) {
-            if (currChildId !== "") {
-                if (currChildId === initialVal) {
-                    childList.append($('<option selected="selected"></option>').val(currChildId).html(currChildValue));
-                } else {
-                    childList.append($('<option></option>').val(currChildId).html(currChildValue));
-                }
-            }
+            MvcMegaForms.RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue);
             state = MvcMegaForms.CascadeStringStatus.StartChildId;
             currChildId = "";
             currChildValue = "";
         } else if (state === MvcMegaForms.CascadeStringStatus.EndChildValue) {
-            if (currChildId !== "") {
-                if (currChildId === initialVal) {
-                    childList.append($('<option selected="selected"></option>').val(currChildId).html(currChildValue));
-                } else {
-                    childList.append($('<option></option>').val(currChildId).html(currChildValue));
-                }
-            }
+            MvcMegaForms.RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue);
             state = MvcMegaForms.CascadeStringStatus.StartParentId;
             currParentId = "";
             currChildId = "";
@@ -782,6 +770,31 @@ MvcMegaForms.CascadeDropDown = function (parentList) {
     if (isChildVisible) {
         showEffect = MvcMegaForms.IsNullOrUndefined(MegaFormsCascadeJQueryShowEffect) ? 'fast' : MegaFormsCascadeJQueryShowEffect;
         childList.show(showEffect);
+    }
+};
+
+MvcMegaForms.RenderCascadedSelectOption = function (currChildId, initialVal, childList, currChildValue) {
+    "use strict";
+    var isSelected = false,
+        iMet,
+        currContainsItem;
+    if (currChildId !== "") {
+        if (MvcMegaForms.IsArray(initialVal)) {
+            for (iMet = 0; iMet < initialVal.length; iMet += 1) {
+                currContainsItem = initialVal[iMet];
+                if (currContainsItem.toString() === currChildId.toString()) {
+                    isSelected = true;
+                    break;
+                }
+            }
+        } else {
+            isSelected = currChildId === initialVal;
+        }
+        if (isSelected) {
+            childList.append($('<option selected="selected"></option>').val(currChildId).html(currChildValue));
+        } else {
+            childList.append($('<option></option>').val(currChildId).html(currChildValue));
+        }
     }
 };
 
