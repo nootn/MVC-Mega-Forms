@@ -10,21 +10,6 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-var MegaFormsChangeVisuallyJQueryParentContainerSelector: any;
-var MegaFormsChangeVisuallyJQueryHideEffect: any;
-var MegaFormsChangeVisuallyJQueryShowEffect: any;
-var MegaFormsCascadeJQueryHideEffect: any;
-var MegaFormsCascadeJQueryShowEffect: any;
-var MegaFormsDetectAllFormChanges: any;
-var MegaFormsDetectChangesWarningMessage: any;
-var MegaFormsDetectChangesFormClass: any;
-var MegaFormsIgnoreDetectChangesClass: any;
-var MegaFormsDisabledOrReadonlyCssClass: any;
-
-var MvcMegaForms = MvcMegaForms || {};
-
-var MvcMegaFormsLeavingPageDueToSubmitOrIgnore = false;
-
 $(document).ready(function () {
     "use strict";
     MvcMegaForms.AttachEvents();
@@ -33,14 +18,14 @@ $(document).ready(function () {
 
 $(window).bind("beforeunload", function (): string {
     "use strict";
-    if (!MvcMegaFormsLeavingPageDueToSubmitOrIgnore) {
+    if (!MvcMegaForms.LeavingPageDueToSubmitOrIgnore) {
         var formSearch = "form", hasPossibleFormsDetecting = true, doNoLeaveMessage = '';
-        if (MvcMegaForms.IsNullOrUndefined(MegaFormsDetectAllFormChanges) || MegaFormsDetectAllFormChanges === false) {
-            if (MvcMegaForms.IsNullOrUndefined(MegaFormsDetectChangesFormClass) || MegaFormsDetectChangesFormClass === '') {
+        if (MvcMegaForms.IsNullOrUndefined(MvcMegaForms.DetectAllFormChanges) || MvcMegaForms.DetectAllFormChanges === false) {
+            if (MvcMegaForms.IsNullOrUndefined(MvcMegaForms.DetectChangesFormClass) || MvcMegaForms.DetectChangesFormClass === '') {
                 //there is no detect changes option available
                 hasPossibleFormsDetecting = false;
             }
-            formSearch += "." + MegaFormsDetectChangesFormClass;
+            formSearch += "." + MvcMegaForms.DetectChangesFormClass;
         }
 
         if (hasPossibleFormsDetecting) {
@@ -55,18 +40,16 @@ $(window).bind("beforeunload", function (): string {
             }
         }
     }
-
-
 });
 
 //TODO: get client side required if validation working
 //if ($.validator !== undefined) {
 //    $.validator.addMethod('requiredifcontains', function (val, element, dependentproperty, dependentvalue) {
 //        "use strict";
-//        if (!MvcMegaForms.IsNullOrUndefined(val)) {
+//        if (!IsNullOrUndefined(val)) {
 //            return false;
 //        }
-//        var modelPrefix = element.name.substr(0, element.name.lastIndexOf(".") + 1), otherProperty = $("[name='" + modelPrefix + dependentproperty + "']"), otherVal = MvcMegaForms.GetFormValue(otherProperty).toLowerCase(), i, currValue;
+//        var modelPrefix = element.name.substr(0, element.name.lastIndexOf(".") + 1), otherProperty = $("[name='" + modelPrefix + dependentproperty + "']"), otherVal = GetFormValue(otherProperty).toLowerCase(), i, currValue;
 //        for (i = 0; i < otherVal.length; i += 1) {
 //            currValue = otherVal[i].toLowerCase();
 //            if (currValue === dependentvalue) {
@@ -79,10 +62,10 @@ $(window).bind("beforeunload", function (): string {
 
 //    $.validator.addMethod('requiredifnotcontains', function (val, element, dependentproperty, dependentvalue) {
 //        "use strict";
-//        if (!MvcMegaForms.IsNullOrUndefined(val)) {
+//        if (!IsNullOrUndefined(val)) {
 //            return false;
 //        }
-//        var modelPrefix = element.name.substr(0, element.name.lastIndexOf(".") + 1), otherProperty = $("[name='" + modelPrefix + dependentproperty + "']"), otherVal = MvcMegaForms.GetFormValue(otherProperty).toLowerCase(), i, currValue;
+//        var modelPrefix = element.name.substr(0, element.name.lastIndexOf(".") + 1), otherProperty = $("[name='" + modelPrefix + dependentproperty + "']"), otherVal = GetFormValue(otherProperty).toLowerCase(), i, currValue;
 //        for (i = 0; i < otherVal.length; i += 1) {
 //            currValue = otherVal[i].toLowerCase();
 //            if (currValue === dependentvalue) {
@@ -94,366 +77,232 @@ $(window).bind("beforeunload", function (): string {
 //    $.validator.unobtrusive.adapters.addSingleVal('requiredifnotcontains', 'dependentproperty', 'dependentvalue', 'requiredifnotcontains');
 //}
 
-MvcMegaForms.ConfigureDetectChanges = function () {
-    "use strict";
-    var formSearch = "form";
-    if (MvcMegaForms.IsNullOrUndefined(MegaFormsDetectAllFormChanges) || MegaFormsDetectAllFormChanges === false) {
-        if (MvcMegaForms.IsNullOrUndefined(MegaFormsDetectChangesFormClass) || MegaFormsDetectChangesFormClass === '') {
-            //there is no detect changes option available
-            return;
-        }
-        formSearch += "." + MegaFormsDetectChangesFormClass;
-    }
+class MvcMegaForms {
 
-    $(formSearch).each(function (): any {
-        var $form = $(this);
+    public static ChangeVisuallyJQueryParentContainerSelector : string = '.control-group';
+    public static ChangeVisuallyJQueryHideEffect : string = 'fast';
+    public static ChangeVisuallyJQueryShowEffect : string = 'fast';
+    public static CascadeJQueryHideEffect : string = 'fast';
+    public static CascadeJQueryShowEffect : string = 'fast';
+    public static DetectAllFormChanges : bool = false; //set value whether to detect changes on all forms or not
+    public static DetectChangesWarningMessage : string = '';  //The message to show if a form value has changed and page is being left.  If blank uses default which includes ID of first element found
+    public static DetectChangesFormClass : string = 'detect-changes'; //The class to give forms that you want changes detected on if 'MvcMegaForms.DetectAllFormChanges' is false
+    public static IgnoreDetectChangesClass : string = 'ignore-detect-changes'; //Add this class to any elements you want to allow to be clicked that leave the page but don't show the message (E.g. clear buttons that reset the form)
+    public static DisabledOrReadonlyCssClass : string = 'ui-state-disabled';  //The class to give controls that are disabled or readonly
 
-        //wire up submit buttons
-        $form.find("input:submit").each(function (): any {
-            var $me = $(this);
-            $me.click(function () {
-                MvcMegaFormsLeavingPageDueToSubmitOrIgnore = true;
-            });
-        });
+    private static LeavingPageDueToSubmitOrIgnore: bool = false;
 
-        //ensure all selects that have options have a selected option (otherwise it will always say they changed)
-        $form.find("select").each(function (): any {
-            var $me = $(this), foundDefaultSelected, $firstOption;
-            if (MvcMegaForms.IsNullOrUndefined($me.attr('multiple')) && $me.find('option').length > 0) {
-                foundDefaultSelected = false;
-                $me.find('option').each(function (): any {
-                    if (this.defaultSelected) {
-                        foundDefaultSelected = true;
-                        return;
-                    }
-                });
-                if (!foundDefaultSelected) {
-                    $firstOption = $me.find("option:first-child");
-                    $firstOption.attr("selected", true);
-                    $firstOption.attr("defaultSelected", true);
-                }
+    public static ConfigureDetectChanges(): void {
+        "use strict";
+        var formSearch = "form";
+        if (IsNullOrUndefined(MvcMegaForms.DetectAllFormChanges) || MvcMegaForms.DetectAllFormChanges === false) {
+            if (IsNullOrUndefined(MvcMegaForms.DetectChangesFormClass) || MvcMegaForms.DetectChangesFormClass === '') {
+                //there is no detect changes option available
+                return;
             }
-        });
-    });
+            formSearch += "." + MvcMegaForms.DetectChangesFormClass;
+        }
 
-    if (!MvcMegaForms.IsNullOrUndefined(MegaFormsIgnoreDetectChangesClass)) {
-        //wire up any other items to ignore which could be anywhere on the screen, not within a form
-        $("." + MegaFormsIgnoreDetectChangesClass).each(function (): any {
-            var $me = $(this);
-            $me.click(function (): void {
-                MvcMegaFormsLeavingPageDueToSubmitOrIgnore = true;
+        $(formSearch).each(function (): any {
+            var $form = $(this);
+
+            //wire up submit buttons
+            $form.find("input:submit").each(function (): any {
+                var $me = $(this);
+                $me.click(function () {
+                    MvcMegaForms.LeavingPageDueToSubmitOrIgnore = true;
+                });
+            });
+
+            //ensure all selects that have options have a selected option (otherwise it will always say they changed)
+            $form.find("select").each(function (): any {
+                var $me = $(this), foundDefaultSelected, $firstOption;
+                if (MvcMegaForms.IsNullOrUndefined($me.attr('multiple')) && $me.find('option').length > 0) {
+                    foundDefaultSelected = false;
+                    $me.find('option').each(function (): any {
+                        if (this.defaultSelected) {
+                            foundDefaultSelected = true;
+                            return;
+                        }
+                    });
+                    if (!foundDefaultSelected) {
+                        $firstOption = $me.find("option:first-child");
+                        $firstOption.attr("selected", true);
+                        $firstOption.attr("defaultSelected", true);
+                    }
+                }
             });
         });
+
+        if (!MvcMegaForms.IsNullOrUndefined(MvcMegaForms.IgnoreDetectChangesClass)) {
+            //wire up any other items to ignore which could be anywhere on the screen, not within a form
+            $("." + MvcMegaForms.IgnoreDetectChangesClass).each(function (): any {
+                var $me = $(this);
+                $me.click(function (): void {
+                    MvcMegaForms.LeavingPageDueToSubmitOrIgnore = true;
+                });
+            });
+        }
     }
-};
 
-MvcMegaForms.AttachEvents = function () {
-    "use strict";
-    $(":input").each(function (): any {
-        var tos,
-            toValues,
-            otherPropertyNames,
-            ifOperators,
-            values,
-            conditionPassesIfNulls,
-            valueTypeToCompares,
-            valueFormats,
-            dependentProperty,
-            uniqueOtherPropertyNames,
-            iOuter,
-            fullName,
-            otherProperty,
-            iInner,
-            currentOtherProperty,
-            parentId,
-            parentList;
+    public static AttachEvents(): void {
+        "use strict";
+        $(":input").each(function (): any {
+            var tos,
+                toValues,
+                otherPropertyNames,
+                ifOperators,
+                values,
+                conditionPassesIfNulls,
+                valueTypeToCompares,
+                valueFormats,
+                dependentProperty,
+                uniqueOtherPropertyNames,
+                iOuter,
+                fullName,
+                otherProperty,
+                iInner,
+                currentOtherProperty,
+                parentId,
+                parentList;
 
-        tos = $(this).attr('data-val-changevisually-to');
-        if (!MvcMegaForms.IsNullOrUndefined(tos)) {
-            toValues = tos.split("~");
-            otherPropertyNames = $(this).attr('data-val-changevisually-otherpropertyname').split("~");
-            ifOperators = $(this).attr('data-val-changevisually-ifoperator').split("~");
-            values = $(this).attr('data-val-changevisually-value').split("~");
-            conditionPassesIfNulls = $(this).attr('data-val-changevisually-conditionpassesifnull').split("~");
-            valueTypeToCompares = $(this).attr('data-val-changevisually-valuetypetocompare').split("~");
-            valueFormats = $(this).attr('data-val-changevisually-valueformat').split("~");
-            dependentProperty = $(this);
-            uniqueOtherPropertyNames = $.unique(otherPropertyNames.slice()); //Get each unique other property name
-            //go through each 'other' field and hook up the change event
-            for (iOuter = 0; iOuter < uniqueOtherPropertyNames.length; iOuter += 1) {
-                fullName = dependentProperty.attr('name').substr(0, dependentProperty.attr("name").lastIndexOf(".") + 1) + uniqueOtherPropertyNames[iOuter];
-                otherProperty = $("[name='" + fullName + "']");
-                otherProperty.change({ otherPropertyOuterInitialName: uniqueOtherPropertyNames[iOuter], otherPropertyFullName: fullName }, function (event) {
-                    for (var iInner = 0; iInner < otherPropertyNames.length; iInner++) {
-                        if (otherPropertyNames[iInner] === event.data.otherPropertyOuterInitialName) {
-                            var currentOtherProperty = $("[name='" + event.data.otherPropertyFullName + "']");
-                            if (MvcMegaForms.ApplyChangeVisually(dependentProperty, currentOtherProperty, toValues[iInner], ifOperators[iInner], values[iInner], conditionPassesIfNulls[iInner], valueTypeToCompares[iInner], valueFormats[iInner])) {
-                                break; //a condition has passed, don't process the rest
+            tos = $(this).attr('data-val-changevisually-to');
+            if (!MvcMegaForms.IsNullOrUndefined(tos)) {
+                toValues = tos.split("~");
+                otherPropertyNames = $(this).attr('data-val-changevisually-otherpropertyname').split("~");
+                ifOperators = $(this).attr('data-val-changevisually-ifoperator').split("~");
+                values = $(this).attr('data-val-changevisually-value').split("~");
+                conditionPassesIfNulls = $(this).attr('data-val-changevisually-conditionpassesifnull').split("~");
+                valueTypeToCompares = $(this).attr('data-val-changevisually-valuetypetocompare').split("~");
+                valueFormats = $(this).attr('data-val-changevisually-valueformat').split("~");
+                dependentProperty = $(this);
+                uniqueOtherPropertyNames = $.unique(otherPropertyNames.slice()); //Get each unique other property name
+                //go through each 'other' field and hook up the change event
+                for (iOuter = 0; iOuter < uniqueOtherPropertyNames.length; iOuter += 1) {
+                    fullName = dependentProperty.attr('name').substr(0, dependentProperty.attr("name").lastIndexOf(".") + 1) + uniqueOtherPropertyNames[iOuter];
+                    otherProperty = $("[name='" + fullName + "']");
+                    otherProperty.change({ otherPropertyOuterInitialName: uniqueOtherPropertyNames[iOuter], otherPropertyFullName: fullName }, function (event) {
+                        for (var iInner = 0; iInner < otherPropertyNames.length; iInner++) {
+                            if (otherPropertyNames[iInner] === event.data.otherPropertyOuterInitialName) {
+                                var currentOtherProperty = $("[name='" + event.data.otherPropertyFullName + "']");
+                                if (ApplyChangeVisually(dependentProperty, currentOtherProperty, toValues[iInner], ifOperators[iInner], values[iInner], conditionPassesIfNulls[iInner], valueTypeToCompares[iInner], valueFormats[iInner])) {
+                                    break; //a condition has passed, don't process the rest
+                                }
                             }
                         }
-                    }
-                });
-                otherProperty.change();
+                    });
+                    otherProperty.change();
+                }
             }
-        }
 
-        parentId = $(this).attr("parentListId");
-        if (!MvcMegaForms.IsNullOrUndefined(parentId)) {
-            parentList = $("[name='" + $(this).attr("name").substr(0, $(this).attr("name").lastIndexOf(".") + 1) + parentId + "']");
-            parentList.attr("childid", $(this).attr('id'));
-            parentList.change(function () {
-                MvcMegaForms.SetupCascadingDropDown($(this));
-            });
-            parentList.change();
-        }
-    });
-};
+            parentId = $(this).attr("parentListId");
+            if (!IsNullOrUndefined(parentId)) {
+                parentList = $("[name='" + $(this).attr("name").substr(0, $(this).attr("name").lastIndexOf(".") + 1) + parentId + "']");
+                parentList.attr("childid", $(this).attr('id'));
+                parentList.change(function () {
+                    SetupCascadingDropDown($(this));
+                });
+                parentList.change();
+            }
+        });
+    }
 
-MvcMegaForms.ApplyChangeVisually = function (dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull, valueTypeToCompare, valueFormat) {
-    "use strict";
-    var parentSelector = MvcMegaForms.IsNullOrUndefined(MegaFormsChangeVisuallyJQueryParentContainerSelector) ? '.editor-field' : MegaFormsChangeVisuallyJQueryParentContainerSelector,
-        container = dependentProperty.parents(parentSelector),
-        showEffect,
-        hideEffect,
-        disabledOrReadonlyCssClass,
-        otherPropValue,
-        conditionMet;
-    if (MvcMegaForms.IsNullOrUndefined(container)) {
-        throw 'MvcMegaForms-ChangeVisually Critical Error: Unable to find parent container with selector: ' + parentSelector + ' for property ' + dependentProperty;
-    } else {
-        showEffect = MvcMegaForms.IsNullOrUndefined(MegaFormsChangeVisuallyJQueryShowEffect) ? 'fast' : MegaFormsChangeVisuallyJQueryShowEffect;
-        hideEffect = MvcMegaForms.IsNullOrUndefined(MegaFormsChangeVisuallyJQueryHideEffect) ? 'fast' : MegaFormsChangeVisuallyJQueryHideEffect;
-        disabledOrReadonlyCssClass = MvcMegaForms.IsNullOrUndefined(MegaFormsDisabledOrReadonlyCssClass) ? 'ui-state-disabled' : MegaFormsDisabledOrReadonlyCssClass;
+    public static ApplyChangeVisually(dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull, valueTypeToCompare, valueFormat): bool {
+        "use strict";
+        var parentSelector = IsNullOrUndefined(MvcMegaForms.ChangeVisuallyJQueryParentContainerSelector) ? '.editor-field' : MvcMegaForms.ChangeVisuallyJQueryParentContainerSelector,
+            container = dependentProperty.parents(parentSelector),
+            showEffect,
+            hideEffect,
+            disabledOrReadonlyCssClass,
+            otherPropValue,
+            conditionMet;
+        if (IsNullOrUndefined(container)) {
+            throw 'MvcMegaForms-ChangeVisually Critical Error: Unable to find parent container with selector: ' + parentSelector + ' for property ' + dependentProperty;
+        } else {
+            showEffect = IsNullOrUndefined(MvcMegaForms.ChangeVisuallyJQueryShowEffect) ? 'fast' : MvcMegaForms.ChangeVisuallyJQueryShowEffect;
+            hideEffect = IsNullOrUndefined(MvcMegaForms.ChangeVisuallyJQueryHideEffect) ? 'fast' : MvcMegaForms.ChangeVisuallyJQueryHideEffect;
+            disabledOrReadonlyCssClass = IsNullOrUndefined(MvcMegaForms.DisabledOrReadonlyCssClass) ? 'ui-state-disabled' : MvcMegaForms.DisabledOrReadonlyCssClass;
 
-        otherPropValue = MvcMegaForms.GetFormValue(otherProperty);
+            otherPropValue = GetFormValue(otherProperty);
 
-        conditionMet = MvcMegaForms.ConditionMetForChangeVisually(ifOperator, value, otherPropValue, conditionPassesIfNull, valueTypeToCompare, valueFormat);
-        if (conditionMet) {
-            if (to === 'hidden') {
-                //hide
-                container.hide(hideEffect);
+            conditionMet = ConditionMetForChangeVisually(ifOperator, value, otherPropValue, conditionPassesIfNull, valueTypeToCompare, valueFormat);
+            if (conditionMet) {
+                if (to === 'hidden') {
+                    //hide
+                    container.hide(hideEffect);
+
+                    //enable
+                    dependentProperty.removeAttr('disabled');
+                    dependentProperty.removeAttr('readonly');
+                    dependentProperty.removeClass(disabledOrReadonlyCssClass);
+                } else if (to === 'disabled') {
+                    //show  
+                    container.show(showEffect);
+                    dependentProperty.removeAttr('readonly');
+
+                    //disable
+                    dependentProperty.attr('disabled', 'disabled');
+                    dependentProperty.addClass(disabledOrReadonlyCssClass);
+                } else if (to === 'readonly') {
+                    //show  
+                    container.show(showEffect);
+                    dependentProperty.removeAttr('disabled');
+
+                    //disable
+                    dependentProperty.attr('readonly', 'readonly');
+                    dependentProperty.addClass(disabledOrReadonlyCssClass);
+                }
+            } else {
+                //show
+                container.show(showEffect);
 
                 //enable
                 dependentProperty.removeAttr('disabled');
                 dependentProperty.removeAttr('readonly');
                 dependentProperty.removeClass(disabledOrReadonlyCssClass);
-            } else if (to === 'disabled') {
-                //show  
-                container.show(showEffect);
-                dependentProperty.removeAttr('readonly');
-
-                //disable
-                dependentProperty.attr('disabled', 'disabled');
-                dependentProperty.addClass(disabledOrReadonlyCssClass);
-            } else if (to === 'readonly') {
-                //show  
-                container.show(showEffect);
-                dependentProperty.removeAttr('disabled');
-
-                //disable
-                dependentProperty.attr('readonly', 'readonly');
-                dependentProperty.addClass(disabledOrReadonlyCssClass);
             }
-        } else {
-            //show
-            container.show(showEffect);
-
-            //enable
-            dependentProperty.removeAttr('disabled');
-            dependentProperty.removeAttr('readonly');
-            dependentProperty.removeClass(disabledOrReadonlyCssClass);
+            return conditionMet;
         }
-        return conditionMet;
-    }
-};
-
-MvcMegaForms.ConditionMetForChangeVisually = function (ifOperator, expectedValue, actualValue, conditionPassesIfNull, valueTypeToCompare, valueFormat) {
-    "use strict";
-    //ensure it's not null or undefined before we begin
-    if (MvcMegaForms.IsNullOrUndefined(ifOperator)) {
-        throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: ifOperator was not supplied";
     }
 
-    var conditionMet = false,
-        actualValueIsArray,
-        i,
-        iMet,
-        iNotMet,
-        currContainsItem,
-        currNotContainsItem;
-    conditionPassesIfNull = !(MvcMegaForms.IsNullOrUndefined(conditionPassesIfNull)) && conditionPassesIfNull.toString().toLowerCase() === 'true'; //it was a string, make it a bool
+    public static ConditionMetForChangeVisually(ifOperator, expectedValue, actualValue, conditionPassesIfNull, valueTypeToCompare, valueFormat): bool {
+        "use strict";
+        //ensure it's not null or undefined before we begin
+        if (IsNullOrUndefined(ifOperator)) {
+            throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: ifOperator was not supplied";
+        }
 
-    //treat empty string or undefined as null
-    if (actualValue === '' || MvcMegaForms.IsNullOrUndefined(actualValue)) {
-        actualValue = null;
-    }
-    if (expectedValue === '' || MvcMegaForms.IsNullOrUndefined(expectedValue)) {
-        expectedValue = null;
-    }
+        var conditionMet = false,
+            actualValueIsArray,
+            i,
+            iMet,
+            iNotMet,
+            currContainsItem,
+            currNotContainsItem;
+        conditionPassesIfNull = !(IsNullOrUndefined(conditionPassesIfNull)) && conditionPassesIfNull.toString().toLowerCase() === 'true'; //it was a string, make it a bool
 
-    //if the actual value is an empty array, treat it as null
-    actualValueIsArray = MvcMegaForms.IsArray(actualValue);
-    if (actualValueIsArray) {
-        if (actualValue.length <= 0) {
+        //treat empty string or undefined as null
+        if (actualValue === '' || IsNullOrUndefined(actualValue)) {
             actualValue = null;
         }
-    }
-
-    if (expectedValue != null && expectedValue.toString().lastIndexOf('[', 0) === 0) {
-        //appears to be an array, turn it into one
-        expectedValue = $.parseJSON(expectedValue.toString());
-    }
-    if (MvcMegaForms.IsArray(expectedValue)) {
-        //throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Array data type for expectedValue is not supported at this time.  expectedValue supplied was: " + expectedValue;
-
-        //verify value types (if not known, assume string therefore no checks to do)
-        switch (valueTypeToCompare) {
-            case "number":
-                if (isNaN(expectedValue)) {
-                    throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'number', but expectedValue was not a number: " + expectedValue;
-                }
-
-                if (!actualValueIsArray) {
-                    if (isNaN(actualValue)) {
-                        throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'number', but actualValue was not a number: " + actualValue;
-                    }
-                    actualValue = parseFloat(actualValue.toString());
-                } else {
-                    for (i = 0; i < actualValue.length; i += 1) {
-                        if (isNaN(actualValue[i])) {
-                            throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'number', but an item in the actualValue array was not a number: " + actualValue[i];
-                        }
-                        actualValue[i] = parseFloat(actualValue[i].toString());
-                    }
-                }
-                expectedValue = parseFloat(expectedValue.toString());
-
-                switch (ifOperator) {
-                    case "equals":
-                        for (iMet = 0; iMet < expectedValue.length; iMet += 1) {
-                            currContainsItem = expectedValue[iMet];
-                            if (currContainsItem === actualValue) {
-                                conditionMet = true;
-                                break;
-                            }
-                        }
-                        break;
-                    case "notequals":
-                        conditionMet = true;
-                        for (iNotMet = 0; iNotMet < expectedValue.length; iNotMet += 1) {
-                            currNotContainsItem = expectedValue[iNotMet];
-                            if (currNotContainsItem === actualValue) {
-                                conditionMet = false;
-                                break;
-                            }
-                        }
-                        break;
-                    default:
-                        throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied when expectedValue was an array: ' + ifOperator;
-                }
-            case "datetime":
-                if (!DateJs.Helper.isValid(expectedValue, valueFormat)) {
-                    throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'datetime', but expectedValue does not fit the specified date format: " + expectedValue + " was not a valid DateTime in the specified format: " + valueFormat;
-                }
-
-                if (!actualValueIsArray) {
-                    if (!DateJs.Helper.isValid(actualValue, valueFormat)) {
-                        throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'datetime', but actualValue: " + actualValue + " was not a valid DateTime in the specified format: " + valueFormat;
-                    }
-                    actualValue = DateJs.Helper.parseString(actualValue.toString(), valueFormat);
-                } else {
-                    for (i = 0; i < actualValue.length; i += 1) {
-                        if (!DateJs.Helper.isValid(actualValue[i], valueFormat)) {
-                            throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'datetime', but an item in the actualValue array '" + actualValue[i] + "' was not a valid DateTime in the specified format: " + valueFormat;
-                        }
-                        actualValue[i] = DateJs.Helper.parseString(actualValue[i].toString(), valueFormat);
-                    }
-                }
-                expectedValue = DateJs.Helper.parseString(expectedValue.toString(), valueFormat);
-                switch (ifOperator) {
-                    case "equals":
-                        for (iMet = 0; iMet < expectedValue.length; iMet += 1) {
-                            currContainsItem = expectedValue[iMet];
-                            if (new DateJs.Helper(currContainsItem).equals(actualValue)) {
-                                conditionMet = true;
-                                break;
-                            }
-                        }
-                        break;
-                    case "notequals":
-                        conditionMet = true;
-                        for (iNotMet = 0; iNotMet < expectedValue.length; iNotMet += 1) {
-                            currNotContainsItem = expectedValue[iNotMet];
-                            if (new DateJs.Helper(currNotContainsItem).equals(actualValue)) {
-                                conditionMet = false;
-                                break;
-                            }
-                        }
-                        break;
-                    default:
-                        throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied when expectedValue was an array: ' + ifOperator;
-                }
-            default:
-                //must be a string
-                if (!actualValueIsArray) {
-                    actualValue = actualValue.toString().toLowerCase();
-                }
-                expectedValue = expectedValue.toString().toLowerCase();
-
-                switch (ifOperator) {
-                    case "equals":
-                        for (iMet = 0; iMet < expectedValue.length; iMet += 1) {
-                            currContainsItem = expectedValue[iMet].toString().toLowerCase();
-                            if (currContainsItem === actualValue) {
-                                conditionMet = true;
-                                break;
-                            }
-                        }
-                        break;
-                    case "notequals":
-                        conditionMet = true;
-                        for (iNotMet = 0; iNotMet < expectedValue.length; iNotMet += 1) {
-                            currNotContainsItem = expectedValue[iNotMet].toString().toLowerCase();
-                            if (currNotContainsItem === actualValue) {
-                                conditionMet = false;
-                                break;
-                            }
-                        }
-                        break;
-                    default:
-                        throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied when expectedValue was an array: ' + ifOperator;
-                }
-
+        if (expectedValue === '' || IsNullOrUndefined(expectedValue)) {
+            expectedValue = null;
         }
 
-    } else {
-        if (actualValue === null && expectedValue !== null) {
-            //expectedValue is null, condition is met if we wanted it to be met when null
-            conditionMet = conditionPassesIfNull;
-        } else if (actualValue !== null && expectedValue === null) {
-            //the expectedValue is not null, but we were looking for a null, determine what to do
-            switch (ifOperator) {
-                case "equals":
-                    conditionMet = false; //we wanted a null and it was not
-                    break;
-                case "notequals":
-                    conditionMet = true; //we did not want a null and it was not
-                    break;
-                default:
-                    throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: When checking for a null expectedValue, DisplayChangeIf must be Equals or NotEquals, supplied ifOperator was ' + ifOperator;
+        //if the actual value is an empty array, treat it as null
+        actualValueIsArray = IsArray(actualValue);
+        if (actualValueIsArray) {
+            if (actualValue.length <= 0) {
+                actualValue = null;
             }
-        } else if (actualValue === null && expectedValue === null) {
-            //both are null, condition is met if we wanted it to be met when null
-            conditionMet = conditionPassesIfNull;
-        } else { //both are not null
-            if (actualValueIsArray) {
-                //verify that if the actual value is an array, we are only dealing with contains/notcontains
-                if (ifOperator !== "contains" && ifOperator !== "notcontains") {
-                    throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: When actualValue is an array (E.g. value of a multi-select), DisplayChangeIf must be Contains or NotContains, supplied ifOperator was ' + ifOperator;
-                }
-            }
+        }
 
-            expectedValue = expectedValue.toString().toLowerCase();
+        if (expectedValue != null && expectedValue.toString().lastIndexOf('[', 0) === 0) {
+            //appears to be an array, turn it into one
+            expectedValue = $.parseJSON(expectedValue.toString());
+        }
+        if (IsArray(expectedValue)) {
+            //throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Array data type for expectedValue is not supported at this time.  expectedValue supplied was: " + expectedValue;
 
             //verify value types (if not known, assume string therefore no checks to do)
             switch (valueTypeToCompare) {
@@ -479,55 +328,27 @@ MvcMegaForms.ConditionMetForChangeVisually = function (ifOperator, expectedValue
 
                     switch (ifOperator) {
                         case "equals":
-                            conditionMet = actualValue === expectedValue;
-                            break;
-                        case "notequals":
-                            conditionMet = actualValue !== expectedValue;
-                            break;
-                        case "greaterthan":
-                            conditionMet = actualValue > expectedValue;
-                            break;
-                        case "greaterthanorequals":
-                            conditionMet = actualValue >= expectedValue;
-                            break;
-                        case "lessthan":
-                            conditionMet = actualValue < expectedValue;
-                            break;
-                        case "lessthanorequals":
-                            conditionMet = actualValue <= expectedValue;
-                            break;
-                        case "contains":
-                            if (!actualValueIsArray) {
-                                conditionMet = actualValue === expectedValue; //same as equals
-                            } else {
-                                for (iMet = 0; iMet < actualValue.length; iMet += 1) {
-                                    currContainsItem = actualValue[iMet];
-                                    if (currContainsItem === expectedValue) {
-                                        conditionMet = true;
-                                        break;
-                                    }
+                            for (iMet = 0; iMet < expectedValue.length; iMet += 1) {
+                                currContainsItem = expectedValue[iMet];
+                                if (currContainsItem === actualValue) {
+                                    conditionMet = true;
+                                    break;
                                 }
                             }
                             break;
-                        case "notcontains":
-                            if (!actualValueIsArray) {
-                                conditionMet = actualValue !== expectedValue; //same as not equals
-                            } else {
-                                conditionMet = true;
-                                for (iNotMet = 0; iNotMet < actualValue.length; iNotMet += 1) {
-                                    currNotContainsItem = actualValue[iNotMet];
-                                    if (currNotContainsItem === expectedValue) {
-                                        conditionMet = false;
-                                        break;
-                                    }
+                        case "notequals":
+                            conditionMet = true;
+                            for (iNotMet = 0; iNotMet < expectedValue.length; iNotMet += 1) {
+                                currNotContainsItem = expectedValue[iNotMet];
+                                if (currNotContainsItem === actualValue) {
+                                    conditionMet = false;
+                                    break;
                                 }
                             }
                             break;
                         default:
-                            throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
+                            throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied when expectedValue was an array: ' + ifOperator;
                     }
-
-                    break;
                 case "datetime":
                     if (!DateJs.Helper.isValid(expectedValue, valueFormat)) {
                         throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'datetime', but expectedValue does not fit the specified date format: " + expectedValue + " was not a valid DateTime in the specified format: " + valueFormat;
@@ -547,387 +368,566 @@ MvcMegaForms.ConditionMetForChangeVisually = function (ifOperator, expectedValue
                         }
                     }
                     expectedValue = DateJs.Helper.parseString(expectedValue.toString(), valueFormat);
-
                     switch (ifOperator) {
                         case "equals":
-                            conditionMet = new DateJs.Helper(actualValue).equals(expectedValue);
-                            break;
-                        case "notequals":
-                            conditionMet = !new DateJs.Helper(actualValue).equals(expectedValue);
-                            break;
-                        case "greaterthan":
-                            conditionMet = new DateJs.Helper(actualValue).isAfter(expectedValue);
-                            break;
-                        case "greaterthanorequals":
-                            conditionMet = new DateJs.Helper(actualValue).equals(expectedValue) || new DateJs.Helper(actualValue).isAfter(expectedValue);
-                            break;
-                        case "lessthan":
-                            conditionMet = new DateJs.Helper(actualValue).isBefore(expectedValue);
-                            break;
-                        case "lessthanorequals":
-                            conditionMet = new DateJs.Helper(actualValue).equals(expectedValue) || new DateJs.Helper(actualValue).isBefore(expectedValue);
-                            break;
-                        case "contains":
-                            if (!actualValueIsArray) {
-                                conditionMet = new DateJs.Helper(actualValue).equals(expectedValue); //same as equals
-                            } else {
-                                for (iMet = 0; iMet < actualValue.length; iMet += 1) {
-                                    currContainsItem = actualValue[iMet];
-                                    if (new DateJs.Helper(currContainsItem).equals(expectedValue)) {
-                                        conditionMet = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            break;
-                        case "notcontains":
-                            if (!actualValueIsArray) {
-                                conditionMet = !new DateJs.Helper(actualValue).equals(expectedValue); //same as not equals
-                            } else {
-                                conditionMet = true;
-                                for (iNotMet = 0; iNotMet < actualValue.length; iNotMet += 1) {
-                                    currNotContainsItem = actualValue[iNotMet];
-                                    if (new DateJs.Helper(currNotContainsItem).equals(expectedValue)) {
-                                        conditionMet = false;
-                                        break;
-                                    }
-                                }
-                            }
-                            break;
-                        default:
-                            throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
-                    }
-
-                    break;
-                default:
-                    //must be a string
-                    if (!actualValueIsArray) {
-                        actualValue = actualValue.toString().toLowerCase();
-                    }
-                    expectedValue = expectedValue.toString().toLowerCase();
-                    switch (ifOperator) {
-                        case "equals":
-                            conditionMet = actualValue === expectedValue;
-                            break;
-                        case "notequals":
-                            conditionMet = actualValue !== expectedValue;
-                            break;
-                        case "greaterthan":
-                            conditionMet = actualValue > expectedValue;
-                            break;
-                        case "greaterthanorequals":
-                            conditionMet = actualValue >= expectedValue;
-                            break;
-                        case "lessthan":
-                            conditionMet = actualValue < expectedValue;
-                            break;
-                        case "lessthanorequals":
-                            conditionMet = actualValue <= expectedValue;
-                            break;
-                        case "contains":
-                            for (iMet = 0; iMet < actualValue.length; iMet += 1) {
-                                currContainsItem = actualValue[iMet].toString().toLowerCase();
-                                if (currContainsItem === expectedValue) {
+                            for (iMet = 0; iMet < expectedValue.length; iMet += 1) {
+                                currContainsItem = expectedValue[iMet];
+                                if (new DateJs.Helper(currContainsItem).equals(actualValue)) {
                                     conditionMet = true;
                                     break;
                                 }
                             }
                             break;
-                        case "notcontains":
+                        case "notequals":
                             conditionMet = true;
-                            for (iNotMet = 0; iNotMet < actualValue.length; iNotMet += 1) {
-                                currNotContainsItem = actualValue[iNotMet].toString().toLowerCase();
-                                if (currNotContainsItem === expectedValue) {
+                            for (iNotMet = 0; iNotMet < expectedValue.length; iNotMet += 1) {
+                                currNotContainsItem = expectedValue[iNotMet];
+                                if (new DateJs.Helper(currNotContainsItem).equals(actualValue)) {
                                     conditionMet = false;
                                     break;
                                 }
                             }
                             break;
                         default:
-                            throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
+                            throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied when expectedValue was an array: ' + ifOperator;
                     }
-                    break;
+                default:
+                    //must be a string
+                    if (!actualValueIsArray) {
+                        actualValue = actualValue.toString().toLowerCase();
+                    }
+                    expectedValue = expectedValue.toString().toLowerCase();
+
+                    switch (ifOperator) {
+                        case "equals":
+                            for (iMet = 0; iMet < expectedValue.length; iMet += 1) {
+                                currContainsItem = expectedValue[iMet].toString().toLowerCase();
+                                if (currContainsItem === actualValue) {
+                                    conditionMet = true;
+                                    break;
+                                }
+                            }
+                            break;
+                        case "notequals":
+                            conditionMet = true;
+                            for (iNotMet = 0; iNotMet < expectedValue.length; iNotMet += 1) {
+                                currNotContainsItem = expectedValue[iNotMet].toString().toLowerCase();
+                                if (currNotContainsItem === actualValue) {
+                                    conditionMet = false;
+                                    break;
+                                }
+                            }
+                            break;
+                        default:
+                            throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied when expectedValue was an array: ' + ifOperator;
+                    }
+
+            }
+
+        } else {
+            if (actualValue === null && expectedValue !== null) {
+                //expectedValue is null, condition is met if we wanted it to be met when null
+                conditionMet = conditionPassesIfNull;
+            } else if (actualValue !== null && expectedValue === null) {
+                //the expectedValue is not null, but we were looking for a null, determine what to do
+                switch (ifOperator) {
+                    case "equals":
+                        conditionMet = false; //we wanted a null and it was not
+                        break;
+                    case "notequals":
+                        conditionMet = true; //we did not want a null and it was not
+                        break;
+                    default:
+                        throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: When checking for a null expectedValue, DisplayChangeIf must be Equals or NotEquals, supplied ifOperator was ' + ifOperator;
+                }
+            } else if (actualValue === null && expectedValue === null) {
+                //both are null, condition is met if we wanted it to be met when null
+                conditionMet = conditionPassesIfNull;
+            } else { //both are not null
+                if (actualValueIsArray) {
+                    //verify that if the actual value is an array, we are only dealing with contains/notcontains
+                    if (ifOperator !== "contains" && ifOperator !== "notcontains") {
+                        throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: When actualValue is an array (E.g. value of a multi-select), DisplayChangeIf must be Contains or NotContains, supplied ifOperator was ' + ifOperator;
+                    }
+                }
+
+                expectedValue = expectedValue.toString().toLowerCase();
+
+                //verify value types (if not known, assume string therefore no checks to do)
+                switch (valueTypeToCompare) {
+                    case "number":
+                        if (isNaN(expectedValue)) {
+                            throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'number', but expectedValue was not a number: " + expectedValue;
+                        }
+
+                        if (!actualValueIsArray) {
+                            if (isNaN(actualValue)) {
+                                throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'number', but actualValue was not a number: " + actualValue;
+                            }
+                            actualValue = parseFloat(actualValue.toString());
+                        } else {
+                            for (i = 0; i < actualValue.length; i += 1) {
+                                if (isNaN(actualValue[i])) {
+                                    throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'number', but an item in the actualValue array was not a number: " + actualValue[i];
+                                }
+                                actualValue[i] = parseFloat(actualValue[i].toString());
+                            }
+                        }
+                        expectedValue = parseFloat(expectedValue.toString());
+
+                        switch (ifOperator) {
+                            case "equals":
+                                conditionMet = actualValue === expectedValue;
+                                break;
+                            case "notequals":
+                                conditionMet = actualValue !== expectedValue;
+                                break;
+                            case "greaterthan":
+                                conditionMet = actualValue > expectedValue;
+                                break;
+                            case "greaterthanorequals":
+                                conditionMet = actualValue >= expectedValue;
+                                break;
+                            case "lessthan":
+                                conditionMet = actualValue < expectedValue;
+                                break;
+                            case "lessthanorequals":
+                                conditionMet = actualValue <= expectedValue;
+                                break;
+                            case "contains":
+                                if (!actualValueIsArray) {
+                                    conditionMet = actualValue === expectedValue; //same as equals
+                                } else {
+                                    for (iMet = 0; iMet < actualValue.length; iMet += 1) {
+                                        currContainsItem = actualValue[iMet];
+                                        if (currContainsItem === expectedValue) {
+                                            conditionMet = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            case "notcontains":
+                                if (!actualValueIsArray) {
+                                    conditionMet = actualValue !== expectedValue; //same as not equals
+                                } else {
+                                    conditionMet = true;
+                                    for (iNotMet = 0; iNotMet < actualValue.length; iNotMet += 1) {
+                                        currNotContainsItem = actualValue[iNotMet];
+                                        if (currNotContainsItem === expectedValue) {
+                                            conditionMet = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            default:
+                                throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
+                        }
+
+                        break;
+                    case "datetime":
+                        if (!DateJs.Helper.isValid(expectedValue, valueFormat)) {
+                            throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'datetime', but expectedValue does not fit the specified date format: " + expectedValue + " was not a valid DateTime in the specified format: " + valueFormat;
+                        }
+
+                        if (!actualValueIsArray) {
+                            if (!DateJs.Helper.isValid(actualValue, valueFormat)) {
+                                throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'datetime', but actualValue: " + actualValue + " was not a valid DateTime in the specified format: " + valueFormat;
+                            }
+                            actualValue = DateJs.Helper.parseString(actualValue.toString(), valueFormat);
+                        } else {
+                            for (i = 0; i < actualValue.length; i += 1) {
+                                if (!DateJs.Helper.isValid(actualValue[i], valueFormat)) {
+                                    throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: valueTypeToCompare was 'datetime', but an item in the actualValue array '" + actualValue[i] + "' was not a valid DateTime in the specified format: " + valueFormat;
+                                }
+                                actualValue[i] = DateJs.Helper.parseString(actualValue[i].toString(), valueFormat);
+                            }
+                        }
+                        expectedValue = DateJs.Helper.parseString(expectedValue.toString(), valueFormat);
+
+                        switch (ifOperator) {
+                            case "equals":
+                                conditionMet = new DateJs.Helper(actualValue).equals(expectedValue);
+                                break;
+                            case "notequals":
+                                conditionMet = !new DateJs.Helper(actualValue).equals(expectedValue);
+                                break;
+                            case "greaterthan":
+                                conditionMet = new DateJs.Helper(actualValue).isAfter(expectedValue);
+                                break;
+                            case "greaterthanorequals":
+                                conditionMet = new DateJs.Helper(actualValue).equals(expectedValue) || new DateJs.Helper(actualValue).isAfter(expectedValue);
+                                break;
+                            case "lessthan":
+                                conditionMet = new DateJs.Helper(actualValue).isBefore(expectedValue);
+                                break;
+                            case "lessthanorequals":
+                                conditionMet = new DateJs.Helper(actualValue).equals(expectedValue) || new DateJs.Helper(actualValue).isBefore(expectedValue);
+                                break;
+                            case "contains":
+                                if (!actualValueIsArray) {
+                                    conditionMet = new DateJs.Helper(actualValue).equals(expectedValue); //same as equals
+                                } else {
+                                    for (iMet = 0; iMet < actualValue.length; iMet += 1) {
+                                        currContainsItem = actualValue[iMet];
+                                        if (new DateJs.Helper(currContainsItem).equals(expectedValue)) {
+                                            conditionMet = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            case "notcontains":
+                                if (!actualValueIsArray) {
+                                    conditionMet = !new DateJs.Helper(actualValue).equals(expectedValue); //same as not equals
+                                } else {
+                                    conditionMet = true;
+                                    for (iNotMet = 0; iNotMet < actualValue.length; iNotMet += 1) {
+                                        currNotContainsItem = actualValue[iNotMet];
+                                        if (new DateJs.Helper(currNotContainsItem).equals(expectedValue)) {
+                                            conditionMet = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            default:
+                                throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
+                        }
+
+                        break;
+                    default:
+                        //must be a string
+                        if (!actualValueIsArray) {
+                            actualValue = actualValue.toString().toLowerCase();
+                        }
+                        expectedValue = expectedValue.toString().toLowerCase();
+                        switch (ifOperator) {
+                            case "equals":
+                                conditionMet = actualValue === expectedValue;
+                                break;
+                            case "notequals":
+                                conditionMet = actualValue !== expectedValue;
+                                break;
+                            case "greaterthan":
+                                conditionMet = actualValue > expectedValue;
+                                break;
+                            case "greaterthanorequals":
+                                conditionMet = actualValue >= expectedValue;
+                                break;
+                            case "lessthan":
+                                conditionMet = actualValue < expectedValue;
+                                break;
+                            case "lessthanorequals":
+                                conditionMet = actualValue <= expectedValue;
+                                break;
+                            case "contains":
+                                for (iMet = 0; iMet < actualValue.length; iMet += 1) {
+                                    currContainsItem = actualValue[iMet].toString().toLowerCase();
+                                    if (currContainsItem === expectedValue) {
+                                        conditionMet = true;
+                                        break;
+                                    }
+                                }
+                                break;
+                            case "notcontains":
+                                conditionMet = true;
+                                for (iNotMet = 0; iNotMet < actualValue.length; iNotMet += 1) {
+                                    currNotContainsItem = actualValue[iNotMet].toString().toLowerCase();
+                                    if (currNotContainsItem === expectedValue) {
+                                        conditionMet = false;
+                                        break;
+                                    }
+                                }
+                                break;
+                            default:
+                                throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied ' + ifOperator;
+                        }
+                        break;
+                }
             }
         }
-    }
-    return conditionMet;
-};
-
-MvcMegaForms.CascadeStringStatus = {
-    StartParentId: 0,
-    StartChildId: 1,
-    EndChildId: 2,
-    EndChildValueWithNext: 3,
-    EndChildValue: 4
-};
-
-MvcMegaForms.SetupCascadingDropDown = function (parentList) {
-    "use strict";
-
-    var childId,
-        childList,
-        childOfChild,
-        indexOfLastDot,
-        childNameWithoutPrefix,
-        valArray;
-
-    MvcMegaForms.CascadeDropDown(parentList);
-
-    childId = $(parentList).attr('childid');
-    childList = $('#' + childId);
-
-    //if this child has a child one, it's change event will not fire, so we must call it manually
-    childOfChild = childList.attr('childid');
-    if (!MvcMegaForms.IsNullOrUndefined(childOfChild)) {
-        childList.change();
-    } else {
-        //find if there are any form elements that depend on the child one for changevisually
-        indexOfLastDot = childList.attr("name").lastIndexOf(".");
-        childNameWithoutPrefix = childList.attr('name').substr((indexOfLastDot < 0 ? -1 : indexOfLastDot) + 1);
-        $(":input[data-val-changevisually-otherpropertyname]").each(function (): any {
-            valArray = $(this).attr("data-val-changevisually-otherpropertyname").split("~");
-            if ($.inArray(childNameWithoutPrefix, valArray)) {
-                childList.change();
-            }
-        });
-    }
-};
-
-MvcMegaForms.CascadeDropDown = function (parentList) {
-    "use strict";
-
-    var parentVal,
-        childId,
-        childList,
-        combos,
-        isChildVisible,
-        hideEffect,
-        initialVal,
-        state,
-        currParentId,
-        currChildId,
-        currChildValue,
-        i,
-        val,
-        showEffect;
-
-
-    parentVal = MvcMegaForms.GetFormValue($(parentList));
-    childId = $(parentList).attr('childid');
-    childList = $('#' + childId);
-    combos = childList.attr('combos');
-
-    isChildVisible = childList.is(":visible");
-    if (isChildVisible) {
-        hideEffect = MvcMegaForms.IsNullOrUndefined(MegaFormsCascadeJQueryHideEffect) ? 'fast' : MegaFormsCascadeJQueryHideEffect;
-        childList.hide(hideEffect);
+        return conditionMet;
     }
 
-    initialVal = MvcMegaForms.GetFormValue(childList);
+    private static CascadeStringStatus = {
+        StartParentId: 0,
+        StartChildId: 1,
+        EndChildId: 2,
+        EndChildValueWithNext: 3,
+        EndChildValue: 4
+    }
 
-    childList.val(null);
-    childList.empty();
+    private static SetupCascadingDropDown(parentList): void {
+        "use strict";
 
-    state = MvcMegaForms.CascadeStringStatus.StartParentId;
-    currParentId = "";
-    currChildId = "";
-    currChildValue = "";
-    for (i = 0; i < combos.length; i += 1) {
-        val = combos.charAt(i);
+        var childId,
+            childList,
+            childOfChild,
+            indexOfLastDot,
+            childNameWithoutPrefix,
+            valArray;
 
-        //set state
-        if (val === "{") {
-            state = MvcMegaForms.CascadeStringStatus.StartChildId;
-        } else if (val === "~") {
-            state = MvcMegaForms.CascadeStringStatus.EndChildId;
-        } else if (val === ";") {
-            state = MvcMegaForms.CascadeStringStatus.EndChildValueWithNext;
-        } else if (val === "}") {
-            state = MvcMegaForms.CascadeStringStatus.EndChildValue;
+        CascadeDropDown(parentList);
+
+        childId = $(parentList).attr('childid');
+        childList = $('#' + childId);
+
+        //if this child has a child one, it's change event will not fire, so we must call it manually
+        childOfChild = childList.attr('childid');
+        if (!IsNullOrUndefined(childOfChild)) {
+            childList.change();
+        } else {
+            //find if there are any form elements that depend on the child one for changevisually
+            indexOfLastDot = childList.attr("name").lastIndexOf(".");
+            childNameWithoutPrefix = childList.attr('name').substr((indexOfLastDot < 0 ? -1 : indexOfLastDot) + 1);
+            $(":input[data-val-changevisually-otherpropertyname]").each(function (): any {
+                valArray = $(this).attr("data-val-changevisually-otherpropertyname").split("~");
+                if ($.inArray(childNameWithoutPrefix, valArray)) {
+                    childList.change();
+                }
+            });
+        }
+    }
+
+    private static CascadeDropDown(parentList): void {
+        "use strict";
+
+        var parentVal,
+            childId,
+            childList,
+            combos,
+            isChildVisible,
+            hideEffect,
+            initialVal,
+            state,
+            currParentId,
+            currChildId,
+            currChildValue,
+            i,
+            val,
+            showEffect;
+
+
+        parentVal = GetFormValue($(parentList));
+        childId = $(parentList).attr('childid');
+        childList = $('#' + childId);
+        combos = childList.attr('combos');
+
+        isChildVisible = childList.is(":visible");
+        if (isChildVisible) {
+            hideEffect = IsNullOrUndefined(MvcMegaForms.CascadeJQueryHideEffect) ? 'fast' : MvcMegaForms.CascadeJQueryHideEffect;
+            childList.hide(hideEffect);
         }
 
-        //set values
-        if (state === MvcMegaForms.CascadeStringStatus.StartParentId) {
-            currParentId += val;
-        } else if (state === MvcMegaForms.CascadeStringStatus.StartChildId) {
-            if (currParentId === parentVal) {
-                if (val !== "{") {
-                    currChildId += val;
-                }
-            } else {
-                currParentId = "";
+        initialVal = GetFormValue(childList);
+
+        childList.val(null);
+        childList.empty();
+
+        state = CascadeStringStatus.StartParentId;
+        currParentId = "";
+        currChildId = "";
+        currChildValue = "";
+        for (i = 0; i < combos.length; i += 1) {
+            val = combos.charAt(i);
+
+            //set state
+            if (val === "{") {
+                state = CascadeStringStatus.StartChildId;
+            } else if (val === "~") {
+                state = CascadeStringStatus.EndChildId;
+            } else if (val === ";") {
+                state = CascadeStringStatus.EndChildValueWithNext;
+            } else if (val === "}") {
+                state = CascadeStringStatus.EndChildValue;
             }
-        } else if (state === MvcMegaForms.CascadeStringStatus.EndChildId) {
-            if (currParentId !== "" && currChildId !== "") {
-                if (val !== "~") {
-                    currChildValue += val;
+
+            //set values
+            if (state === CascadeStringStatus.StartParentId) {
+                currParentId += val;
+            } else if (state === CascadeStringStatus.StartChildId) {
+                if (currParentId === parentVal) {
+                    if (val !== "{") {
+                        currChildId += val;
+                    }
+                } else {
+                    currParentId = "";
                 }
-            } else {
+            } else if (state === CascadeStringStatus.EndChildId) {
+                if (currParentId !== "" && currChildId !== "") {
+                    if (val !== "~") {
+                        currChildValue += val;
+                    }
+                } else {
+                    currParentId = "";
+                    currChildId = "";
+                }
+            } else if (state === CascadeStringStatus.EndChildValueWithNext) {
+                RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue);
+                state = CascadeStringStatus.StartChildId;
+                currChildId = "";
+                currChildValue = "";
+            } else if (state === CascadeStringStatus.EndChildValue) {
+                RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue);
+                state = CascadeStringStatus.StartParentId;
                 currParentId = "";
                 currChildId = "";
+                currChildValue = "";
             }
-        } else if (state === MvcMegaForms.CascadeStringStatus.EndChildValueWithNext) {
-            MvcMegaForms.RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue);
-            state = MvcMegaForms.CascadeStringStatus.StartChildId;
-            currChildId = "";
-            currChildValue = "";
-        } else if (state === MvcMegaForms.CascadeStringStatus.EndChildValue) {
-            MvcMegaForms.RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue);
-            state = MvcMegaForms.CascadeStringStatus.StartParentId;
-            currParentId = "";
-            currChildId = "";
-            currChildValue = "";
+        }
+
+        if (isChildVisible) {
+            showEffect = IsNullOrUndefined(MvcMegaForms.CascadeJQueryShowEffect) ? 'fast' : MvcMegaForms.CascadeJQueryShowEffect;
+            childList.show(showEffect);
         }
     }
 
-    if (isChildVisible) {
-        showEffect = MvcMegaForms.IsNullOrUndefined(MegaFormsCascadeJQueryShowEffect) ? 'fast' : MegaFormsCascadeJQueryShowEffect;
-        childList.show(showEffect);
-    }
-};
-
-MvcMegaForms.RenderCascadedSelectOption = function (currChildId, initialVal, childList, currChildValue) {
-    "use strict";
-    var isSelected = false,
-        iMet,
-        currContainsItem;
-    if (currChildId !== "") {
-        if (MvcMegaForms.IsArray(initialVal)) {
-            for (iMet = 0; iMet < initialVal.length; iMet += 1) {
-                currContainsItem = initialVal[iMet];
-                if (currContainsItem.toString() === currChildId.toString()) {
-                    isSelected = true;
-                    break;
+    private static RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue): void {
+        "use strict";
+        var isSelected = false,
+            iMet,
+            currContainsItem;
+        if (currChildId !== "") {
+            if (IsArray(initialVal)) {
+                for (iMet = 0; iMet < initialVal.length; iMet += 1) {
+                    currContainsItem = initialVal[iMet];
+                    if (currContainsItem.toString() === currChildId.toString()) {
+                        isSelected = true;
+                        break;
+                    }
                 }
+            } else {
+                isSelected = currChildId === initialVal;
+            }
+            if (isSelected) {
+                childList.append($('<option selected="selected"></option>').val(currChildId).html(currChildValue));
+            } else {
+                childList.append($('<option></option>').val(currChildId).html(currChildValue));
+            }
+        }
+    }
+
+    public static GetFormValue(formControl): any {
+        "use strict";
+        //ensure it's not null or undefined before we begin
+        if (IsNullOrUndefined(formControl)) {
+            throw "Undefined form control supplied";
+        }
+
+        var $formControl,
+            val;
+
+        //ensure we have a jquery object to deal with
+        $formControl = formControl instanceof jQuery ? formControl : $(formControl);
+
+        //get the value different ways based on the type of form control
+        if ($formControl.is(':checkbox')) {
+            val = $formControl.is(':checked') ? true : false;
+        } else if ($formControl.is(':radio')) {
+            val = $("input:radio[name='" + $formControl.attr('name') + "']:checked").val();
+        } else {
+            val = $formControl.val();
+        }
+        return val;
+    }
+
+    public static IsArray(item): bool {
+        "use strict";
+        return (Object.prototype.toString.call(item) === '[object Array]');
+    }
+
+    public static FormControlValueHasChanged(formControl): bool {
+        "use strict";
+
+        var $formControl,
+            allCndMet,
+            currOpt,
+            returnVal,
+            i;
+
+        $formControl = $(formControl);
+
+        if ($formControl.is(':checkbox')) {
+            returnVal = (formControl.checked !== formControl.defaultChecked);
+        } else if ($formControl.is(':radio')) {
+            returnVal = (formControl.checked !== formControl.defaultChecked);
+        } else if ($formControl.is('select') && !IsNullOrUndefined($formControl.attr('multiple'))) {
+            if (IsNullOrUndefined(formControl.options) || formControl.options.length <= 0) {
+                returnVal = false;
+            } else {
+                allCndMet = false;
+                for (i = 0; i < formControl.options.length; i += 1) {
+                    currOpt = formControl.options[i];
+                    allCndMet = allCndMet || (currOpt.selected !== currOpt.defaultSelected);
+                }
+                returnVal = allCndMet;
+            }
+        } else if ($formControl.is('select')) {
+            if (IsNullOrUndefined(formControl.options) || formControl.options.length <= 0) {
+                returnVal = false;
+            } else {
+                returnVal = !(formControl.options[formControl.selectedIndex].defaultSelected);
             }
         } else {
-            isSelected = currChildId === initialVal;
+            returnVal = (formControl.value !== formControl.defaultValue);
         }
-        if (isSelected) {
-            childList.append($('<option selected="selected"></option>').val(currChildId).html(currChildValue));
-        } else {
-            childList.append($('<option></option>').val(currChildId).html(currChildValue));
-        }
-    }
-};
-
-MvcMegaForms.GetFormValue = function (formControl) {
-    "use strict";
-    //ensure it's not null or undefined before we begin
-    if (MvcMegaForms.IsNullOrUndefined(formControl)) {
-        throw "Undefined form control supplied";
+        return returnVal;
     }
 
-    var $formControl,
-        val;
-
-    //ensure we have a jquery object to deal with
-    $formControl = formControl instanceof jQuery ? formControl : $(formControl);
-
-    //get the value different ways based on the type of form control
-    if ($formControl.is(':checkbox')) {
-        val = $formControl.is(':checked') ? true : false;
-    } else if ($formControl.is(':radio')) {
-        val = $("input:radio[name='" + $formControl.attr('name') + "']:checked").val();
-    } else {
-        val = $formControl.val();
-    }
-    return val;
-};
-
-MvcMegaForms.IsArray = function (item) {
-    "use strict";
-    return (Object.prototype.toString.call(item) === '[object Array]');
-};
-
-MvcMegaForms.FormControlValueHasChanged = function (formControl) {
-    "use strict";
-
-    var $formControl,
-        allCndMet,
-        currOpt,
-        returnVal,
-        i;
-
-    $formControl = $(formControl);
-
-    if ($formControl.is(':checkbox')) {
-        returnVal = (formControl.checked !== formControl.defaultChecked);
-    } else if ($formControl.is(':radio')) {
-        returnVal = (formControl.checked !== formControl.defaultChecked);
-    } else if ($formControl.is('select') && !MvcMegaForms.IsNullOrUndefined($formControl.attr('multiple'))) {
-        if (MvcMegaForms.IsNullOrUndefined(formControl.options) || formControl.options.length <= 0) {
-            returnVal = false;
-        } else {
-            allCndMet = false;
-            for (i = 0; i < formControl.options.length; i += 1) {
-                currOpt = formControl.options[i];
-                allCndMet = allCndMet || (currOpt.selected !== currOpt.defaultSelected);
-            }
-            returnVal = allCndMet;
-        }
-    } else if ($formControl.is('select')) {
-        if (MvcMegaForms.IsNullOrUndefined(formControl.options) || formControl.options.length <= 0) {
-            returnVal = false;
-        } else {
-            returnVal = !(formControl.options[formControl.selectedIndex].defaultSelected);
-        }
-    } else {
-        returnVal = (formControl.value !== formControl.defaultValue);
-    }
-    return returnVal;
-};
-
-MvcMegaForms.FormFieldIdChanged = function ($form) {
-    "use strict";
-    var changedId = null;
-    $form.find('input').each(function () {
-        //specifically leave 'this' as non-jquery
-        if (MvcMegaForms.FormControlValueHasChanged(this)) {
-            changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
-            return;
-        }
-    });
-    $form.find('textarea').each(function () {
-        //specifically leave 'this' as non-jquery
-        if (MvcMegaForms.FormControlValueHasChanged(this)) {
-            changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
-            return;
-        }
-    });
-    if (MvcMegaForms.IsNullOrUndefined(changedId)) {
-        $form.find('select').each(function () {
+    public static FormFieldIdChanged($form): string {
+        "use strict";
+        var changedId = null;
+        $form.find('input').each(function () {
             //specifically leave 'this' as non-jquery
-            if (MvcMegaForms.FormControlValueHasChanged(this)) {
-                changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
+            if (FormControlValueHasChanged(this)) {
+                changedId = IsNullOrUndefined(this.id) ? IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
                 return;
             }
         });
-    }
-    return changedId;
-};
-
-MvcMegaForms.AlertFormChanged = function ($form) {
-    "use strict";
-
-    var changedId,
-        confMsg;
-
-    changedId = MvcMegaForms.FormFieldIdChanged($form);
-    if (!MvcMegaForms.IsNullOrUndefined(changedId)) {
-        confMsg = "At least one unsaved value has changed ('" + changedId + "'), are you sure you want to leave the page?";
-        if (!MvcMegaForms.IsNullOrUndefined(MegaFormsDetectChangesWarningMessage) && MegaFormsDetectChangesWarningMessage !== '') {
-            confMsg = MegaFormsDetectChangesWarningMessage;
+        $form.find('textarea').each(function () {
+            //specifically leave 'this' as non-jquery
+            if (FormControlValueHasChanged(this)) {
+                changedId = IsNullOrUndefined(this.id) ? IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
+                return;
+            }
+        });
+        if (IsNullOrUndefined(changedId)) {
+            $form.find('select').each(function () {
+                //specifically leave 'this' as non-jquery
+                if (FormControlValueHasChanged(this)) {
+                    changedId = IsNullOrUndefined(this.id) ? IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
+                    return;
+                }
+            });
         }
-        return confMsg;
+        return changedId;
     }
-    return '';
-};
 
-MvcMegaForms.IsNullOrUndefined = function (item) {
-    "use strict";
-    return (item == null || item === undefined || typeof item == 'undefined');
-};
+    public static AlertFormChanged($form): string {
+        "use strict";
+
+        var changedId,
+            confMsg;
+
+        changedId = FormFieldIdChanged($form);
+        if (!IsNullOrUndefined(changedId)) {
+            confMsg = "At least one unsaved value has changed ('" + changedId + "'), are you sure you want to leave the page?";
+            if (!IsNullOrUndefined(MvcMegaForms.DetectChangesWarningMessage) && MvcMegaForms.DetectChangesWarningMessage !== '') {
+                confMsg = MvcMegaForms.DetectChangesWarningMessage;
+            }
+            return confMsg;
+        }
+        return '';
+    }
+
+    public static IsNullOrUndefined(item): bool {
+        "use strict";
+        return (item == null || item === undefined || typeof item == 'undefined');
+    }
+
+}
 
 module DateJs {
     export class Helper {
@@ -1198,7 +1198,7 @@ module DateJs {
 
         static isValid(val, format: string, preferAmericanFormatForDefault?: bool = true): bool {
             return (parseString(val, format, preferAmericanFormatForDefault) != null);
-        };
+        }
 
         public isBefore(date2) {
             if (date2 == null) {

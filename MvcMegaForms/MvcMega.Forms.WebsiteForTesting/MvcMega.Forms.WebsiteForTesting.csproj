@@ -203,7 +203,6 @@
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Scripts\DateJs.js" />
     <Content Include="Scripts\jasmine-samples\Player.js" />
     <Content Include="Scripts\jasmine-samples\PlayerSpec.js" />
     <Content Include="Scripts\jasmine-samples\Song.js" />
@@ -237,16 +236,7 @@
     <Content Include="Scripts\MvcMegaForms.min.js">
       <DependentUpon>MvcMegaForms.ts</DependentUpon>
     </Content>
-    <Content Include="Scripts\MvcMegaForms2.js" />
-    <TypeScriptCompile Include="Scripts\MvcMegaFormsNew.ts" />
-    <Content Include="Scripts\MvcMegaFormsNew.js">
-      <DependentUpon>MvcMegaFormsNew.ts</DependentUpon>
-    </Content>
-    <Content Include="Scripts\MvcMegaFormsNew.min.js">
-      <DependentUpon>MvcMegaFormsNew.ts</DependentUpon>
-    </Content>
     <Content Include="Scripts\Site.js" />
-    <Content Include="Scripts\zzz_old.txt" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
