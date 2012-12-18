@@ -21,8 +21,7 @@ namespace MvcMega.Forms.WebsiteForTesting
                         "~/Scripts/modernizr-*"));
 
             bundles.Add(new ScriptBundle("~/bundles/site").Include(
-                        "~/Scripts/MvcMegaForms.js",
-                        "~/Scripts/Site.js"));
+                        "~/Scripts/MvcMegaForms.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/site.css"));
 

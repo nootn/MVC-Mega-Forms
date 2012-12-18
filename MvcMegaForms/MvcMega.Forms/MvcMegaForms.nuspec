@@ -2,9 +2,11 @@
 <package>
   <metadata>
     <id>MvcMegaForms</id>
-    <version>0.0.0.16</version>
+    <version>0.1.0.0</version>
     <releaseNotes>
-      * Fixes issue with ChildListBox not having values pre-selected when set initially
+      * BREAKING CHANGE (if you change defaults): the "Site.js" file has been removed which is where you used to change default values (such as MegaFormsChangeVisuallyJQueryHideEffect).  These defaults are now within the MvcMegaForms namepsace, such as "MvcMegaForms.ChangeVisuallyJQueryHideEffect", so you can just set them yourself in a script that loads after this one.
+      * Adds typescript file so that you can reference public functions in your applications using typescript!
+      * Adds a minified JS file
     </releaseNotes>
     <authors>http://about.me/nootn</authors>
     <owners>http://about.me/nootn</owners>
@@ -31,5 +33,6 @@
   <files>
     <file src="bin\release\MvcMega.Forms.dll" target="lib" />
     <file src="Content\Scripts\*.js" target="Content\Scripts" />
+    <file src="Content\Scripts\*.ts" target="Content\Scripts" />
   </files>
 </package>

@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(function () {
     "use strict";
     MvcMegaForms.AttachEvents();
     MvcMegaForms.ConfigureDetectChanges();
@@ -142,29 +142,23 @@ var MvcMegaForms = (function () {
             if(conditionMet) {
                 if(to === 'hidden') {
                     container.hide(hideEffect);
-                    dependentProperty.removeAttr('disabled');
-                    dependentProperty.removeAttr('readonly');
-                    dependentProperty.removeClass(disabledOrReadonlyCssClass);
+                    MvcMegaForms.SetControlEnabledAndWritable(dependentProperty);
                 } else {
                     if(to === 'disabled') {
                         container.show(showEffect);
                         dependentProperty.removeAttr('readonly');
-                        dependentProperty.attr('disabled', 'disabled');
-                        dependentProperty.addClass(disabledOrReadonlyCssClass);
+                        MvcMegaForms.SetControlDisabled(dependentProperty);
                     } else {
                         if(to === 'readonly') {
                             container.show(showEffect);
                             dependentProperty.removeAttr('disabled');
-                            dependentProperty.attr('readonly', 'readonly');
-                            dependentProperty.addClass(disabledOrReadonlyCssClass);
+                            MvcMegaForms.SetControlReadonly(dependentProperty);
                         }
                     }
                 }
             } else {
                 container.show(showEffect);
-                dependentProperty.removeAttr('disabled');
-                dependentProperty.removeAttr('readonly');
-                dependentProperty.removeClass(disabledOrReadonlyCssClass);
+                MvcMegaForms.SetControlEnabledAndWritable(dependentProperty);
             }
             return conditionMet;
         }
@@ -740,13 +734,16 @@ var MvcMegaForms = (function () {
             }
         }
     }
+    MvcMegaForms.GetObjectAsJQuery = function GetObjectAsJQuery(obj) {
+        return obj instanceof jQuery ? obj : $(obj);
+    }
     MvcMegaForms.GetFormValue = function GetFormValue(formControl) {
         "use strict";
         if(MvcMegaForms.IsNullOrUndefined(formControl)) {
             throw "Undefined form control supplied";
         }
         var $formControl, val;
-        $formControl = formControl instanceof jQuery ? formControl : $(formControl);
+        $formControl = MvcMegaForms.GetObjectAsJQuery(formControl);
         if($formControl.is(':checkbox')) {
             val = $formControl.is(':checked') ? true : false;
         } else {
@@ -757,6 +754,40 @@ var MvcMegaForms = (function () {
             }
         }
         return val;
+    }
+    MvcMegaForms.SetControlEnabledAndWritable = function SetControlEnabledAndWritable(ctrl, customDisabledOrReadonlyCssClass) {
+        ctrl = MvcMegaForms.GetObjectAsJQuery(ctrl);
+        ctrl.removeAttr('disabled');
+        ctrl.removeAttr('readonly');
+        if(!MvcMegaForms.IsNullOrUndefined(customDisabledOrReadonlyCssClass) && customDisabledOrReadonlyCssClass !== '') {
+            ctrl.removeClass(customDisabledOrReadonlyCssClass);
+        } else {
+            ctrl.removeClass(MvcMegaForms.DisabledOrReadonlyCssClass);
+        }
+    }
+    MvcMegaForms.SetControlDisabled = function SetControlDisabled(ctrl, customDisabledOrReadonlyCssClass) {
+        ctrl = MvcMegaForms.GetObjectAsJQuery(ctrl);
+        ctrl.attr('disabled', 'disabled');
+        if(!MvcMegaForms.IsNullOrUndefined(customDisabledOrReadonlyCssClass) && customDisabledOrReadonlyCssClass !== '') {
+            ctrl.addClass(customDisabledOrReadonlyCssClass);
+        } else {
+            ctrl.addClass(MvcMegaForms.DisabledOrReadonlyCssClass);
+        }
+    }
+    MvcMegaForms.SetControlReadonly = function SetControlReadonly(ctrl, customDisabledOrReadonlyCssClass) {
+        ctrl = MvcMegaForms.GetObjectAsJQuery(ctrl);
+        ctrl.attr('readonly', 'readonly');
+        if(!MvcMegaForms.IsNullOrUndefined(customDisabledOrReadonlyCssClass) && customDisabledOrReadonlyCssClass !== '') {
+            ctrl.addClass(customDisabledOrReadonlyCssClass);
+        } else {
+            ctrl.addClass(MvcMegaForms.DisabledOrReadonlyCssClass);
+        }
+    }
+    MvcMegaForms.SetControlDisabledAndReadonly = function SetControlDisabledAndReadonly(ctrl, disabledOrReadonlyCssClass) {
+        ctrl = MvcMegaForms.GetObjectAsJQuery(ctrl);
+        ctrl.attr('disabled', 'disabled');
+        ctrl.attr('readonly', 'readonly');
+        ctrl.addClass(disabledOrReadonlyCssClass);
     }
     MvcMegaForms.IsArray = function IsArray(item) {
         "use strict";
