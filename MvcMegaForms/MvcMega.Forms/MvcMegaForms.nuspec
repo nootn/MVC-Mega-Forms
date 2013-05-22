@@ -17,7 +17,7 @@
     <copyright>Copyright http://about.me/nootn 2012</copyright>
     <tags>asp.net mvc mvc4 form forms mega mvcmega mvcmegaforms nootn</tags>
     <dependencies>
-      <dependency id="AspNetMvc" />
+      <dependency id="Microsoft.AspNet.Mvc" />
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="net40" />
