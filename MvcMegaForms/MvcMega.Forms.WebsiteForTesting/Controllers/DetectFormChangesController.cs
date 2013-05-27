@@ -11,6 +11,7 @@
 using System;
 using System.Linq;
 using System.Web.Mvc;
+using MvcMega.Forms.ActionFilters;
 using MvcMega.Forms.WebsiteForTesting.Models;
 
 namespace MvcMega.Forms.WebsiteForTesting.Controllers
@@ -36,12 +37,12 @@ namespace MvcMega.Forms.WebsiteForTesting.Controllers
             return View(model);
         }
 
+        [PreventDoubleAction(5, PreventDoubleAction.PreventionLevel.ActionPlusDataDeep)]
         [HttpPost]
         public ActionResult Index(ComplicatedForm model)
         {
             if (ModelState.IsValid)
             {
-                TempData.Add("success", "Successfully submitted form!");
                 return RedirectToAction("Index");
             }
             model.PopulateAllTestDropDownItems();
