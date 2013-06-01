@@ -2,11 +2,11 @@
 <package>
   <metadata>
     <id>MvcMegaForms</id>
-    <version>0.1.0.0</version>
+    <version>0.1.0.1</version>
     <releaseNotes>
-      * BREAKING CHANGE (if you change defaults): the "Site.js" file has been removed which is where you used to change default values (such as MegaFormsChangeVisuallyJQueryHideEffect).  These defaults are now within the MvcMegaForms namepsace, such as "MvcMegaForms.ChangeVisuallyJQueryHideEffect", so you can just set them yourself in a script that loads after this one.
-      * Adds typescript file so that you can reference public functions in your applications using typescript!
-      * Adds a minified JS file
+      * Adds PreventDoubleAction attribute to allow prevention of duplicate form submits on the server side
+      * Adds extension method "IsValidEditableFieldsOnly" to ModelState to be called instead of "ModelState.IsValid" (not thoroughly tested yet, initial version so be wary trusting it)
+      * Changes dependency on ASP.NET MVC to newer version (should have been done long ago!)
     </releaseNotes>
     <authors>http://about.me/nootn</authors>
     <owners>http://about.me/nootn</owners>
