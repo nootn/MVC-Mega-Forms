@@ -2,7 +2,7 @@
 @model MvcMega.Forms.WebsiteForTesting.Models.ComplicatedForm
 @using (Html.BeginForm("Index", "DetectFormChanges", FormMethod.Post, new { @class = "detect-changes" }))
 {
-    @Html.ValidationSummary(true, "Please correct the errors and try again.")
+    @Html.ValidationSummary(false, "Please correct the errors and try again.")
     <fieldset>
         <legend>Please fill in the form</legend>
         @using (Html.BeginControlGroup())

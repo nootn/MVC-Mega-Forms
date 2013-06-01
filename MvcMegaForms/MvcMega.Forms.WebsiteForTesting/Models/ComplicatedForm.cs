@@ -74,7 +74,7 @@ namespace MvcMega.Forms.WebsiteForTesting.Models
         //This will show as a checkbox on the screen - checking it will show "TheNextHidingField"
         public bool ShowTheNextHidingField { get; set; }
 
-        //[RequiredIf("ShowTheNextHidingField", Operator.EqualTo, true)]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "You must supply TheNextHidingField if ShowTheNextHidingField is 'Yes'")]
         [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "ShowTheNextHidingField", ChangeVisuallyAttribute.DisplayChangeIf.Equals, false, false)]
         public string TheNextHidingField { get; set; }
 
@@ -103,7 +103,6 @@ namespace MvcMega.Forms.WebsiteForTesting.Models
 
         public bool ShowNextField { get; set; }
 
-        //[RequiredIf("ShowNextField", Operator.EqualTo, true)]
         [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "ShowNextField", ChangeVisuallyAttribute.DisplayChangeIf.Equals, false, false)]
         public string NextField { get; set; }
 
@@ -111,7 +110,7 @@ namespace MvcMega.Forms.WebsiteForTesting.Models
 
         public int TestSelectedDropDownItemId { get; set; }
 
-        //[RequiredIf("TestSelectedDropDownItemId", Operator.EqualTo, 3)]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "DropDownOther is required if 'Other' is selected in TestSelectedDropDownItemId")]
         [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "TestSelectedDropDownItemId", ChangeVisuallyAttribute.DisplayChangeIf.NotEquals, "3", true)]
         public string DropDownOther { get; set; }
 
@@ -120,7 +119,8 @@ namespace MvcMega.Forms.WebsiteForTesting.Models
 
         public int[] TestSelectedMultiSelectItemIds { get; set; }
 
-        [RequiredIfContains("TestSelectedMultiSelectItemIds", 3)]
+        //[RequiredIfContains("TestSelectedMultiSelectItemIds", 3)]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "MultiSelectOther is required if 'Other' is selected in TestSelectedMultiSelectItemIds")]
         [ChangeVisually(ChangeVisuallyAttribute.ChangeTo.Hidden, "TestSelectedMultiSelectItemIds", ChangeVisuallyAttribute.DisplayChangeIf.NotContains, "3", true)]
         public string MultiSelectOther { get; set; }
 

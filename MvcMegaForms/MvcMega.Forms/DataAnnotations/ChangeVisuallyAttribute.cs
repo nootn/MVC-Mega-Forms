@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -20,7 +21,7 @@ namespace MvcMega.Forms.DataAnnotations
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class ChangeVisuallyAttribute : ValidationAttribute, IClientValidatable
     {
-        private const string Separator = "~";
+        public const string Separator = "~";
 
         public enum ChangeTo
         {
@@ -90,77 +91,89 @@ namespace MvcMega.Forms.DataAnnotations
                 ValidationType = "changevisually",
             };
 
-            var toValues = new List<string>();
-            var whenOtherPropertyNameValues = new List<string>();
-            var ifValues = new List<string>();
-            var valueValues = new List<string>();
-            var conditionPassesIfNullValues = new List<string>();
-            var valueTypeToCompareValues = new List<string>();
-            var valueFormatValues = new List<string>();
-
             var prop = metadata == null || metadata.ContainerType == null
-                           ? null
-                           : metadata.ContainerType.GetProperty(metadata.PropertyName);
-            var allChangeVisuallyAttributesOnThisProperty = prop == null ? null : prop.GetCustomAttributes(typeof(ChangeVisuallyAttribute), true);
-            if (allChangeVisuallyAttributesOnThisProperty != null && allChangeVisuallyAttributesOnThisProperty.Length > 1)
+               ? null
+               : metadata.ContainerType.GetProperty(metadata.PropertyName);
+
+            //string toValueForClient;
+            //string otherPropertyNameForClient;
+            //string ifOperatorForClient;
+            //string valueForClient;
+            //string conditionPassesIfNullForClient;
+            //string valueTypeToCompareForClient;
+            //string valueFormatForClient;
+            //GetValuesForClient(prop, out toValueForClient, out otherPropertyNameForClient, out ifOperatorForClient, out valueForClient, out conditionPassesIfNullForClient, out valueTypeToCompareForClient, out valueFormatForClient);
+
+            List<string> toValues;
+            List<string> whenOtherPropertyNameValues;
+            List<string> ifValues;
+            List<string> valueValues;
+            List<string> conditionPassesIfNullValues;
+            List<string> valueTypeToCompareValues;
+            List<string> valueFormatValues;
+            GetValuesForClient(prop, out toValues, out whenOtherPropertyNameValues, out ifValues, out valueValues, out conditionPassesIfNullValues, out valueTypeToCompareValues, out valueFormatValues);
+
+            var toValueForClient = string.Join(Separator, toValues).ToLower();
+            var otherPropertyNameForClient = string.Join(Separator, whenOtherPropertyNameValues);
+            var ifOperatorForClient = string.Join(Separator, ifValues).ToLower();
+            var valueForClient = string.Join(Separator, valueValues).ToLower();
+            var conditionPassesIfNullForClient = string.Join(Separator, conditionPassesIfNullValues).ToLower();
+            var valueTypeToCompareForClient = string.Join(Separator, valueTypeToCompareValues).ToLower();
+            var valueFormatForClient = string.Join(Separator, valueFormatValues);
+
+            rule.ValidationParameters.Add("to", toValueForClient);
+            rule.ValidationParameters.Add("otherpropertyname", otherPropertyNameForClient);
+            rule.ValidationParameters.Add("ifoperator", ifOperatorForClient);
+            rule.ValidationParameters.Add("value", valueForClient);
+            rule.ValidationParameters.Add("conditionpassesifnull", conditionPassesIfNullForClient);
+            rule.ValidationParameters.Add("valuetypetocompare", valueTypeToCompareForClient);
+            rule.ValidationParameters.Add("valueformat", valueFormatForClient);
+
+            yield return rule;
+        }
+
+        public static void GetValuesForClient(PropertyInfo prop, out List<string> toValues, out List<string> whenOtherPropertyNameValues, out List<string> ifValues,
+                                               out List<string> valueValues, out List<string> conditionPassesIfNullValues,
+                                               out List<string> valueTypeToCompareValues, out List<string> valueFormatValues)
+        {
+            toValues = new List<string>();
+            whenOtherPropertyNameValues = new List<string>();
+            ifValues = new List<string>();
+            valueValues = new List<string>();
+            conditionPassesIfNullValues = new List<string>();
+            valueTypeToCompareValues = new List<string>();
+            valueFormatValues = new List<string>();
+
+            var allChangeVisuallyAttributesOnThisProperty = prop == null
+                                                                ? null
+                                                                : prop.GetCustomAttributes(typeof (ChangeVisuallyAttribute),
+                                                                                           true);
+            if (allChangeVisuallyAttributesOnThisProperty != null && allChangeVisuallyAttributesOnThisProperty.Any())
             {
                 foreach (var currAttr in allChangeVisuallyAttributesOnThisProperty.Reverse())
                 {
-                    var attr = (ChangeVisuallyAttribute)currAttr;
-                    toValues.Add(attr.To.ToString());
+                    var attr = (ChangeVisuallyAttribute) currAttr;
+                    toValues.Add(attr.To.ToString().ToLower());
                     whenOtherPropertyNameValues.Add(attr.WhenOtherPropertyName);
-                    ifValues.Add(attr.If.ToString());
+                    ifValues.Add(attr.If.ToString().ToLower());
                     var val = string.Empty;
                     if (attr.Value != null)
                     {
                         if (attr.Value.GetType().IsArray)
                         {
-                            val = Json.Encode(attr.Value);
+                            val = Json.Encode(attr.Value).ToLower();
                         }
                         else
                         {
-                            val = attr.Value.ToString();
+                            val = attr.Value.ToString().ToLower();
                         }
                     }
                     valueValues.Add(val);
-                    conditionPassesIfNullValues.Add(attr.ConditionPassesIfNull.ToString());
-                    valueTypeToCompareValues.Add(attr.ValueTypeToCompare.ToString());
-                    valueFormatValues.Add(attr.ValueFormat ?? string.Empty);
+                    conditionPassesIfNullValues.Add(attr.ConditionPassesIfNull.ToString().ToLower());
+                    valueTypeToCompareValues.Add(attr.ValueTypeToCompare.ToString().ToLower());
+                    valueFormatValues.Add(attr.ValueFormat ?? string.Empty); //do not "toLower" the format!  It could be a date format that needs some captials
                 }
             }
-            else
-            {
-                toValues.Add(To.ToString());
-                whenOtherPropertyNameValues.Add(WhenOtherPropertyName);
-                ifValues.Add(If.ToString());
-                var val = string.Empty;
-                if (Value != null)
-                {
-                    if (Value.GetType().IsArray)
-                    {
-                        val = Json.Encode(Value);
-                    }
-                    else
-                    {
-                        val = Value.ToString();
-                    }
-                }
-                valueValues.Add(val);
-                conditionPassesIfNullValues.Add(ConditionPassesIfNull.ToString());
-                valueTypeToCompareValues.Add(ValueTypeToCompare.ToString());
-                valueFormatValues.Add(ValueFormat ?? string.Empty);
-            }
-
-            rule.ValidationParameters.Add("to", string.Join(Separator, toValues).ToLower());
-            rule.ValidationParameters.Add("otherpropertyname", string.Join(Separator, whenOtherPropertyNameValues));
-            rule.ValidationParameters.Add("ifoperator", string.Join(Separator, ifValues).ToLower());
-            rule.ValidationParameters.Add("value", string.Join(Separator, valueValues).ToLower());
-            rule.ValidationParameters.Add("conditionpassesifnull", string.Join(Separator, conditionPassesIfNullValues).ToLower());
-            rule.ValidationParameters.Add("valuetypetocompare", string.Join(Separator, valueTypeToCompareValues).ToLower());
-            rule.ValidationParameters.Add("valueformat", string.Join(Separator, valueFormatValues));
-
-            yield return rule;
         }
-
     }
 }

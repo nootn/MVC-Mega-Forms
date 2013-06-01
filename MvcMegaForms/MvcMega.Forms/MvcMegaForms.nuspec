@@ -18,6 +18,7 @@
     <tags>asp.net mvc mvc4 form forms mega mvcmega mvcmegaforms nootn</tags>
     <dependencies>
       <dependency id="Microsoft.AspNet.Mvc" />
+      <dependency id="Jurassic" />
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="net40" />

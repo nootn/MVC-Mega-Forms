@@ -73,6 +73,9 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Jurassic">
+      <HintPath>..\packages\Jurassic.2.1.1\lib\Jurassic.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -117,12 +120,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionFilters\PreventDoubleAction.cs" />
+    <Compile Include="ControllerHelpers\ChangeVisuallyHelpers.cs" />
     <Compile Include="DataAnnotations\ChangeVisuallyAttribute.cs" />
     <Compile Include="DataAnnotations\ChangeVisuallyCondition.cs" />
     <Compile Include="DataAnnotations\RequiredIfNotContainsOneOf.cs" />
     <Compile Include="DataAnnotations\RequiredIfContainsOneOf.cs" />
     <Compile Include="DataAnnotations\RequiredIfNotContains.cs" />
     <Compile Include="DataAnnotations\RequiredIfContains.cs" />
+    <Compile Include="Extensions\ModelStateDictionaryExtensions.cs" />
     <Compile Include="MVC\CascadingSelectList.cs" />
     <Compile Include="MVC\ChildSelectListItem.cs" />
     <Compile Include="MVC\ControlGroup.cs" />
@@ -165,8 +170,10 @@
     <Content Include="Content\Scripts\MvcMegaForms.ts">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="Content\Scripts\MvcMegaFormsSubsetForJurassic.js" />
     <Content Include="LICENSE.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
