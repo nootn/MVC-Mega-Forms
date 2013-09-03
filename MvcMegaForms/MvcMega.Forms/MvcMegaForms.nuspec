@@ -4,9 +4,7 @@
     <id>MvcMegaForms</id>
     <version>0.1.0.1</version>
     <releaseNotes>
-      * Adds PreventDoubleAction attribute to allow prevention of duplicate form submits on the server side
-      * Adds extension method "IsValidEditableFieldsOnly" to ModelState to be called instead of "ModelState.IsValid" (not thoroughly tested yet, initial version so be wary trusting it)
-      * Changes dependency on ASP.NET MVC to newer version (should have been done long ago!)
+      * Fixes to work with latest TypeScript (0.9.1.1)
     </releaseNotes>
     <authors>http://about.me/nootn</authors>
     <owners>http://about.me/nootn</owners>
@@ -19,6 +17,7 @@
     <dependencies>
       <dependency id="Microsoft.AspNet.Mvc" />
       <dependency id="Jurassic" />
+      <dependency id="jquery.TypeScript.DefinitelyTyped" />
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="net40" />

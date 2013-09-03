@@ -1,4 +1,4 @@
-/// <reference path="jquery.d.ts" />
+/// <reference path="typings/jquery/jquery.d.ts" />
 
 /*
 Copyright (c) 2012 Andrew Newton (http://about.me/nootn)
@@ -87,19 +87,19 @@ class MvcMegaForms {
     public static ChangeVisuallyJQueryShowEffect: string = 'fast';
     public static CascadeJQueryHideEffect: string = 'fast';
     public static CascadeJQueryShowEffect: string = 'fast';
-    public static DetectAllFormChanges: bool = false; //set value whether to detect changes on all forms or not
+    public static DetectAllFormChanges: boolean = false; //set value whether to detect changes on all forms or not
     public static DetectChangesWarningMessage: string = '';  //The message to show if a form value has changed and page is being left.  If blank uses default which includes ID of first element found
     public static DetectChangesFormClass: string = 'detect-changes'; //The class to give forms that you want changes detected on if 'MvcMegaForms.DetectAllFormChanges' is false
     public static IgnoreDetectChangesClass: string = 'ignore-detect-changes'; //Add this class to any elements you want to allow to be clicked that leave the page but don't show the message (E.g. clear buttons that reset the form)
     public static DisabledOrReadonlyCssClass: string = 'ui-state-disabled';  //The class to give controls that are disabled or readonly
 
-    private static LeavingPageDueToSubmitOrIgnore: bool = false;
+    public static LeavingPageDueToSubmitOrIgnore: boolean = false;
 
     public static ConfigureDetectChanges(): void {
         "use strict";
         var formSearch = "form";
-        if (IsNullOrUndefined(MvcMegaForms.DetectAllFormChanges) || MvcMegaForms.DetectAllFormChanges === false) {
-            if (IsNullOrUndefined(MvcMegaForms.DetectChangesFormClass) || MvcMegaForms.DetectChangesFormClass === '') {
+        if (MvcMegaForms.IsNullOrUndefined(MvcMegaForms.DetectAllFormChanges) || MvcMegaForms.DetectAllFormChanges === false) {
+            if (MvcMegaForms.IsNullOrUndefined(MvcMegaForms.DetectChangesFormClass) || MvcMegaForms.DetectChangesFormClass === '') {
                 //there is no detect changes option available
                 return;
             }
@@ -188,7 +188,7 @@ class MvcMegaForms {
                         for (var iInner = 0; iInner < otherPropertyNames.length; iInner++) {
                             if (otherPropertyNames[iInner] === event.data.otherPropertyOuterInitialName) {
                                 var currentOtherProperty = $("[name='" + event.data.otherPropertyFullName + "']");
-                                if (ApplyChangeVisually(dependentProperty, currentOtherProperty, toValues[iInner], ifOperators[iInner], values[iInner], conditionPassesIfNulls[iInner], valueTypeToCompares[iInner], valueFormats[iInner])) {
+                                if (MvcMegaForms.ApplyChangeVisually(dependentProperty, currentOtherProperty, toValues[iInner], ifOperators[iInner], values[iInner], conditionPassesIfNulls[iInner], valueTypeToCompares[iInner], valueFormats[iInner])) {
                                     break; //a condition has passed, don't process the rest
                                 }
                             }
@@ -199,73 +199,73 @@ class MvcMegaForms {
             }
 
             parentId = $(this).attr("parentListId");
-            if (!IsNullOrUndefined(parentId)) {
+            if (!MvcMegaForms.IsNullOrUndefined(parentId)) {
                 parentList = $("[name='" + $(this).attr("name").substr(0, $(this).attr("name").lastIndexOf(".") + 1) + parentId + "']");
                 parentList.attr("childid", $(this).attr('id'));
                 parentList.change(function () {
-                    SetupCascadingDropDown($(this));
+                    MvcMegaForms.SetupCascadingDropDown($(this));
                 });
                 parentList.change();
             }
         });
     }
 
-    public static ApplyChangeVisually(dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull, valueTypeToCompare, valueFormat): bool {
+    public static ApplyChangeVisually(dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull, valueTypeToCompare, valueFormat): boolean {
         "use strict";
-        var parentSelector = IsNullOrUndefined(MvcMegaForms.ChangeVisuallyJQueryParentContainerSelector) ? '.editor-field' : MvcMegaForms.ChangeVisuallyJQueryParentContainerSelector,
+        var parentSelector = MvcMegaForms.IsNullOrUndefined(MvcMegaForms.ChangeVisuallyJQueryParentContainerSelector) ? '.editor-field' : MvcMegaForms.ChangeVisuallyJQueryParentContainerSelector,
             container = dependentProperty.parents(parentSelector),
             showEffect,
             hideEffect,
             disabledOrReadonlyCssClass,
             otherPropValue,
             conditionMet;
-        if (IsNullOrUndefined(container)) {
+        if (MvcMegaForms.IsNullOrUndefined(container)) {
             throw 'MvcMegaForms-ChangeVisually Critical Error: Unable to find parent container with selector: ' + parentSelector + ' for property ' + dependentProperty;
         } else {
-            showEffect = IsNullOrUndefined(MvcMegaForms.ChangeVisuallyJQueryShowEffect) ? 'fast' : MvcMegaForms.ChangeVisuallyJQueryShowEffect;
-            hideEffect = IsNullOrUndefined(MvcMegaForms.ChangeVisuallyJQueryHideEffect) ? 'fast' : MvcMegaForms.ChangeVisuallyJQueryHideEffect;
-            disabledOrReadonlyCssClass = IsNullOrUndefined(MvcMegaForms.DisabledOrReadonlyCssClass) ? 'ui-state-disabled' : MvcMegaForms.DisabledOrReadonlyCssClass;
+            showEffect = MvcMegaForms.IsNullOrUndefined(MvcMegaForms.ChangeVisuallyJQueryShowEffect) ? 'fast' : MvcMegaForms.ChangeVisuallyJQueryShowEffect;
+            hideEffect = MvcMegaForms.IsNullOrUndefined(MvcMegaForms.ChangeVisuallyJQueryHideEffect) ? 'fast' : MvcMegaForms.ChangeVisuallyJQueryHideEffect;
+            disabledOrReadonlyCssClass = MvcMegaForms.IsNullOrUndefined(MvcMegaForms.DisabledOrReadonlyCssClass) ? 'ui-state-disabled' : MvcMegaForms.DisabledOrReadonlyCssClass;
 
-            otherPropValue = GetFormValue(otherProperty);
+            otherPropValue = MvcMegaForms.GetFormValue(otherProperty);
 
-            conditionMet = ConditionMetForChangeVisually(ifOperator, value, otherPropValue, conditionPassesIfNull, valueTypeToCompare, valueFormat);
+            conditionMet = MvcMegaForms.ConditionMetForChangeVisually(ifOperator, value, otherPropValue, conditionPassesIfNull, valueTypeToCompare, valueFormat);
             if (conditionMet) {
                 if (to === 'hidden') {
                     //hide
                     container.hide(hideEffect);
 
                     //enable
-                    SetControlEnabledAndWritable(dependentProperty);
+                    MvcMegaForms.SetControlEnabledAndWritable(dependentProperty);
                 } else if (to === 'disabled') {
                     //show  
                     container.show(showEffect);
                     dependentProperty.removeAttr('readonly');
 
                     //disable
-                    SetControlDisabled(dependentProperty);
+                    MvcMegaForms.SetControlDisabled(dependentProperty);
                 } else if (to === 'readonly') {
                     //show  
                     container.show(showEffect);
                     dependentProperty.removeAttr('disabled');
 
                     //disable
-                    SetControlReadonly(dependentProperty);
+                    MvcMegaForms.SetControlReadonly(dependentProperty);
                 }
             } else {
                 //show
                 container.show(showEffect);
 
                 //enable
-                SetControlEnabledAndWritable(dependentProperty);
+                MvcMegaForms.SetControlEnabledAndWritable(dependentProperty);
             }
             return conditionMet;
         }
     }
 
-    public static ConditionMetForChangeVisually(ifOperator, expectedValue, actualValue, conditionPassesIfNull, valueTypeToCompare, valueFormat): bool {
+    public static ConditionMetForChangeVisually(ifOperator, expectedValue, actualValue, conditionPassesIfNull, valueTypeToCompare, valueFormat): boolean {
         "use strict";
         //ensure it's not null or undefined before we begin
-        if (IsNullOrUndefined(ifOperator)) {
+        if (MvcMegaForms.IsNullOrUndefined(ifOperator)) {
             throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: ifOperator was not supplied";
         }
 
@@ -276,18 +276,18 @@ class MvcMegaForms {
             iNotMet,
             currContainsItem,
             currNotContainsItem;
-        conditionPassesIfNull = !(IsNullOrUndefined(conditionPassesIfNull)) && conditionPassesIfNull.toString().toLowerCase() === 'true'; //it was a string, make it a bool
+        conditionPassesIfNull = !(MvcMegaForms.IsNullOrUndefined(conditionPassesIfNull)) && conditionPassesIfNull.toString().toLowerCase() === 'true'; //it was a string, make it a bool
 
         //treat empty string or undefined as null
-        if (actualValue === '' || IsNullOrUndefined(actualValue)) {
+        if (actualValue === '' || MvcMegaForms.IsNullOrUndefined(actualValue)) {
             actualValue = null;
         }
-        if (expectedValue === '' || IsNullOrUndefined(expectedValue)) {
+        if (expectedValue === '' || MvcMegaForms.IsNullOrUndefined(expectedValue)) {
             expectedValue = null;
         }
 
         //if the actual value is an empty array, treat it as null
-        actualValueIsArray = IsArray(actualValue);
+        actualValueIsArray = MvcMegaForms.IsArray(actualValue);
         if (actualValueIsArray) {
             if (actualValue.length <= 0) {
                 actualValue = null;
@@ -298,7 +298,7 @@ class MvcMegaForms {
             //appears to be an array, turn it into one
             expectedValue = $.parseJSON(expectedValue.toString());
         }
-        if (IsArray(expectedValue)) {
+        if (MvcMegaForms.IsArray(expectedValue)) {
             //throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Array data type for expectedValue is not supported at this time.  expectedValue supplied was: " + expectedValue;
 
             //verify value types (if not known, assume string therefore no checks to do)
@@ -666,14 +666,14 @@ class MvcMegaForms {
             childNameWithoutPrefix,
             valArray;
 
-        CascadeDropDown(parentList);
+        MvcMegaForms.CascadeDropDown(parentList);
 
         childId = $(parentList).attr('childid');
         childList = $('#' + childId);
 
         //if this child has a child one, it's change event will not fire, so we must call it manually
         childOfChild = childList.attr('childid');
-        if (!IsNullOrUndefined(childOfChild)) {
+        if (!MvcMegaForms.IsNullOrUndefined(childOfChild)) {
             childList.change();
         } else {
             //find if there are any form elements that depend on the child one for changevisually
@@ -707,23 +707,23 @@ class MvcMegaForms {
             showEffect;
 
 
-        parentVal = GetFormValue($(parentList));
+        parentVal = MvcMegaForms.GetFormValue($(parentList));
         childId = $(parentList).attr('childid');
         childList = $('#' + childId);
         combos = childList.attr('combos');
 
         isChildVisible = childList.is(":visible");
         if (isChildVisible) {
-            hideEffect = IsNullOrUndefined(MvcMegaForms.CascadeJQueryHideEffect) ? 'fast' : MvcMegaForms.CascadeJQueryHideEffect;
+            hideEffect = MvcMegaForms.IsNullOrUndefined(MvcMegaForms.CascadeJQueryHideEffect) ? 'fast' : MvcMegaForms.CascadeJQueryHideEffect;
             childList.hide(hideEffect);
         }
 
-        initialVal = GetFormValue(childList);
+        initialVal = MvcMegaForms.GetFormValue(childList);
 
         childList.val(null);
         childList.empty();
 
-        state = CascadeStringStatus.StartParentId;
+        state = MvcMegaForms.CascadeStringStatus.StartParentId;
         currParentId = "";
         currChildId = "";
         currChildValue = "";
@@ -732,19 +732,19 @@ class MvcMegaForms {
 
             //set state
             if (val === "{") {
-                state = CascadeStringStatus.StartChildId;
+                state = MvcMegaForms.CascadeStringStatus.StartChildId;
             } else if (val === "~") {
-                state = CascadeStringStatus.EndChildId;
+                state = MvcMegaForms.CascadeStringStatus.EndChildId;
             } else if (val === ";") {
-                state = CascadeStringStatus.EndChildValueWithNext;
+                state = MvcMegaForms.CascadeStringStatus.EndChildValueWithNext;
             } else if (val === "}") {
-                state = CascadeStringStatus.EndChildValue;
+                state = MvcMegaForms.CascadeStringStatus.EndChildValue;
             }
 
             //set values
-            if (state === CascadeStringStatus.StartParentId) {
+            if (state === MvcMegaForms.CascadeStringStatus.StartParentId) {
                 currParentId += val;
-            } else if (state === CascadeStringStatus.StartChildId) {
+            } else if (state === MvcMegaForms.CascadeStringStatus.StartChildId) {
                 if (currParentId === parentVal) {
                     if (val !== "{") {
                         currChildId += val;
@@ -752,7 +752,7 @@ class MvcMegaForms {
                 } else {
                     currParentId = "";
                 }
-            } else if (state === CascadeStringStatus.EndChildId) {
+            } else if (state === MvcMegaForms.CascadeStringStatus.EndChildId) {
                 if (currParentId !== "" && currChildId !== "") {
                     if (val !== "~") {
                         currChildValue += val;
@@ -761,14 +761,14 @@ class MvcMegaForms {
                     currParentId = "";
                     currChildId = "";
                 }
-            } else if (state === CascadeStringStatus.EndChildValueWithNext) {
-                RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue);
-                state = CascadeStringStatus.StartChildId;
+            } else if (state === MvcMegaForms.CascadeStringStatus.EndChildValueWithNext) {
+                MvcMegaForms.RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue);
+                state = MvcMegaForms.CascadeStringStatus.StartChildId;
                 currChildId = "";
                 currChildValue = "";
-            } else if (state === CascadeStringStatus.EndChildValue) {
-                RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue);
-                state = CascadeStringStatus.StartParentId;
+            } else if (state === MvcMegaForms.CascadeStringStatus.EndChildValue) {
+                MvcMegaForms.RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue);
+                state = MvcMegaForms.CascadeStringStatus.StartParentId;
                 currParentId = "";
                 currChildId = "";
                 currChildValue = "";
@@ -776,7 +776,7 @@ class MvcMegaForms {
         }
 
         if (isChildVisible) {
-            showEffect = IsNullOrUndefined(MvcMegaForms.CascadeJQueryShowEffect) ? 'fast' : MvcMegaForms.CascadeJQueryShowEffect;
+            showEffect = MvcMegaForms.IsNullOrUndefined(MvcMegaForms.CascadeJQueryShowEffect) ? 'fast' : MvcMegaForms.CascadeJQueryShowEffect;
             childList.show(showEffect);
         }
     }
@@ -787,7 +787,7 @@ class MvcMegaForms {
             iMet,
             currContainsItem;
         if (currChildId !== "") {
-            if (IsArray(initialVal)) {
+            if (MvcMegaForms.IsArray(initialVal)) {
                 for (iMet = 0; iMet < initialVal.length; iMet += 1) {
                     currContainsItem = initialVal[iMet];
                     if (currContainsItem.toString() === currChildId.toString()) {
@@ -814,7 +814,7 @@ class MvcMegaForms {
     public static GetFormValue(formControl): any {
         "use strict";
         //ensure it's not null or undefined before we begin
-        if (IsNullOrUndefined(formControl)) {
+        if (MvcMegaForms.IsNullOrUndefined(formControl)) {
             throw "Undefined form control supplied";
         }
 
@@ -822,7 +822,7 @@ class MvcMegaForms {
             val;
 
         //ensure we have a jquery object to deal with
-        $formControl = GetObjectAsJQuery(formControl);
+        $formControl = MvcMegaForms.GetObjectAsJQuery(formControl);
 
         //get the value different ways based on the type of form control
         if ($formControl.is(':checkbox')) {
@@ -837,61 +837,61 @@ class MvcMegaForms {
 
     public static SetControlEnabledAndWritable(ctrl: any, customDisabledOrReadonlyCssClass?: string): void {
         //ensure we have a jquery object to deal with
-        ctrl = GetObjectAsJQuery(ctrl);
+        ctrl = MvcMegaForms.GetObjectAsJQuery(ctrl);
 
         //enable
         ctrl.removeAttr('disabled');
         ctrl.removeAttr('readonly');
 
-        if (!IsNullOrUndefined(customDisabledOrReadonlyCssClass) && customDisabledOrReadonlyCssClass !== '') {
+        if (!MvcMegaForms.IsNullOrUndefined(customDisabledOrReadonlyCssClass) && customDisabledOrReadonlyCssClass !== '') {
             ctrl.removeClass(customDisabledOrReadonlyCssClass);
         }
         else {
-            ctrl.removeClass(DisabledOrReadonlyCssClass);
+            ctrl.removeClass(MvcMegaForms.DisabledOrReadonlyCssClass);
         }
     }
 
     public static SetControlDisabled(ctrl: any, customDisabledOrReadonlyCssClass?: string): void {
         //ensure we have a jquery object to deal with
-        ctrl = GetObjectAsJQuery(ctrl);
+        ctrl = MvcMegaForms.GetObjectAsJQuery(ctrl);
 
         ctrl.attr('disabled', 'disabled');
-        if (!IsNullOrUndefined(customDisabledOrReadonlyCssClass) && customDisabledOrReadonlyCssClass !== '') {
+        if (!MvcMegaForms.IsNullOrUndefined(customDisabledOrReadonlyCssClass) && customDisabledOrReadonlyCssClass !== '') {
             ctrl.addClass(customDisabledOrReadonlyCssClass);
         }
         else {
-            ctrl.addClass(DisabledOrReadonlyCssClass);
+            ctrl.addClass(MvcMegaForms.DisabledOrReadonlyCssClass);
         }
     }
 
     public static SetControlReadonly(ctrl: any, customDisabledOrReadonlyCssClass?: string): void {
         //ensure we have a jquery object to deal with
-        ctrl = GetObjectAsJQuery(ctrl);
+        ctrl = MvcMegaForms.GetObjectAsJQuery(ctrl);
 
         ctrl.attr('readonly', 'readonly');
-        if (!IsNullOrUndefined(customDisabledOrReadonlyCssClass) && customDisabledOrReadonlyCssClass !== '') {
+        if (!MvcMegaForms.IsNullOrUndefined(customDisabledOrReadonlyCssClass) && customDisabledOrReadonlyCssClass !== '') {
             ctrl.addClass(customDisabledOrReadonlyCssClass);
         }
         else {
-            ctrl.addClass(DisabledOrReadonlyCssClass);
+            ctrl.addClass(MvcMegaForms.DisabledOrReadonlyCssClass);
         }
     }
 
     public static SetControlDisabledAndReadonly(ctrl: any, disabledOrReadonlyCssClass?: string): void {
         //ensure we have a jquery object to deal with
-        ctrl = GetObjectAsJQuery(ctrl);
+        ctrl = MvcMegaForms.GetObjectAsJQuery(ctrl);
 
         ctrl.attr('disabled', 'disabled');
         ctrl.attr('readonly', 'readonly');
         ctrl.addClass(disabledOrReadonlyCssClass);
     }
 
-    public static IsArray(item): bool {
+    public static IsArray(item): boolean {
         "use strict";
         return (Object.prototype.toString.call(item) === '[object Array]');
     }
 
-    public static FormControlValueHasChanged(formControl): bool {
+    public static FormControlValueHasChanged(formControl): boolean {
         "use strict";
 
         var $formControl,
@@ -906,8 +906,8 @@ class MvcMegaForms {
             returnVal = (formControl.checked !== formControl.defaultChecked);
         } else if ($formControl.is(':radio')) {
             returnVal = (formControl.checked !== formControl.defaultChecked);
-        } else if ($formControl.is('select') && !IsNullOrUndefined($formControl.attr('multiple'))) {
-            if (IsNullOrUndefined(formControl.options) || formControl.options.length <= 0) {
+        } else if ($formControl.is('select') && !MvcMegaForms.IsNullOrUndefined($formControl.attr('multiple'))) {
+            if (MvcMegaForms.IsNullOrUndefined(formControl.options) || formControl.options.length <= 0) {
                 returnVal = false;
             } else {
                 allCndMet = false;
@@ -918,7 +918,7 @@ class MvcMegaForms {
                 returnVal = allCndMet;
             }
         } else if ($formControl.is('select')) {
-            if (IsNullOrUndefined(formControl.options) || formControl.options.length <= 0) {
+            if (MvcMegaForms.IsNullOrUndefined(formControl.options) || formControl.options.length <= 0) {
                 returnVal = false;
             } else {
                 returnVal = !(formControl.options[formControl.selectedIndex].defaultSelected);
@@ -934,23 +934,23 @@ class MvcMegaForms {
         var changedId = null;
         $form.find('input').each(function () {
             //specifically leave 'this' as non-jquery
-            if (FormControlValueHasChanged(this)) {
-                changedId = IsNullOrUndefined(this.id) ? IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
+            if (MvcMegaForms.FormControlValueHasChanged(this)) {
+                changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
                 return;
             }
         });
         $form.find('textarea').each(function () {
             //specifically leave 'this' as non-jquery
-            if (FormControlValueHasChanged(this)) {
-                changedId = IsNullOrUndefined(this.id) ? IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
+            if (MvcMegaForms.FormControlValueHasChanged(this)) {
+                changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
                 return;
             }
         });
-        if (IsNullOrUndefined(changedId)) {
+        if (MvcMegaForms.IsNullOrUndefined(changedId)) {
             $form.find('select').each(function () {
                 //specifically leave 'this' as non-jquery
-                if (FormControlValueHasChanged(this)) {
-                    changedId = IsNullOrUndefined(this.id) ? IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
+                if (MvcMegaForms.FormControlValueHasChanged(this)) {
+                    changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
                     return;
                 }
             });
@@ -964,10 +964,10 @@ class MvcMegaForms {
         var changedId,
             confMsg;
 
-        changedId = FormFieldIdChanged($form);
-        if (!IsNullOrUndefined(changedId)) {
+        changedId = MvcMegaForms.FormFieldIdChanged($form);
+        if (!MvcMegaForms.IsNullOrUndefined(changedId)) {
             confMsg = "At least one unsaved value has changed ('" + changedId + "'), are you sure you want to leave the page?";
-            if (!IsNullOrUndefined(MvcMegaForms.DetectChangesWarningMessage) && MvcMegaForms.DetectChangesWarningMessage !== '') {
+            if (!MvcMegaForms.IsNullOrUndefined(MvcMegaForms.DetectChangesWarningMessage) && MvcMegaForms.DetectChangesWarningMessage !== '') {
                 confMsg = MvcMegaForms.DetectChangesWarningMessage;
             }
             return confMsg;
@@ -975,7 +975,7 @@ class MvcMegaForms {
         return '';
     }
 
-    public static IsNullOrUndefined(item): bool {
+    public static IsNullOrUndefined(item): boolean {
         "use strict";
         return (item == null || item === undefined || typeof item == 'undefined');
     }
@@ -1001,7 +1001,7 @@ module DateJs {
 
         static $VERSION = 1.02;
         // Utility function to append a 0 to single-digit numbers
-        static LZ(x) { return (x < 0 || x > 9 ? "" : "0") + x };
+        static LZ(x) { return (x < 0 || x > 9 ? "" : "0") + x }
         // Full month names. Change this for local month names
         static monthNames: string[] = new Array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
         // Month abbreviations. Change this for local month names
@@ -1013,9 +1013,9 @@ module DateJs {
 
         // Used for parsing ambiguous dates like 1/2/2000 - default to preferring 'American' format meaning Jan 2.
         // Set to false to prefer 'European' format meaning Feb 1
-        preferAmericanFormat: bool;
+        preferAmericanFormat: boolean;
 
-        constructor(public providedDate: Date, preferAmericanFormatForDefault?: bool = true) {
+        constructor(public providedDate: Date, preferAmericanFormatForDefault: boolean = true) {
             this.preferAmericanFormat = preferAmericanFormatForDefault;
         }
 
@@ -1045,7 +1045,7 @@ module DateJs {
         // If no format is passed, try a list of common formats.
         // If string cannot be parsed, return null.
         // Avoids regular expressions to be more portable.
-        static parseString(val, format: string, preferAmericanFormatForDefault?: bool = true): Date {
+        static parseString(val, format: string, preferAmericanFormatForDefault: boolean = true): Date {
             // If no format is specified, try a few common formats
             if (typeof (format) == "undefined" || format == null || format == "") {
                 var generalFormats = new Array('y-M-d', 'MMM d, y', 'MMM d,y', 'y-MMM-d', 'd-MMM-y', 'MMM d', 'MMM-d', 'd-MMM');
@@ -1114,7 +1114,7 @@ module DateJs {
                 }
                 else if (token == "MMM" || token == "NNN") {
                     month = 0;
-                    var names = (token == "MMM" ? (monthNames.concat(monthAbbreviations)) : monthAbbreviations);
+                    var names = (token == "MMM" ? (DateJs.Helper.monthNames.concat(DateJs.Helper.monthAbbreviations)) : DateJs.Helper.monthAbbreviations);
                     for (var i = 0; i < names.length; i++) {
                         var month_name = names[i];
                         if (val.substring(i_val, i_val + month_name.length).toLowerCase() == month_name.toLowerCase()) {
@@ -1128,7 +1128,7 @@ module DateJs {
                     }
                 }
                 else if (token == "EE" || token == "E") {
-                    var names = (token == "EE" ? dayNames : dayAbbreviations);
+                    var names = (token == "EE" ? DateJs.Helper.dayNames : DateJs.Helper.dayAbbreviations);
                     for (var i = 0; i < names.length; i++) {
                         var day_name = names[i];
                         if (val.substring(i_val, i_val + day_name.length).toLowerCase() == day_name.toLowerCase()) {
@@ -1249,8 +1249,8 @@ module DateJs {
             return new Date(year, month - 1, date, hh, mm, ss);
         }
 
-        static isValid(val, format: string, preferAmericanFormatForDefault?: bool = true): bool {
-            return (parseString(val, format, preferAmericanFormatForDefault) != null);
+        static isValid(val, format: string, preferAmericanFormatForDefault: boolean = true): boolean {
+            return (DateJs.Helper.parseString(val, format, preferAmericanFormatForDefault) != null);
         }
 
         public isBefore(date2) {

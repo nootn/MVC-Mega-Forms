@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>AspNetMvc</id>
+    <version>4.0.20126.16343</version>
+    <title>ASP.NET MVC 4 (Beta)</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>http://www.microsoft.com/web/webpi/eula/aspnetmvc4-beta-eula.htm</licenseUrl>
+    <projectUrl>http://www.asp.net/mvc</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>This package contains the runtime assemblies for ASP.NET MVC. ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that enables a clean separation of concerns and that gives you full control over markup.</description>
+    <dependencies>
+      <dependency id="AspNetWebPages.Core" version="2.0.20126.16343" />
+      <dependency id="AspNetRazor.Core" version="2.0.20126.16343" />
+      <dependency id="System.Web.Http.Common" version="4.0.20126.16343" />
+    </dependencies>
+  </metadata>
+</package>
