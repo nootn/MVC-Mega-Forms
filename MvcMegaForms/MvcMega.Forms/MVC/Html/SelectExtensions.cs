@@ -115,7 +115,7 @@ namespace MvcMega.Forms.MVC.Html
                             {
                                 EnsureNoSpecialCharacters(currChild.Value);
                                 EnsureNoSpecialCharacters(currChild.Text);
-                                finalItems.AppendFormat("{0}~{1};", currChild.Value, currChild.Text);
+                                finalItems.AppendFormat("{0}~{1}{2};", currChild.Value, (currChild.Selected ? 1 : 0), currChild.Text);
                             }
                             finalItems.Remove(finalItems.Length - 1, 1);
                         }

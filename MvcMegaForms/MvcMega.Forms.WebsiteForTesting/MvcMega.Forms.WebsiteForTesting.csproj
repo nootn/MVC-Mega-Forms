@@ -236,6 +236,9 @@
     <Content Include="Scripts\MvcMegaForms.js">
       <DependentUpon>MvcMegaForms.ts</DependentUpon>
     </Content>
+    <Content Include="Scripts\MvcMegaForms.min.js">
+      <DependentUpon>MvcMegaForms.ts</DependentUpon>
+    </Content>
     <Content Include="Scripts\typings\jquery\jquery.d.ts" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
