@@ -167,6 +167,9 @@
     <Content Include="Content\Scripts\MvcMegaForms.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Scripts\MvcMegaForms.min.js">
+      <DependentUpon>MvcMegaForms.ts</DependentUpon>
+    </Content>
     <Content Include="Content\Scripts\MvcMegaForms.ts">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

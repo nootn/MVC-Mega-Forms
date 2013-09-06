@@ -9,7 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
  
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-
+ 
 
 //document ready
 $(() => {
@@ -653,7 +653,8 @@ class MvcMegaForms {
         StartChildId: 1,
         EndChildId: 2,
         EndChildValueWithNext: 3,
-        EndChildValue: 4
+        EndChildValue: 4,
+        CheckForSelected: 5
     }
 
     private static SetupCascadingDropDown(parentList): void {
@@ -704,7 +705,8 @@ class MvcMegaForms {
             currChildValue,
             i,
             val,
-            showEffect;
+            showEffect,
+            selected;
 
 
         parentVal = MvcMegaForms.GetFormValue($(parentList));
@@ -733,8 +735,16 @@ class MvcMegaForms {
             //set state
             if (val === "{") {
                 state = MvcMegaForms.CascadeStringStatus.StartChildId;
-            } else if (val === "~") {
+            } else if (state === MvcMegaForms.CascadeStringStatus.CheckForSelected) {
+                if (val === "1") {
+                    selected = true;
+                } else {
+                    selected = false;
+                }
+                val = "";
                 state = MvcMegaForms.CascadeStringStatus.EndChildId;
+            } else if (val === "~") {
+                state = MvcMegaForms.CascadeStringStatus.CheckForSelected;
             } else if (val === ";") {
                 state = MvcMegaForms.CascadeStringStatus.EndChildValueWithNext;
             } else if (val === "}") {
@@ -762,12 +772,12 @@ class MvcMegaForms {
                     currChildId = "";
                 }
             } else if (state === MvcMegaForms.CascadeStringStatus.EndChildValueWithNext) {
-                MvcMegaForms.RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue);
+                MvcMegaForms.RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue, selected);
                 state = MvcMegaForms.CascadeStringStatus.StartChildId;
                 currChildId = "";
                 currChildValue = "";
             } else if (state === MvcMegaForms.CascadeStringStatus.EndChildValue) {
-                MvcMegaForms.RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue);
+                MvcMegaForms.RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue, selected);
                 state = MvcMegaForms.CascadeStringStatus.StartParentId;
                 currParentId = "";
                 currChildId = "";
@@ -781,7 +791,7 @@ class MvcMegaForms {
         }
     }
 
-    private static RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue): void {
+    private static RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue, selected): void {
         "use strict";
         var isSelected = false,
             iMet,
@@ -793,10 +803,13 @@ class MvcMegaForms {
                     if (currContainsItem.toString() === currChildId.toString()) {
                         isSelected = true;
                         break;
+                    } else if (selected === true) {
+                        isSelected = true;
+                        break;
                     }
                 }
             } else {
-                isSelected = currChildId === initialVal;
+                isSelected = currChildId === initialVal || selected == true;
             }
             if (isSelected) {
                 childList.append($('<option selected="selected"></option>').val(currChildId).html(currChildValue));
