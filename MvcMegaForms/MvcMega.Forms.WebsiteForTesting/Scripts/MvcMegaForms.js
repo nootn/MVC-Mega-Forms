@@ -622,7 +622,7 @@ var MvcMegaForms = (function () {
     MvcMegaForms.CascadeDropDown = function (parentList) {
         "use strict";
 
-        var parentVal, childId, childList, combos, isChildVisible, hideEffect, initialVal, state, currParentId, currChildId, currChildValue, i, val, showEffect;
+        var parentVal, childId, childList, combos, isChildVisible, hideEffect, initialVal, state, currParentId, currChildId, currChildValue, i, val, showEffect, selected;
 
         parentVal = MvcMegaForms.GetFormValue($(parentList));
         childId = $(parentList).attr('childid');
@@ -649,8 +649,16 @@ var MvcMegaForms = (function () {
 
             if (val === "{") {
                 state = MvcMegaForms.CascadeStringStatus.StartChildId;
-            } else if (val === "~") {
+            } else if (state === MvcMegaForms.CascadeStringStatus.CheckForSelected) {
+                if (val === "1") {
+                    selected = true;
+                } else {
+                    selected = false;
+                }
+                val = "";
                 state = MvcMegaForms.CascadeStringStatus.EndChildId;
+            } else if (val === "~") {
+                state = MvcMegaForms.CascadeStringStatus.CheckForSelected;
             } else if (val === ";") {
                 state = MvcMegaForms.CascadeStringStatus.EndChildValueWithNext;
             } else if (val === "}") {
@@ -677,12 +685,12 @@ var MvcMegaForms = (function () {
                     currChildId = "";
                 }
             } else if (state === MvcMegaForms.CascadeStringStatus.EndChildValueWithNext) {
-                MvcMegaForms.RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue);
+                MvcMegaForms.RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue, selected);
                 state = MvcMegaForms.CascadeStringStatus.StartChildId;
                 currChildId = "";
                 currChildValue = "";
             } else if (state === MvcMegaForms.CascadeStringStatus.EndChildValue) {
-                MvcMegaForms.RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue);
+                MvcMegaForms.RenderCascadedSelectOption(currChildId, initialVal, childList, currChildValue, selected);
                 state = MvcMegaForms.CascadeStringStatus.StartParentId;
                 currParentId = "";
                 currChildId = "";
@@ -696,7 +704,7 @@ var MvcMegaForms = (function () {
         }
     };
 
-    MvcMegaForms.RenderCascadedSelectOption = function (currChildId, initialVal, childList, currChildValue) {
+    MvcMegaForms.RenderCascadedSelectOption = function (currChildId, initialVal, childList, currChildValue, selected) {
         "use strict";
         var isSelected = false, iMet, currContainsItem;
         if (currChildId !== "") {
@@ -706,10 +714,13 @@ var MvcMegaForms = (function () {
                     if (currContainsItem.toString() === currChildId.toString()) {
                         isSelected = true;
                         break;
+                    } else if (selected === true) {
+                        isSelected = true;
+                        break;
                     }
                 }
             } else {
-                isSelected = currChildId === initialVal;
+                isSelected = currChildId === initialVal || selected == true;
             }
             if (isSelected) {
                 childList.append($('<option selected="selected"></option>').val(currChildId).html(currChildValue));
@@ -897,7 +908,8 @@ var MvcMegaForms = (function () {
         StartChildId: 1,
         EndChildId: 2,
         EndChildValueWithNext: 3,
-        EndChildValue: 4
+        EndChildValue: 4,
+        CheckForSelected: 5
     };
     return MvcMegaForms;
 })();
