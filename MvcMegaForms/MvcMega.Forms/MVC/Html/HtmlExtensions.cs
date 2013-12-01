@@ -88,11 +88,11 @@ namespace MvcMega.Forms.MVC.Html
             IDictionary<string, object> controlsHtmlAttributes = null,
             string helpInlineClass = DefaultHelpInlineClass,
             IDictionary<string, object> helpInlineHtmlAttributes = null,
-            string templateName = "")
+            string templateName = "", bool readOnly = false, MvcHtmlString controlForReadOnly = null)
         {
             return ControlBundleFor(htmlHelper, expression, htmlHelper.EditorFor(expression, templateName), controlGroupClass,
                                     controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
-                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes, readOnly, controlForReadOnly);
         }
 
         public static MvcHtmlString ControlBundleTextBoxFor<TModel, TValue>(
@@ -265,7 +265,8 @@ namespace MvcMega.Forms.MVC.Html
             string controlsClass = DefaultControlsClass,
             IDictionary<string, object> controlsHtmlAttributes = null,
             string helpInlineClass = DefaultHelpInlineClass,
-            IDictionary<string, object> helpInlineHtmlAttributes = null)
+            IDictionary<string, object> helpInlineHtmlAttributes = null, 
+            bool readOnly = false, MvcHtmlString controlForReadOnly = null)
         {
             using (BeginControlGroup(htmlHelper, controlGroupClass, controlGroupHtmlAttributes))
             {
@@ -273,7 +274,14 @@ namespace MvcMega.Forms.MVC.Html
                                                                     labelHtmlAttributes));
                 using (BeginControls(htmlHelper, controlsClass, controlsHtmlAttributes))
                 {
-                    htmlHelper.ViewContext.Writer.Write(control);
+                    if (readOnly)
+                    {
+                        htmlHelper.ViewContext.Writer.Write(controlForReadOnly ?? htmlHelper.DisplayFor(expression));
+                    }
+                    else
+                    {
+                        htmlHelper.ViewContext.Writer.Write(control);
+                    }
                     using (BeginHelpInline(htmlHelper, helpInlineClass, helpInlineHtmlAttributes))
                     {
                         htmlHelper.ViewContext.Writer.Write(htmlHelper.ValidationMessageFor(expression));
