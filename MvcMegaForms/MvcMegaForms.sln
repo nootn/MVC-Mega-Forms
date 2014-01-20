@@ -1,13 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcMega.Forms", "MvcMega.Forms\MvcMega.Forms.csproj", "{52208A05-BE2C-4F08-BABC-0109C8FB70DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCMega.Forms.FunctionalTests", "MVCMega.Forms.FunctionalTests\MVCMega.Forms.FunctionalTests.csproj", "{C321B94E-45A0-4D19-B1AC-2C947CC44482}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcMega.Forms.UnitTests", "MvcMega.Forms.UnitTests\MvcMega.Forms.UnitTests.csproj", "{984EBEFD-B762-4570-B71D-1F6EB96A565F}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcMega.Forms.WebsiteForTesting", "MvcMega.Forms.WebsiteForTesting\MvcMega.Forms.WebsiteForTesting.csproj", "{DC394642-34A4-4DEF-857D-3421B8B8ABC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcMega.Forms.UnitTests", "MvcMega.Forms.UnitTests\MvcMega.Forms.UnitTests.csproj", "{984EBEFD-B762-4570-B71D-1F6EB96A565F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{672AD93A-5201-4AEC-B088-E2D1C3BCE580}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,18 +47,6 @@ Global
 		{C321B94E-45A0-4D19-B1AC-2C947CC44482}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C321B94E-45A0-4D19-B1AC-2C947CC44482}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{C321B94E-45A0-4D19-B1AC-2C947CC44482}.Release|x86.ActiveCfg = Release|Any CPU
-		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Debug|x86.Build.0 = Debug|Any CPU
-		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Release|x86.ActiveCfg = Release|Any CPU
-		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Release|x86.Build.0 = Release|Any CPU
 		{984EBEFD-B762-4570-B71D-1F6EB96A565F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{984EBEFD-B762-4570-B71D-1F6EB96A565F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{984EBEFD-B762-4570-B71D-1F6EB96A565F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -62,6 +57,16 @@ Global
 		{984EBEFD-B762-4570-B71D-1F6EB96A565F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{984EBEFD-B762-4570-B71D-1F6EB96A565F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{984EBEFD-B762-4570-B71D-1F6EB96A565F}.Release|x86.ActiveCfg = Release|Any CPU
+		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{DC394642-34A4-4DEF-857D-3421B8B8ABC2}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
