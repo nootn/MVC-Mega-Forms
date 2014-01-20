@@ -1,12 +1,12 @@
-﻿// /*
-// Copyright (c) 2012 Andrew Newton (http://about.me/nootn)
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// */
+﻿// // /*
+// // Copyright (c) 2014 Andrew Newton (http://www.nootn.com)
+// // 
+// // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// // 
+// // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+// // 
+// // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// // */
 
 using System;
 using System.Collections.Generic;
@@ -26,8 +26,8 @@ namespace MvcMega.Forms.MVC.Html
         public const string DefaultLabelClass = "control-label";
 
         public static ControlGroup BeginControlGroup(this HtmlHelper htmlHelper,
-                                                     string controlGroupClass = DefaultControlGroupClass,
-                                                     IDictionary<string, object> controlGroupHtmlAttributes = null)
+            string controlGroupClass = DefaultControlGroupClass,
+            IDictionary<string, object> controlGroupHtmlAttributes = null)
         {
             var container = new ControlGroup(htmlHelper.ViewContext);
             WriteStartTagWithClass(htmlHelper, container.Tag, controlGroupClass, controlGroupHtmlAttributes);
@@ -35,7 +35,7 @@ namespace MvcMega.Forms.MVC.Html
         }
 
         public static Controls BeginControls(this HtmlHelper htmlHelper, string controlsClass = DefaultControlsClass,
-                                             IDictionary<string, object> controlsHtmlAttributes = null)
+            IDictionary<string, object> controlsHtmlAttributes = null)
         {
             var container = new Controls(htmlHelper.ViewContext);
             WriteStartTagWithClass(htmlHelper, container.Tag, controlsClass, controlsHtmlAttributes);
@@ -43,8 +43,8 @@ namespace MvcMega.Forms.MVC.Html
         }
 
         public static HelpInline BeginHelpInline(this HtmlHelper htmlHelper,
-                                                 string helpInlineClass = DefaultHelpInlineClass,
-                                                 IDictionary<string, object> helpInlineHtmlAttributes = null)
+            string helpInlineClass = DefaultHelpInlineClass,
+            IDictionary<string, object> helpInlineHtmlAttributes = null)
         {
             var container = new HelpInline(htmlHelper.ViewContext);
             WriteStartTagWithClass(htmlHelper, container.Tag, helpInlineClass, helpInlineHtmlAttributes);
@@ -52,10 +52,10 @@ namespace MvcMega.Forms.MVC.Html
         }
 
         public static MvcHtmlString ControlLabelFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
-                                                                    Expression<Func<TModel, TValue>> expression,
-                                                                    string labelClass = DefaultLabelClass,
-                                                                    IDictionary<string, object> labelHtmlAttributes =
-                                                                        null)
+            Expression<Func<TModel, TValue>> expression,
+            string labelClass = DefaultLabelClass,
+            IDictionary<string, object> labelHtmlAttributes =
+                null)
         {
             if (labelHtmlAttributes == null)
             {
@@ -66,8 +66,8 @@ namespace MvcMega.Forms.MVC.Html
             {
                 var item = labelHtmlAttributes["class"];
                 labelHtmlAttributes["class"] = item == null
-                                                   ? labelClass
-                                                   : string.Concat(item.ToString(), " ", labelClass);
+                    ? labelClass
+                    : string.Concat(item.ToString(), " ", labelClass);
             }
             else
             {
@@ -90,9 +90,10 @@ namespace MvcMega.Forms.MVC.Html
             IDictionary<string, object> helpInlineHtmlAttributes = null,
             string templateName = "", bool readOnly = false, MvcHtmlString controlForReadOnly = null)
         {
-            return ControlBundleFor(htmlHelper, expression, htmlHelper.EditorFor(expression, templateName), controlGroupClass,
-                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
-                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes, readOnly, controlForReadOnly);
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.EditorFor(expression, templateName),
+                controlGroupClass,
+                controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes, readOnly, controlForReadOnly);
         }
 
         public static MvcHtmlString ControlBundleTextBoxFor<TModel, TValue>(
@@ -105,11 +106,12 @@ namespace MvcMega.Forms.MVC.Html
             string controlsClass = DefaultControlsClass,
             IDictionary<string, object> controlsHtmlAttributes = null,
             string helpInlineClass = DefaultHelpInlineClass,
-            IDictionary<string, object> helpInlineHtmlAttributes = null)
+            IDictionary<string, object> helpInlineHtmlAttributes = null, bool readOnly = false,
+            MvcHtmlString controlForReadOnly = null)
         {
             return ControlBundleFor(htmlHelper, expression, htmlHelper.TextBoxFor(expression), controlGroupClass,
-                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
-                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+                controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes, readOnly, controlForReadOnly);
         }
 
         public static MvcHtmlString ControlBundleTextAreaFor<TModel, TValue>(
@@ -123,11 +125,12 @@ namespace MvcMega.Forms.MVC.Html
             IDictionary<string, object> controlsHtmlAttributes = null,
             string helpInlineClass = DefaultHelpInlineClass,
             IDictionary<string, object> helpInlineHtmlAttributes = null,
-            int rows = 4, int columns = 20)
+            int rows = 4, int columns = 20, bool readOnly = false, MvcHtmlString controlForReadOnly = null)
         {
-            return ControlBundleFor(htmlHelper, expression, htmlHelper.TextAreaFor(expression, rows, columns, null), controlGroupClass,
-                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
-                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.TextAreaFor(expression, rows, columns, null),
+                controlGroupClass,
+                controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes, readOnly, controlForReadOnly);
         }
 
         public static MvcHtmlString ControlBundleCheckBoxFor<TModel>(
@@ -140,11 +143,12 @@ namespace MvcMega.Forms.MVC.Html
             string controlsClass = DefaultControlsClass,
             IDictionary<string, object> controlsHtmlAttributes = null,
             string helpInlineClass = DefaultHelpInlineClass,
-            IDictionary<string, object> helpInlineHtmlAttributes = null)
+            IDictionary<string, object> helpInlineHtmlAttributes = null, bool readOnly = false,
+            MvcHtmlString controlForReadOnly = null)
         {
             return ControlBundleFor(htmlHelper, expression, htmlHelper.CheckBoxFor(expression), controlGroupClass,
-                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
-                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+                controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes, readOnly, controlForReadOnly);
         }
 
         public static MvcHtmlString ControlBundlePasswordFor<TModel, TValue>(
@@ -157,11 +161,12 @@ namespace MvcMega.Forms.MVC.Html
             string controlsClass = DefaultControlsClass,
             IDictionary<string, object> controlsHtmlAttributes = null,
             string helpInlineClass = DefaultHelpInlineClass,
-            IDictionary<string, object> helpInlineHtmlAttributes = null)
+            IDictionary<string, object> helpInlineHtmlAttributes = null, bool readOnly = false,
+            MvcHtmlString controlForReadOnly = null)
         {
             return ControlBundleFor(htmlHelper, expression, htmlHelper.PasswordFor(expression), controlGroupClass,
-                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
-                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+                controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes, readOnly, controlForReadOnly);
         }
 
         public static MvcHtmlString ControlBundleRadioButtonFor<TModel, TValue>(
@@ -175,11 +180,13 @@ namespace MvcMega.Forms.MVC.Html
             string controlsClass = DefaultControlsClass,
             IDictionary<string, object> controlsHtmlAttributes = null,
             string helpInlineClass = DefaultHelpInlineClass,
-            IDictionary<string, object> helpInlineHtmlAttributes = null)
+            IDictionary<string, object> helpInlineHtmlAttributes = null, bool readOnly = false,
+            MvcHtmlString controlForReadOnly = null)
         {
-            return ControlBundleFor(htmlHelper, expression, htmlHelper.RadioButtonFor(expression, value), controlGroupClass,
-                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
-                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.RadioButtonFor(expression, value),
+                controlGroupClass,
+                controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes, readOnly, controlForReadOnly);
         }
 
         public static MvcHtmlString ControlBundleDropDownListFor<TModel, TValue>(
@@ -193,11 +200,13 @@ namespace MvcMega.Forms.MVC.Html
             string controlsClass = DefaultControlsClass,
             IDictionary<string, object> controlsHtmlAttributes = null,
             string helpInlineClass = DefaultHelpInlineClass,
-            IDictionary<string, object> helpInlineHtmlAttributes = null)
+            IDictionary<string, object> helpInlineHtmlAttributes = null, bool readOnly = false,
+            MvcHtmlString controlForReadOnly = null)
         {
-            return ControlBundleFor(htmlHelper, expression, htmlHelper.DropDownListFor(expression, selectList), controlGroupClass,
-                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
-                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.DropDownListFor(expression, selectList),
+                controlGroupClass,
+                controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes, readOnly, controlForReadOnly);
         }
 
         public static MvcHtmlString ControlBundleDropDownChildListFor<TModel, TValue>(
@@ -211,11 +220,13 @@ namespace MvcMega.Forms.MVC.Html
             string controlsClass = DefaultControlsClass,
             IDictionary<string, object> controlsHtmlAttributes = null,
             string helpInlineClass = DefaultHelpInlineClass,
-            IDictionary<string, object> helpInlineHtmlAttributes = null)
+            IDictionary<string, object> helpInlineHtmlAttributes = null, bool readOnly = false,
+            MvcHtmlString controlForReadOnly = null)
         {
-            return ControlBundleFor(htmlHelper, expression, htmlHelper.DropDownChildListFor(expression, selectList), controlGroupClass,
-                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
-                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.DropDownChildListFor(expression, selectList),
+                controlGroupClass,
+                controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes, readOnly, controlForReadOnly);
         }
 
         public static MvcHtmlString ControlBundleListBoxFor<TModel, TValue>(
@@ -229,11 +240,13 @@ namespace MvcMega.Forms.MVC.Html
             string controlsClass = DefaultControlsClass,
             IDictionary<string, object> controlsHtmlAttributes = null,
             string helpInlineClass = DefaultHelpInlineClass,
-            IDictionary<string, object> helpInlineHtmlAttributes = null)
+            IDictionary<string, object> helpInlineHtmlAttributes = null, bool readOnly = false,
+            MvcHtmlString controlForReadOnly = null)
         {
-            return ControlBundleFor(htmlHelper, expression, htmlHelper.ListBoxFor(expression, selectList), controlGroupClass,
-                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
-                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.ListBoxFor(expression, selectList),
+                controlGroupClass,
+                controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes, readOnly, controlForReadOnly);
         }
 
         public static MvcHtmlString ControlBundleListBoxChildFor<TModel, TValue>(
@@ -247,11 +260,13 @@ namespace MvcMega.Forms.MVC.Html
             string controlsClass = DefaultControlsClass,
             IDictionary<string, object> controlsHtmlAttributes = null,
             string helpInlineClass = DefaultHelpInlineClass,
-            IDictionary<string, object> helpInlineHtmlAttributes = null)
+            IDictionary<string, object> helpInlineHtmlAttributes = null, bool readOnly = false,
+            MvcHtmlString controlForReadOnly = null)
         {
-            return ControlBundleFor(htmlHelper, expression, htmlHelper.ListBoxChildFor(expression, selectList), controlGroupClass,
-                                    controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
-                                    controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes);
+            return ControlBundleFor(htmlHelper, expression, htmlHelper.ListBoxChildFor(expression, selectList),
+                controlGroupClass,
+                controlGroupHtmlAttributes, labelClass, labelHtmlAttributes, controlsClass,
+                controlsHtmlAttributes, helpInlineClass, helpInlineHtmlAttributes, readOnly, controlForReadOnly);
         }
 
         public static MvcHtmlString ControlBundleFor<TModel, TValue>(
@@ -265,13 +280,13 @@ namespace MvcMega.Forms.MVC.Html
             string controlsClass = DefaultControlsClass,
             IDictionary<string, object> controlsHtmlAttributes = null,
             string helpInlineClass = DefaultHelpInlineClass,
-            IDictionary<string, object> helpInlineHtmlAttributes = null, 
+            IDictionary<string, object> helpInlineHtmlAttributes = null,
             bool readOnly = false, MvcHtmlString controlForReadOnly = null)
         {
             using (BeginControlGroup(htmlHelper, controlGroupClass, controlGroupHtmlAttributes))
             {
                 htmlHelper.ViewContext.Writer.Write(ControlLabelFor(htmlHelper, expression, labelClass,
-                                                                    labelHtmlAttributes));
+                    labelHtmlAttributes));
                 using (BeginControls(htmlHelper, controlsClass, controlsHtmlAttributes))
                 {
                     if (readOnly)
@@ -294,7 +309,7 @@ namespace MvcMega.Forms.MVC.Html
 
 
         private static void WriteStartTagWithClass(HtmlHelper htmlHelper, HtmlTextWriterTag tag, string containerClass,
-                                                   IDictionary<string, object> otherHtmlAttributes)
+            IDictionary<string, object> otherHtmlAttributes)
         {
             var tagBuilder = new TagBuilder(tag.ToString().ToLower());
             if (otherHtmlAttributes != null)
