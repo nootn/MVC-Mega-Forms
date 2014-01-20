@@ -22,7 +22,7 @@
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="net40" />
       <frameworkAssembly assemblyName="System" targetFramework="net40" />
-      <frameworkAssembly assemblyName="System.ComponentModel.DataAnnotations" targetFramework="net40" />
+      <frameworkAssembly assemblyName="System.ComponentModel.DataAnnotations" />
       <frameworkAssembly assemblyName="System.Core" targetFramework="net40" />
       <frameworkAssembly assemblyName="System.Data" targetFramework="net40" />
       <frameworkAssembly assemblyName="System.Web.Razor" targetFramework="net40" />
