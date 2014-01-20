@@ -16,7 +16,7 @@
     <copyright>Copyright http://about.me/nootn 2013</copyright>
     <tags>asp.net mvc mvc4 form forms mega mvcmega mvcmegaforms nootn</tags>
     <dependencies>
-      <dependency id="Microsoft.AspNet.Mvc" version="5.0.0" targetFramework="net451" />
+      <dependency id="Microsoft.AspNet.Mvc" version="5.0.0" />
       <dependency id="Jurassic" />
     </dependencies>
     <frameworkAssemblies>
