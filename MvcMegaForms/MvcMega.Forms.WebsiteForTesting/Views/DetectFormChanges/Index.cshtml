@@ -1,51 +1,64 @@
 ﻿@using MvcMega.Forms.MVC.Html
 @model MvcMega.Forms.WebsiteForTesting.Models.ComplicatedForm
-@using (Html.BeginForm("Index", "DetectFormChanges", FormMethod.Post, new { @class = "detect-changes" }))
+
+@{
+    ////Sets the defaults globally - not good idea on razor view!  Could do this in app start though..
+    //HtmlExtensions.GetDefaultControlsClass = () => "";
+    //HtmlExtensions.GetDefaultLabelClass = () => "control-label";
+}
+
+@using (Html.BeginControlClassOverrideGroup(defaultControlsClass: "", defaultLabelClass: "control-label"))
 {
-    @Html.ValidationSummary(false, "Please correct the errors and try again.")
-    <fieldset>
-        <legend>Please fill in the form</legend>
-        @using (Html.BeginControlGroup())
-        {
-            @Html.ControlLabelFor(m => m.ShowTheNextHidingField)
-            using (Html.BeginControls())
+    using (Html.BeginForm("Index", "DetectFormChanges", FormMethod.Post, new { @class = "detect-changes", role = "form" }))
+    {
+        @Html.ValidationSummary(false, "Please correct the errors and try again.")
+        <fieldset>
+            <legend>Please fill in the form</legend>
+            @using (Html.BeginControlGroup())
             {
-            <label>@Html.RadioButtonFor(m => m.ShowTheNextHidingField, true, new { id = "ShowTheNextHidingFieldTrue" })
-                Yes</label>
-            <label>@Html.RadioButtonFor(m => m.ShowTheNextHidingField, false, new { id = "ShowTheNextHidingFieldFalse" })
-                No</label>
-                using (Html.BeginHelpInline())
+                @Html.ControlLabelFor(m => m.ShowTheNextHidingField)
+                using (Html.BeginControls())
                 {
-            @Html.ValidationMessageFor(m => m.ShowTheNextHidingField)
+                    <label>
+                        @Html.RadioButtonFor(m => m.ShowTheNextHidingField, true, new { id = "ShowTheNextHidingFieldTrue" })
+                    Yes
+                </label>
+                <label>
+                    @Html.RadioButtonFor(m => m.ShowTheNextHidingField, false, new { id = "ShowTheNextHidingFieldFalse" })
+                No
+            </label>
+                    using (Html.BeginHelpInline())
+                    {
+                        @Html.ValidationMessageFor(m => m.ShowTheNextHidingField)
+                    }
                 }
             }
-        }
-        @Html.ControlBundleFor(m => m.TheNextHidingField)
-        @Html.ControlBundleFor(m => m.EnableTheNextDisabledOrHiddenField)
-        @Html.ControlBundleFor(m => m.TypeHideToHideOrDisableOrReadonly)
-        @Html.ControlBundleFor(m => m.TheNextDisabledOrHiddenField)
-        @Html.ControlBundleTextAreaFor(m => m.EqualToInitial)
-        @Html.ControlBundleFor(m => m.EqualToSecond)
-        @Html.ControlBundleFor(m => m.EqualToSecondDisableIfSet)
-        @Html.ControlBundleFor(m => m.ShowNextField)
-        @Html.ControlBundleFor(m => m.NextField)
-        @Html.ControlBundleDropDownListFor(m => m.TestSelectedDropDownItemId, Model.AllTestDropDownItems)
-        @Html.ControlBundleFor(m => m.DropDownOther)
-        @Html.ControlBundleFor(m => m.DropDownShowIfOneOrTwo)
-        @Html.ControlBundleListBoxFor(m => m.TestSelectedMultiSelectItemIds, Model.AllTestDropDownItems)
-        @Html.ControlBundleFor(m => m.MultiSelectOther)
-        @Html.ControlBundleFor(m => m.OnlySupplyIfMultiSelectDoesNotContainTwo)
-        @Html.ControlBundleFor(m => m.RequiredIfOneOrTwo)
-        @Html.ControlBundleDropDownListFor(m => m.ParentItemId, Model.AllParentItems)
-        @Html.ControlBundleDropDownChildListFor(m => m.ChildItemId, Model.AllChildItems)
-        @Html.ControlBundleListBoxChildFor(m => m.ChildOfChildItemIds, Model.AllChildOfChildItems)
-        @Html.ControlBundleFor(m => m.FirstSubDetails.HasValue)
-        @Html.ControlBundleFor(m => m.FirstSubDetails.TheValue)
-        @Html.ControlBundleFor(m => m.SecondSubDetails.HasValue)
-        @Html.ControlBundleFor(m => m.SecondSubDetails.TheValue)
-        @Html.ControlBundleFor(m => m.TimeOfDayForMaskTesting)
-        
-        @{
+            @Html.ControlBundleFor(m => m.TheNextHidingField)
+            @Html.ControlBundleFor(m => m.EnableTheNextDisabledOrHiddenField)
+            @Html.ControlBundleFor(m => m.TypeHideToHideOrDisableOrReadonly)
+            @Html.ControlBundleFor(m => m.TheNextDisabledOrHiddenField)
+            @Html.ControlBundleTextAreaFor(m => m.EqualToInitial)
+            @Html.ControlBundleFor(m => m.EqualToSecond)
+            @Html.ControlBundleFor(m => m.EqualToSecondDisableIfSet)
+            @Html.ControlBundleFor(m => m.ShowNextField)
+            @Html.ControlBundleFor(m => m.NextField)
+            @Html.ControlBundleDropDownListFor(m => m.TestSelectedDropDownItemId, Model.AllTestDropDownItems)
+            @Html.ControlBundleFor(m => m.DropDownOther)
+            @Html.ControlBundleFor(m => m.DropDownShowIfOneOrTwo)
+            @Html.ControlBundleListBoxFor(m => m.TestSelectedMultiSelectItemIds, Model.AllTestDropDownItems)
+            @Html.ControlBundleFor(m => m.MultiSelectOther)
+            @Html.ControlBundleFor(m => m.OnlySupplyIfMultiSelectDoesNotContainTwo)
+            @Html.ControlBundleFor(m => m.RequiredIfOneOrTwo)
+            @Html.ControlBundleDropDownListFor(m => m.ParentItemId, Model.AllParentItems)
+            @Html.ControlBundleDropDownChildListFor(m => m.ChildItemId, Model.AllChildItems)
+            @Html.ControlBundleListBoxChildFor(m => m.ChildOfChildItemIds, Model.AllChildOfChildItems)
+            @Html.ControlBundleFor(m => m.FirstSubDetails.HasValue)
+            @Html.ControlBundleFor(m => m.FirstSubDetails.TheValue)
+            @Html.ControlBundleFor(m => m.SecondSubDetails.HasValue)
+            @Html.ControlBundleFor(m => m.SecondSubDetails.TheValue)
+            @Html.ControlBundleFor(m => m.TimeOfDayForMaskTesting)
+
+            @{
             var groupAtt = new Dictionary<string, object>();
             groupAtt.Add("group", "group");
 
@@ -57,17 +70,20 @@
 
             var helpAtt = new Dictionary<string, object>();
             helpAtt.Add("help", "help");
-        }
+            }
 
-        @Html.ControlBundleFor(m=>m.PlainJaneFieldForStyleTesting, new MvcHtmlString(@Html.TextBoxFor(p => p.PlainJaneFieldForStyleTesting, new { @class = "input-small", type = "number" }) + "<span class=\"add-on\">something</span>"), "controlGroupClass", groupAtt, "labelClass", labelAtt, "controlsClass", controlAtt, "helpInlineClass", helpAtt)
-        @Html.HiddenFor(m => m.ComplicatedFormId)
-    </fieldset>
-    <input type="submit" value="Submit Form" />
-    <br />@Html.ActionLink("Navigate back to this page (should detect changes if any)", "Index")
-    <br />@Html.ActionLink("Navigate back to this page (not detecting changes within form)", "Index", null, new { @class = "ignore-detect-changes" })
+            @Html.ControlBundleFor(m => m.PlainJaneFieldForStyleTesting, new MvcHtmlString(@Html.TextBoxFor(p => p.PlainJaneFieldForStyleTesting, new { @class = "input-small", type = "number" }) + "<span class=\"add-on\">something</span>"), "controlGroupClass", groupAtt, "labelClass", labelAtt, "controlsClass", controlAtt, "helpInlineClass", helpAtt)
+            @Html.HiddenFor(m => m.ComplicatedFormId)
+        </fieldset>
+        <input type="submit" value="Submit Form" />
+        <br />
+        @Html.ActionLink("Navigate back to this page (should detect changes if any)", "Index")
+        <br />
+        @Html.ActionLink("Navigate back to this page (not detecting changes within form)", "Index", null, new { @class = "ignore-detect-changes" })
+    }
+    <br />
+    @Html.ActionLink("Navigate back to this page (not detecting changes outside form)", "Index", null, new { @class = "ignore-detect-changes" })
 }
-<br />@Html.ActionLink("Navigate back to this page (not detecting changes outside form)", "Index", null, new { @class = "ignore-detect-changes" })
-
 @section scripts
 {
     <script type="text/javascript" src="./../../Scripts/jquery.maskedinput-1.3.min.js"></script>

@@ -1,11 +1,8 @@
 /// <reference path="typings/jquery/jquery.d.ts" />
 /*
 Copyright (c) 2012 Andrew Newton (http://about.me/nootn)
-
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 //document ready
@@ -146,7 +143,7 @@ var MvcMegaForms = (function () {
                 valueTypeToCompares = $(this).attr('data-val-changevisually-valuetypetocompare').split("~");
                 valueFormats = $(this).attr('data-val-changevisually-valueformat').split("~");
                 dependentProperty = $(this);
-                uniqueOtherPropertyNames = $.unique(otherPropertyNames.slice());
+                uniqueOtherPropertyNames = $.unique(otherPropertyNames.slice()); //Get each unique other property name
 
                 for (iOuter = 0; iOuter < uniqueOtherPropertyNames.length; iOuter += 1) {
                     fullName = dependentProperty.attr('name').substr(0, dependentProperty.attr("name").lastIndexOf(".") + 1) + uniqueOtherPropertyNames[iOuter];
@@ -226,13 +223,15 @@ var MvcMegaForms = (function () {
     MvcMegaForms.ConditionMetForChangeVisually = function (ifOperator, expectedValue, actualValue, conditionPassesIfNull, valueTypeToCompare, valueFormat) {
         "use strict";
 
+        //ensure it's not null or undefined before we begin
         if (MvcMegaForms.IsNullOrUndefined(ifOperator)) {
             throw "MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: ifOperator was not supplied";
         }
 
         var conditionMet = false, actualValueIsArray, i, iMet, iNotMet, currContainsItem, currNotContainsItem;
-        conditionPassesIfNull = !(MvcMegaForms.IsNullOrUndefined(conditionPassesIfNull)) && conditionPassesIfNull.toString().toLowerCase() === 'true';
+        conditionPassesIfNull = !(MvcMegaForms.IsNullOrUndefined(conditionPassesIfNull)) && conditionPassesIfNull.toString().toLowerCase() === 'true'; //it was a string, make it a bool
 
+        //treat empty string or undefined as null
         if (actualValue === '' || MvcMegaForms.IsNullOrUndefined(actualValue)) {
             actualValue = null;
         }
@@ -340,6 +339,7 @@ var MvcMegaForms = (function () {
                             throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Unhandled ifOperator was supplied when expectedValue was an array: ' + ifOperator;
                     }
                 default:
+                    //must be a string
                     if (!actualValueIsArray) {
                         actualValue = actualValue.toString().toLowerCase();
                     }
@@ -376,10 +376,10 @@ var MvcMegaForms = (function () {
             } else if (actualValue !== null && expectedValue === null) {
                 switch (ifOperator) {
                     case "equals":
-                        conditionMet = false;
+                        conditionMet = false; //we wanted a null and it was not
                         break;
                     case "notequals":
-                        conditionMet = true;
+                        conditionMet = true; //we did not want a null and it was not
                         break;
                     default:
                         throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: When checking for a null expectedValue, DisplayChangeIf must be Equals or NotEquals, supplied ifOperator was ' + ifOperator;
@@ -389,6 +389,7 @@ var MvcMegaForms = (function () {
                 conditionMet = conditionPassesIfNull;
             } else {
                 if (actualValueIsArray) {
+                    //verify that if the actual value is an array, we are only dealing with contains/notcontains
                     if (ifOperator !== "contains" && ifOperator !== "notcontains") {
                         throw 'MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: When actualValue is an array (E.g. value of a multi-select), DisplayChangeIf must be Contains or NotContains, supplied ifOperator was ' + ifOperator;
                     }
@@ -438,7 +439,7 @@ var MvcMegaForms = (function () {
                                 break;
                             case "contains":
                                 if (!actualValueIsArray) {
-                                    conditionMet = actualValue === expectedValue;
+                                    conditionMet = actualValue === expectedValue; //same as equals
                                 } else {
                                     for (iMet = 0; iMet < actualValue.length; iMet += 1) {
                                         currContainsItem = actualValue[iMet];
@@ -451,7 +452,7 @@ var MvcMegaForms = (function () {
                                 break;
                             case "notcontains":
                                 if (!actualValueIsArray) {
-                                    conditionMet = actualValue !== expectedValue;
+                                    conditionMet = actualValue !== expectedValue; //same as not equals
                                 } else {
                                     conditionMet = true;
                                     for (iNotMet = 0; iNotMet < actualValue.length; iNotMet += 1) {
@@ -509,7 +510,7 @@ var MvcMegaForms = (function () {
                                 break;
                             case "contains":
                                 if (!actualValueIsArray) {
-                                    conditionMet = new DateJs.Helper(actualValue).equals(expectedValue);
+                                    conditionMet = new DateJs.Helper(actualValue).equals(expectedValue); //same as equals
                                 } else {
                                     for (iMet = 0; iMet < actualValue.length; iMet += 1) {
                                         currContainsItem = actualValue[iMet];
@@ -522,7 +523,7 @@ var MvcMegaForms = (function () {
                                 break;
                             case "notcontains":
                                 if (!actualValueIsArray) {
-                                    conditionMet = !new DateJs.Helper(actualValue).equals(expectedValue);
+                                    conditionMet = !new DateJs.Helper(actualValue).equals(expectedValue); //same as not equals
                                 } else {
                                     conditionMet = true;
                                     for (iNotMet = 0; iNotMet < actualValue.length; iNotMet += 1) {
@@ -540,6 +541,7 @@ var MvcMegaForms = (function () {
 
                         break;
                     default:
+                        //must be a string
                         if (!actualValueIsArray) {
                             actualValue = actualValue.toString().toLowerCase();
                         }
@@ -647,6 +649,7 @@ var MvcMegaForms = (function () {
         for (i = 0; i < combos.length; i += 1) {
             val = combos.charAt(i);
 
+            //set state
             if (val === "{") {
                 state = MvcMegaForms.CascadeStringStatus.StartChildId;
             } else if (state === MvcMegaForms.CascadeStringStatus.CheckForSelected) {
@@ -665,6 +668,7 @@ var MvcMegaForms = (function () {
                 state = MvcMegaForms.CascadeStringStatus.EndChildValue;
             }
 
+            //set values
             if (state === MvcMegaForms.CascadeStringStatus.StartParentId) {
                 currParentId += val;
             } else if (state === MvcMegaForms.CascadeStringStatus.StartChildId) {
@@ -738,6 +742,7 @@ var MvcMegaForms = (function () {
     MvcMegaForms.GetFormValue = function (formControl) {
         "use strict";
 
+        //ensure it's not null or undefined before we begin
         if (MvcMegaForms.IsNullOrUndefined(formControl)) {
             throw "Undefined form control supplied";
         }
@@ -747,6 +752,7 @@ var MvcMegaForms = (function () {
         //ensure we have a jquery object to deal with
         $formControl = MvcMegaForms.GetObjectAsJQuery(formControl);
 
+        //get the value different ways based on the type of form control
         if ($formControl.is(':checkbox')) {
             val = $formControl.is(':checked') ? true : false;
         } else if ($formControl.is(':radio')) {
@@ -848,12 +854,14 @@ var MvcMegaForms = (function () {
         "use strict";
         var changedId = null;
         $form.find('input').each(function () {
+            //specifically leave 'this' as non-jquery
             if (MvcMegaForms.FormControlValueHasChanged(this)) {
                 changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
                 return;
             }
         });
         $form.find('textarea').each(function () {
+            //specifically leave 'this' as non-jquery
             if (MvcMegaForms.FormControlValueHasChanged(this)) {
                 changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
                 return;
@@ -861,6 +869,7 @@ var MvcMegaForms = (function () {
         });
         if (MvcMegaForms.IsNullOrUndefined(changedId)) {
             $form.find('select').each(function () {
+                //specifically leave 'this' as non-jquery
                 if (MvcMegaForms.FormControlValueHasChanged(this)) {
                     changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
                     return;
@@ -890,7 +899,7 @@ var MvcMegaForms = (function () {
         "use strict";
         return (item == null || item === undefined || typeof item == 'undefined');
     };
-    MvcMegaForms.ChangeVisuallyJQueryParentContainerSelector = '.control-group';
+    MvcMegaForms.ChangeVisuallyJQueryParentContainerSelector = '.form-group';
     MvcMegaForms.ChangeVisuallyJQueryHideEffect = 'fast';
     MvcMegaForms.ChangeVisuallyJQueryShowEffect = 'fast';
     MvcMegaForms.CascadeJQueryHideEffect = 'fast';
@@ -922,8 +931,8 @@ var DateJs;
             this.providedDate = providedDate;
             this.preferAmericanFormat = preferAmericanFormatForDefault;
         }
-        Helper.LZ = // Utility function to append a 0 to single-digit numbers
-        function (x) {
+        // Utility function to append a 0 to single-digit numbers
+        Helper.LZ = function (x) {
             return (x < 0 || x > 9 ? "" : "0") + x;
         };
 
@@ -949,12 +958,13 @@ var DateJs;
             return null;
         };
 
-        Helper.parseString = // Parse a string and convert it to a Date object.
+        // Parse a string and convert it to a Date object.
         // If no format is passed, try a list of common formats.
         // If string cannot be parsed, return null.
         // Avoids regular expressions to be more portable.
-        function (val, format, preferAmericanFormatForDefault) {
+        Helper.parseString = function (val, format, preferAmericanFormatForDefault) {
             if (typeof preferAmericanFormatForDefault === "undefined") { preferAmericanFormatForDefault = true; }
+            // If no format is specified, try a few common formats
             if (typeof (format) == "undefined" || format == null || format == "") {
                 var generalFormats = new Array('y-M-d', 'MMM d, y', 'MMM d,y', 'y-MMM-d', 'd-MMM-y', 'MMM d', 'MMM-d', 'd-MMM');
                 var monthFirst = new Array('M/d/y', 'M-d-y', 'M.d.y', 'M/d', 'M-d');
@@ -996,6 +1006,7 @@ var DateJs;
                     token += format.charAt(i_format++);
                 }
 
+                // Extract contents of value based on format token
                 if (token == "yyyy" || token == "yy" || token == "y") {
                     if (token == "yyyy") {
                         x = 4;
@@ -1112,11 +1123,14 @@ var DateJs;
                 }
             }
 
+            // If there are any trailing characters left in the value, it doesn't match
             if (i_val != val.length) {
                 return null;
             }
 
+            // Is date valid for month?
             if (month == 2) {
+                // Check for leap year
                 if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) {
                     if (date > 29) {
                         return null;
@@ -1133,6 +1147,7 @@ var DateJs;
                 }
             }
 
+            // Correct hours value
             if (hh < 12 && ampm == "PM") {
                 hh = hh - 0 + 12;
             } else if (hh > 11 && ampm == "AM") {
@@ -1179,3 +1194,4 @@ var DateJs;
     })();
     DateJs.Helper = Helper;
 })(DateJs || (DateJs = {}));
+//# sourceMappingURL=MvcMegaForms.js.map

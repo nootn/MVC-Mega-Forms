@@ -136,6 +136,7 @@
     <Compile Include="MVC\HelpInline.cs" />
     <Compile Include="MVC\Html\HtmlExtensions.cs" />
     <Compile Include="MVC\Html\SelectExtensions.cs" />
+    <Compile Include="MVC\ControlClassOverrideGroup.cs" />
     <Compile Include="MVC\MvcHtmlContainerBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

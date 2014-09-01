@@ -2,10 +2,9 @@
 <package>
   <metadata>
     <id>MvcMegaForms</id>
-    <version>0.2.0.0</version>
+    <version>0.2.0.1</version>
     <releaseNotes>
-      * Updates to MVC 5
-      * Adds new feature to supply a "read only" control to ControlBundleFor methods
+      * Updates to cater for Bootstrap 3x by default
     </releaseNotes>
     <authors>http://about.me/nootn</authors>
     <owners>http://about.me/nootn</owners>
@@ -13,11 +12,12 @@
     <iconUrl>https://en.gravatar.com/userimage/3172408/16287e323f3bf3578271be411aadde84.jpg</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Additional components to make awesome forms in ASP.NET MVC.  It contains things like hiding/showing or enabling/disabling form fields based on values of other fields.</description>
-    <copyright>Copyright http://about.me/nootn 2013</copyright>
-    <tags>asp.net mvc mvc4 form forms mega mvcmega mvcmegaforms nootn</tags>
+    <copyright>Copyright http://about.me/nootn 2014</copyright>
+    <tags>asp.net mvc mvc5 form forms mega mvcmega mvcmegaforms nootn</tags>
     <dependencies>
       <dependency id="Microsoft.AspNet.Mvc" version="5.0.0" />
       <dependency id="Jurassic" />
+      <dependency id="jquery.TypeScript.DefinitelyTyped" />
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="net40" />

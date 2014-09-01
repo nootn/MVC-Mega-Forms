@@ -82,7 +82,7 @@ $(window).bind("beforeunload", function (): string {
 
 class MvcMegaForms {
 
-    public static ChangeVisuallyJQueryParentContainerSelector: string = '.control-group';
+    public static ChangeVisuallyJQueryParentContainerSelector: string = '.form-group';
     public static ChangeVisuallyJQueryHideEffect: string = 'fast';
     public static ChangeVisuallyJQueryShowEffect: string = 'fast';
     public static CascadeJQueryHideEffect: string = 'fast';

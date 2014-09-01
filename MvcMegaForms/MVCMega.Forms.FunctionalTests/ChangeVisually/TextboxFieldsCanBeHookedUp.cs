@@ -61,7 +61,7 @@ namespace MVCMega.Forms.FunctionalTests.ChangeVisually
             //TODO: waiting on Seleno to get the element properly
             var elem = _page.AssertThatElements(By.Id("NextField1"));
             elem.Exist();
-            //elem.ConformTo(i => Assert.IsTrue(i.All(a => a.FindElement(new By.jQueryBy("").Parent(".control-group")).GetCssValue("display") == "block")));
+            //elem.ConformTo(i => Assert.IsTrue(i.All(a => a.FindElement(new By.jQueryBy("").Parent(".form-group")).GetCssValue("display") == "block")));
         }
 
         [Test]

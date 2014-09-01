@@ -19,11 +19,27 @@ namespace MvcMega.Forms.MVC.Html
 {
     public static class HtmlExtensions
     {
-        //These css class constants are handy for use with Twitter Bootstrap v2 (and above hopefully)
-        public const string DefaultControlGroupClass = "control-group";
-        public const string DefaultControlsClass = "controls";
+        //These default css class constants are handy for use with Twitter Bootstrap v3 (and above hopefully) with form class "form-horizontal".
+        //If you are not using "form-horizontal, see the comment above the Func<string> methods below for how to override these defaults either globally or in particular forms
+        public const string DefaultControlGroupClass = "form-group";
+        public const string DefaultControlsClass = "controls col-sm-9";
         public const string DefaultHelpInlineClass = "help-inline";
-        public const string DefaultLabelClass = "control-label";
+        public const string DefaultLabelClass = "control-label col-sm-3";
+
+        //You can override the defaults globally by changing these, or within each form using the method "BeginControlClassOverrideGroup"
+        //Since these are able to be set globally, they are a bit dangerous.
+        //If I were not trying to maintain backwards compatibility I would have designed this differently.
+        public static Func<string> GetDefaultControlGroupClass = () => DefaultControlGroupClass;
+        public static Func<string> GetDefaultControlsClass = () => DefaultControlsClass;
+        public static Func<string> GetDefaultHelpInlineClass = () => DefaultHelpInlineClass;
+        public static Func<string> GetDefaultLabelClass = () => DefaultLabelClass;
+
+        public static ControlClassOverrideGroup BeginControlClassOverrideGroup(this HtmlHelper htmlHelper, string defaultControlGroupClass = null, string defaultControlsClass = null,
+            string defaultHelpInlineClass = null, string defaultLabelClass = null)
+        {
+            var container = new ControlClassOverrideGroup(defaultControlGroupClass, defaultControlsClass, defaultHelpInlineClass, defaultLabelClass);
+            return container;
+        }
 
         public static ControlGroup BeginControlGroup(this HtmlHelper htmlHelper,
             string controlGroupClass = DefaultControlGroupClass,
@@ -38,6 +54,15 @@ namespace MvcMega.Forms.MVC.Html
             IDictionary<string, object> controlsHtmlAttributes = null)
         {
             var container = new Controls(htmlHelper.ViewContext);
+
+            //manipulate class, overriding default if necessary
+            if (string.Equals(controlsClass, DefaultControlsClass, StringComparison.CurrentCultureIgnoreCase)
+                && !string.Equals(controlsClass, GetDefaultControlsClass(), StringComparison.CurrentCultureIgnoreCase))
+            {
+                //Set it to the overriden default
+                controlsClass = GetDefaultControlsClass();
+            }
+
             WriteStartTagWithClass(htmlHelper, container.Tag, controlsClass, controlsHtmlAttributes);
             return container;
         }
@@ -47,6 +72,15 @@ namespace MvcMega.Forms.MVC.Html
             IDictionary<string, object> helpInlineHtmlAttributes = null)
         {
             var container = new HelpInline(htmlHelper.ViewContext);
+
+            //manipulate class, overriding default if necessary
+            if (string.Equals(helpInlineClass, DefaultHelpInlineClass, StringComparison.CurrentCultureIgnoreCase)
+                && !string.Equals(helpInlineClass, GetDefaultHelpInlineClass(), StringComparison.CurrentCultureIgnoreCase))
+            {
+                //Set it to the overriden default
+                helpInlineClass = GetDefaultHelpInlineClass();
+            }
+
             WriteStartTagWithClass(htmlHelper, container.Tag, helpInlineClass, helpInlineHtmlAttributes);
             return container;
         }
@@ -60,6 +94,14 @@ namespace MvcMega.Forms.MVC.Html
             if (labelHtmlAttributes == null)
             {
                 labelHtmlAttributes = new Dictionary<string, object>();
+            }
+
+            //manipulate class, overriding default if necessary
+            if (string.Equals(labelClass, DefaultLabelClass, StringComparison.CurrentCultureIgnoreCase)
+                && !string.Equals(labelClass, GetDefaultLabelClass(), StringComparison.CurrentCultureIgnoreCase))
+            {
+                //Set it to the overriden default
+                labelClass = GetDefaultLabelClass();
             }
 
             if (labelHtmlAttributes.ContainsKey("class"))
