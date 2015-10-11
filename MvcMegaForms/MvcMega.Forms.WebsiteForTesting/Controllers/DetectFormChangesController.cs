@@ -26,11 +26,11 @@ namespace MvcMega.Forms.WebsiteForTesting.Controllers
             model.ParentItemId =
                 model.AllParentItems.Where(_ => _.Text == "Parent 2").Select(_ => Convert.ToInt32(_.Value)).First();
             model.ChildItemId =
-                model.AllChildItems.Where(_ => _.ParentValue == model.ParentItemId.ToString() && _.Value != "0")
+                model.AllChildItems.Where(_ => _.ParentValue == model.ParentItemId.ToString() && _.Value != "")
                      .Select(_ => Convert.ToInt32(_.Value))
                      .First();
             model.ChildOfChildItemIds =
-                model.AllChildOfChildItems.Where(_ => _.ParentValue == model.ChildItemId.ToString() && _.Value != "0")
+                model.AllChildOfChildItems.Where(_ => _.ParentValue == model.ChildItemId.ToString() && _.Value != "")
                      .Take(2)
                      .Select(_ => Convert.ToInt32(_.Value))
                      .ToArray();

@@ -35,35 +35,35 @@ namespace MvcMega.Forms.WebsiteForTesting.Models
             AllTestDropDownItems.Add(new SelectListItem { Text = "Other", Value = "3" });
 
             AllParentItems = new List<SelectListItem>();
-            AllParentItems.Add(new SelectListItem { Text = "[Please Select]", Value = "0" });
+            //AllParentItems.Add(new SelectListItem { Text = "", Value = "" });
             AllParentItems.Add(new SelectListItem { Text = "Parent 1", Value = "1" });
             AllParentItems.Add(new SelectListItem { Text = "Parent 2", Value = "2", Selected=true });
             AllParentItems.Add(new SelectListItem { Text = "Parent 3", Value = "3" });
 
             AllChildItems = new CascadingSelectList();
             AllChildItems.ParentSelectListPropertyName = "ParentItemId";
-            AllChildItems.Add(new ChildSelectListItem { Text = "[Please Select]", ParentValue = "1", Value = "0" });
+            //AllChildItems.Add(new ChildSelectListItem { Text = "", ParentValue = "1", Value = "" });
             AllChildItems.Add(new ChildSelectListItem { Text = "Child 1 of Parent 1", ParentValue = "1", Value = "1" });
-            AllChildItems.Add(new ChildSelectListItem { Text = "[Please Select]", ParentValue = "2", Value = "0" });
+            //AllChildItems.Add(new ChildSelectListItem { Text = "", ParentValue = "2", Value = "" });
             AllChildItems.Add(new ChildSelectListItem { Text = "Child 1 of Parent 2", ParentValue = "2", Value = "2" });
             AllChildItems.Add(new ChildSelectListItem { Text = "Child 2 of Parent 2", ParentValue = "2", Value = "3", Selected=true });
-            AllChildItems.Add(new ChildSelectListItem { Text = "[Please Select]", ParentValue = "3", Value = "0" });
+            //AllChildItems.Add(new ChildSelectListItem { Text = "", ParentValue = "3", Value = "" });
             AllChildItems.Add(new ChildSelectListItem { Text = "Child 1 of Parent 3", ParentValue = "3", Value = "4" });
             AllChildItems.Add(new ChildSelectListItem { Text = "Child 2 of Parent 3", ParentValue = "3", Value = "5", Selected=true });
             AllChildItems.Add(new ChildSelectListItem { Text = "Child 3 of Parent 3", ParentValue = "3", Value = "6" });
 
             AllChildOfChildItems = new CascadingSelectList();
             AllChildOfChildItems.ParentSelectListPropertyName = "ChildItemId";
-            AllChildOfChildItems.Add(new ChildSelectListItem { Text = "[Please Select]", ParentValue = "1", Value = "0" });
+            //AllChildOfChildItems.Add(new ChildSelectListItem { Text = "", ParentValue = "1", Value = "" });
             AllChildOfChildItems.Add(new ChildSelectListItem { Text = "ChildOfChild 1 of Child 1", ParentValue = "1", Value = "1" });
-            AllChildOfChildItems.Add(new ChildSelectListItem { Text = "[Please Select]", ParentValue = "2", Value = "0" });
+            //AllChildOfChildItems.Add(new ChildSelectListItem { Text = "", ParentValue = "2", Value = "" });
             AllChildOfChildItems.Add(new ChildSelectListItem { Text = "ChildOfChild 1 of Child 2", ParentValue = "2", Value = "2" });
             AllChildOfChildItems.Add(new ChildSelectListItem { Text = "ChildOfChild 2 of Child 2", ParentValue = "2", Value = "3", Selected=true });
-            AllChildOfChildItems.Add(new ChildSelectListItem { Text = "[Please Select]", ParentValue = "3", Value = "0" });
+            //AllChildOfChildItems.Add(new ChildSelectListItem { Text = "", ParentValue = "3", Value = "" });
             AllChildOfChildItems.Add(new ChildSelectListItem { Text = "ChildOfChild 1 of Child 3", ParentValue = "3", Value = "4" });
             AllChildOfChildItems.Add(new ChildSelectListItem { Text = "ChildOfChild 2 of Child 3", ParentValue = "3", Value = "5", Selected=true });
             AllChildOfChildItems.Add(new ChildSelectListItem { Text = "ChildOfChild 3 of Child 3", ParentValue = "3", Value = "6" });
-            AllChildOfChildItems.Add(new ChildSelectListItem { Text = "[Please Select]", ParentValue = "4", Value = "0" });
+            //AllChildOfChildItems.Add(new ChildSelectListItem { Text = "", ParentValue = "4", Value = "" });
             AllChildOfChildItems.Add(new ChildSelectListItem { Text = "ChildOfChild 1 of Child 4", ParentValue = "4", Value = "7" });
             AllChildOfChildItems.Add(new ChildSelectListItem { Text = "ChildOfChild 2 of Child 4", ParentValue = "4", Value = "8", Selected=true });
             AllChildOfChildItems.Add(new ChildSelectListItem { Text = "ChildOfChild 3 of Child 4", ParentValue = "4", Value = "9" });

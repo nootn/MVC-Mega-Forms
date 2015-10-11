@@ -8,6 +8,7 @@
         @*@Styles.Render("~/Content/themes/base/css", "~/Content/css")
         @Scripts.Render("~/bundles/modernizr")*@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        @RenderSection("head", required: false)
     </head>
     <body>
         <div class="container-fluid">
