@@ -2,9 +2,9 @@
 <package>
   <metadata>
     <id>MvcMegaForms</id>
-    <version>0.2.0.1</version>
+    <version>0.2.0.2</version>
     <releaseNotes>
-      * Updates to cater for Bootstrap 3x by default
+      * Changes how "detect form changes* works to make it more robust and flexible
     </releaseNotes>
     <authors>http://about.me/nootn</authors>
     <owners>http://about.me/nootn</owners>
