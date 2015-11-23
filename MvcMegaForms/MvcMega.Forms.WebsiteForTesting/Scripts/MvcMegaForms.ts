@@ -33,7 +33,7 @@ $(window).bind("beforeunload", function (): string {
 
         if (hasPossibleFormsDetecting) {
             $(formSearch).each(function (): any {
-                doNoLeaveMessage = MvcMegaForms.AlertFormChanged($(this));
+                doNoLeaveMessage = MvcMegaForms.AlertFormChangedIfNecessary($(this));
                 if (doNoLeaveMessage !== '') {
                     return;
                 }
@@ -80,7 +80,13 @@ $(window).bind("beforeunload", function (): string {
 //    $.validator.unobtrusive.adapters.addSingleVal('requiredifnotcontains', 'dependentproperty', 'dependentvalue', 'requiredifnotcontains');
 //}
 
+interface IFormValueContainer {
+    origFormValuesSerialized: string;
+}
+
 class MvcMegaForms {
+
+    
 
     public static ChangeVisuallyJQueryParentContainerSelector: string = '.form-group';
     public static ChangeVisuallyJQueryHideEffect: string = 'fast';
@@ -88,14 +94,17 @@ class MvcMegaForms {
     public static CascadeJQueryHideEffect: string = 'fast';
     public static CascadeJQueryShowEffect: string = 'fast';
     public static DetectAllFormChanges: boolean = false; //set value whether to detect changes on all forms or not
-    public static DetectChangesWarningMessage: string = '';  //The message to show if a form value has changed and page is being left.  If blank uses default which includes ID of first element found
+    public static DetectChangesWarningMessage: string = '';  //The message to show if a form value has changed and page is being left.
     public static DetectChangesFormClass: string = 'detect-changes'; //The class to give forms that you want changes detected on if 'MvcMegaForms.DetectAllFormChanges' is false
     public static IgnoreDetectChangesClass: string = 'ignore-detect-changes'; //Add this class to any elements you want to allow to be clicked that leave the page but don't show the message (E.g. clear buttons that reset the form)
     public static DisabledOrReadonlyCssClass: string = 'ui-state-disabled';  //The class to give controls that are disabled or readonly
 
     public static LeavingPageDueToSubmitOrIgnore: boolean = false;
 
-    public static ConfigureDetectChanges(): void {
+    public static FormOriginalValues: { [id: string]: IFormValueContainer; } = {};
+
+    ///If it's calling the first time, reconfigure should be false, subsequent times to re-set the initial values should be true.
+    public static ConfigureDetectChanges(reconfigure: boolean = false): void {
         "use strict";
         var formSearch = "form";
         if (MvcMegaForms.IsNullOrUndefined(MvcMegaForms.DetectAllFormChanges) || MvcMegaForms.DetectAllFormChanges === false) {
@@ -109,42 +118,30 @@ class MvcMegaForms {
         $(formSearch).each(function (): any {
             var $form = $(this);
 
-            //wire up submit buttons
-            $form.find("input:submit").each(function (): any {
-                var $me = $(this);
-                $me.click(function () {
-                    MvcMegaForms.LeavingPageDueToSubmitOrIgnore = true;
-                });
-            });
-
-            //ensure all selects that have options have a selected option (otherwise it will always say they changed)
-            $form.find("select").each(function (): any {
-                var $me = $(this), foundDefaultSelected, $firstOption;
-                if (MvcMegaForms.IsNullOrUndefined($me.attr('multiple')) && $me.find('option').length > 0) {
-                    foundDefaultSelected = false;
-                    $me.find('option').each(function (): any {
-                        if (this.defaultSelected) {
-                            foundDefaultSelected = true;
-                            return;
-                        }
+            if (!reconfigure) {
+                //wire up submit buttons
+                $form.find("input:submit").each(function (): any {
+                    var $me = $(this);
+                    $me.click(function () {
+                        MvcMegaForms.LeavingPageDueToSubmitOrIgnore = true;
                     });
-                    if (!foundDefaultSelected) {
-                        $firstOption = $me.find("option:first-child");
-                        $firstOption.attr("selected", true);
-                        $firstOption.attr("defaultSelected", true);
-                    }
-                }
-            });
+                });
+            }
+
+            var formId = MvcMegaForms.GetIdOrName($form);
+            MvcMegaForms.FormOriginalValues[formId] = { origFormValuesSerialized: $form.serialize() };
         });
 
-        if (!MvcMegaForms.IsNullOrUndefined(MvcMegaForms.IgnoreDetectChangesClass)) {
-            //wire up any other items to ignore which could be anywhere on the screen, not within a form
-            $("." + MvcMegaForms.IgnoreDetectChangesClass).each(function (): any {
-                var $me = $(this);
-                $me.click(function (): void {
-                    MvcMegaForms.LeavingPageDueToSubmitOrIgnore = true;
+        if (!reconfigure) {
+            if (!MvcMegaForms.IsNullOrUndefined(MvcMegaForms.IgnoreDetectChangesClass)) {
+                //wire up any other items to ignore which could be anywhere on the screen, not within a form
+                $("." + MvcMegaForms.IgnoreDetectChangesClass).each(function (): any {
+                    var $me = $(this);
+                    $me.click(function (): void {
+                        MvcMegaForms.LeavingPageDueToSubmitOrIgnore = true;
+                    });
                 });
-            });
+            }
         }
     }
 
@@ -903,83 +900,19 @@ class MvcMegaForms {
         "use strict";
         return (Object.prototype.toString.call(item) === '[object Array]');
     }
-
-    public static FormControlValueHasChanged(formControl): boolean {
-        "use strict";
-
-        var $formControl,
-            allCndMet,
-            currOpt,
-            returnVal,
-            i;
-
-        $formControl = $(formControl);
-
-        if ($formControl.is(':checkbox')) {
-            returnVal = (formControl.checked !== formControl.defaultChecked);
-        } else if ($formControl.is(':radio')) {
-            returnVal = (formControl.checked !== formControl.defaultChecked);
-        } else if ($formControl.is('select') && !MvcMegaForms.IsNullOrUndefined($formControl.attr('multiple'))) {
-            if (MvcMegaForms.IsNullOrUndefined(formControl.options) || formControl.options.length <= 0) {
-                returnVal = false;
-            } else {
-                allCndMet = false;
-                for (i = 0; i < formControl.options.length; i += 1) {
-                    currOpt = formControl.options[i];
-                    allCndMet = allCndMet || (currOpt.selected !== currOpt.defaultSelected);
-                }
-                returnVal = allCndMet;
-            }
-        } else if ($formControl.is('select')) {
-            if (MvcMegaForms.IsNullOrUndefined(formControl.options) || formControl.options.length <= 0) {
-                returnVal = false;
-            } else {
-                returnVal = !(formControl.options[formControl.selectedIndex].defaultSelected);
-            }
-        } else {
-            returnVal = (formControl.value !== formControl.defaultValue);
-        }
-        return returnVal;
-    }
-
-    public static FormFieldIdChanged($form): string {
-        "use strict";
-        var changedId = null;
-        $form.find('input').each(function () {
-            //specifically leave 'this' as non-jquery
-            if (MvcMegaForms.FormControlValueHasChanged(this)) {
-                changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
-                return;
-            }
-        });
-        $form.find('textarea').each(function () {
-            //specifically leave 'this' as non-jquery
-            if (MvcMegaForms.FormControlValueHasChanged(this)) {
-                changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
-                return;
-            }
-        });
-        if (MvcMegaForms.IsNullOrUndefined(changedId)) {
-            $form.find('select').each(function () {
-                //specifically leave 'this' as non-jquery
-                if (MvcMegaForms.FormControlValueHasChanged(this)) {
-                    changedId = MvcMegaForms.IsNullOrUndefined(this.id) ? MvcMegaForms.IsNullOrUndefined(this.name) ? '[unknown]' : this.name : this.id;
-                    return;
-                }
-            });
-        }
-        return changedId;
-    }
-
-    public static AlertFormChanged($form): string {
+    
+    public static AlertFormChangedIfNecessary($form): string {
         "use strict";
 
         var changedId,
             confMsg;
 
-        changedId = MvcMegaForms.FormFieldIdChanged($form);
-        if (!MvcMegaForms.IsNullOrUndefined(changedId)) {
-            confMsg = "At least one unsaved value has changed ('" + changedId + "'), are you sure you want to leave the page?";
+        var changedFields = MvcMegaForms.GetChangedFields($form);
+        
+        if (changedFields.length > 0) {
+            console.log("Fields changed since page load: " + changedFields);
+
+            confMsg = "Are you sure you want to leave the page?  One or more fields have changed that will not be saved.";
             if (!MvcMegaForms.IsNullOrUndefined(MvcMegaForms.DetectChangesWarningMessage) && MvcMegaForms.DetectChangesWarningMessage !== '') {
                 confMsg = MvcMegaForms.DetectChangesWarningMessage;
             }
@@ -987,6 +920,25 @@ class MvcMegaForms {
         }
         return '';
     }
+
+    public static GetIdOrName($ctrl): string {
+        return MvcMegaForms.IsNullOrUndefined($ctrl.id) ? MvcMegaForms.IsNullOrUndefined($ctrl.name) ? '' : $ctrl.name : $ctrl.id;
+    }
+
+    public static GetChangedFields($form): string[]{
+
+        var formId = MvcMegaForms.GetIdOrName($form);
+        var formValuesBefore = MvcMegaForms.FormOriginalValues[formId];
+        var formValuesAfter = $form.serialize();
+        var current = formValuesAfter.split('&');
+        var clean = formValuesBefore.origFormValuesSerialized.split('&');
+
+        var changedValues = current.filter(function (value) {
+            return clean.indexOf(value) === -1;
+    });
+
+    return changedValues.map(function (value) { return value.split('=')[0]; });
+}
 
     public static IsNullOrUndefined(item): boolean {
         "use strict";

@@ -98,19 +98,19 @@
     @*<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.js"></script>*@
     <script type="text/javascript">
 
-
-        
+              
         $(document).ready(function () {
             //example of how to get masking library working - must set default value
             $ctrlToMask = $('#TimeOfDayForMaskTesting');
             $ctrlToMask.mask('99:99', { placeholder: '' });
-            //Add this line to ensure DetectFormChanges works - need the 'defaultValue' to be the value after masking
-            $ctrlToMask.get(0).defaultValue = $ctrlToMask.val();
 
             //select2
             $('select').select2({
                 placeholder: "[Please Select]"
             });
+
+            //Add this line to ensure DetectFormChanges works after applying any masking etc
+            MvcMegaForms.ConfigureDetectChanges(true);
         });
     </script>
     

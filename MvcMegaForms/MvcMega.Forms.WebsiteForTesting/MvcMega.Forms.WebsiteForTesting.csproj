@@ -21,6 +21,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <TargetFrameworkProfile />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -233,6 +234,7 @@
     <Content Include="Scripts\MvcMegaForms_Readme-Generate-Definition-File.txt" />
     <Content Include="Scripts\MvcMegaForms.d.ts" />
     <Content Include="Scripts\MvcMegaForms.js.map" />
+    <Content Include="Views\Shared\EditorTemplates\Decimal.cshtml" />
     <TypeScriptCompile Include="Scripts\MvcMegaForms.ts" />
     <Content Include="Scripts\MvcMegaForms.js">
       <DependentUpon>MvcMegaForms.ts</DependentUpon>

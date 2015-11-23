@@ -1,4 +1,7 @@
 /// <reference path="typings/jquery/jquery.d.ts" />
+interface IFormValueContainer {
+    origFormValuesSerialized: string;
+}
 declare class MvcMegaForms {
     static ChangeVisuallyJQueryParentContainerSelector: string;
     static ChangeVisuallyJQueryHideEffect: string;
@@ -11,7 +14,8 @@ declare class MvcMegaForms {
     static IgnoreDetectChangesClass: string;
     static DisabledOrReadonlyCssClass: string;
     static LeavingPageDueToSubmitOrIgnore: boolean;
-    static ConfigureDetectChanges(): void;
+    static FormOriginalValues: { [id: string]: IFormValueContainer; };
+    static ConfigureDetectChanges(reconfigure: boolean): void;
     static AttachEvents(): void;
     static ApplyChangeVisually(dependentProperty, otherProperty, to, ifOperator, value, conditionPassesIfNull, valueTypeToCompare, valueFormat): boolean;
     static ConditionMetForChangeVisually(ifOperator, expectedValue, actualValue, conditionPassesIfNull, valueTypeToCompare, valueFormat): boolean;
@@ -26,9 +30,9 @@ declare class MvcMegaForms {
     static SetControlReadonly(ctrl: any, customDisabledOrReadonlyCssClass?: string): void;
     static SetControlDisabledAndReadonly(ctrl: any, disabledOrReadonlyCssClass?: string): void;
     static IsArray(item): boolean;
-    static FormControlValueHasChanged(formControl): boolean;
-    static FormFieldIdChanged($form): string;
-    static AlertFormChanged($form): string;
+    static AlertFormChangedIfNecessary($form): string;
+    static GetIdOrName($ctrl): string;
+    static GetChangedFields($form): string[];
     static IsNullOrUndefined(item): boolean;
 }
 declare module DateJs {
