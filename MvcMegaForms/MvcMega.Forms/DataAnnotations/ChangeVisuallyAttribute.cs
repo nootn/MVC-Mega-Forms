@@ -42,13 +42,14 @@ namespace MvcMega.Forms.DataAnnotations
             NotContains,
         }
 
-        public ChangeVisuallyAttribute(ChangeTo to, string whenOtherPropertyName, DisplayChangeIf ifOperator, object value, bool conditionPassesIfNull)
+        public ChangeVisuallyAttribute(ChangeTo to, string whenOtherPropertyName, DisplayChangeIf ifOperator, object value, bool conditionPassesIfNull, ComparisonValueType valueType = ComparisonValueType.String)
         {
             To = to;
             WhenOtherPropertyName = whenOtherPropertyName;
             If = ifOperator;
             Value = value;
             ConditionPassesIfNull = conditionPassesIfNull;
+            ValueTypeToCompare = valueType;
         }
 
         public enum ComparisonValueType
