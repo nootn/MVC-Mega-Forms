@@ -2,9 +2,9 @@
 <package>
   <metadata>
     <id>MvcMegaForms</id>
-    <version>0.2.0.2</version>
+    <version>0.2.0.3</version>
     <releaseNotes>
-      * Changes how "detect form changes* works to make it more robust and flexible
+      * Makes default CSS class names bootstrap 4 compatible to prevent having to override them as you upgrade bootstrap to the latest version
     </releaseNotes>
     <authors>http://about.me/nootn</authors>
     <owners>http://about.me/nootn</owners>
@@ -16,8 +16,8 @@
     <tags>asp.net mvc mvc5 form forms mega mvcmega mvcmegaforms nootn</tags>
     <dependencies>
       <dependency id="Microsoft.AspNet.Mvc" version="5.0.0" />
-      <dependency id="Jurassic" />
-      <dependency id="jquery.TypeScript.DefinitelyTyped" />
+      <dependency id="Jurassic" version="2.1.1" />
+      <dependency id="jquery.TypeScript.DefinitelyTyped" version="0.2.9" />
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="net40" />
