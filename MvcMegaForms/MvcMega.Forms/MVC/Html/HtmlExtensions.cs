@@ -1,4 +1,4 @@
-﻿// // /*
+// // /*
 // // Copyright (c) 2014 Andrew Newton (http://www.nootn.com)
 // // 
 // // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -19,12 +19,12 @@ namespace MvcMega.Forms.MVC.Html
 {
     public static class HtmlExtensions
     {
-        //These default css class constants are handy for use with Twitter Bootstrap v3 (and above hopefully) with form class "form-horizontal".
+        //These default css class constants are handy for use with Twitter Bootstrap v4.
         //If you are not using "form-horizontal, see the comment above the Func<string> methods below for how to override these defaults either globally or in particular forms
-        public const string DefaultControlGroupClass = "form-group";
+        public const string DefaultControlGroupClass = "form-row";
         public const string DefaultControlsClass = "controls col-sm-9";
-        public const string DefaultHelpInlineClass = "help-inline";
-        public const string DefaultLabelClass = "control-label col-sm-3";
+        public const string DefaultHelpInlineClass = "form-text text-muted";
+        public const string DefaultLabelClass = "col-form-label col-sm-3";
 
         //You can override the defaults globally by changing these, or within each form using the method "BeginControlClassOverrideGroup"
         //Since these are able to be set globally, they are a bit dangerous.
@@ -46,6 +46,15 @@ namespace MvcMega.Forms.MVC.Html
             IDictionary<string, object> controlGroupHtmlAttributes = null)
         {
             var container = new ControlGroup(htmlHelper.ViewContext);
+
+            //manipulate class, overriding default if necessary
+            if (string.Equals(controlGroupClass, DefaultControlGroupClass, StringComparison.CurrentCultureIgnoreCase)
+                && !string.Equals(controlGroupClass, GetDefaultControlGroupClass(), StringComparison.CurrentCultureIgnoreCase))
+            {
+                //Set it to the overriden default
+                controlGroupClass = GetDefaultControlGroupClass();
+            }
+
             WriteStartTagWithClass(htmlHelper, container.Tag, controlGroupClass, controlGroupHtmlAttributes);
             return container;
         }
