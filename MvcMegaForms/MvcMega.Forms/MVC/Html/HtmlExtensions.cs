@@ -26,6 +26,8 @@ namespace MvcMega.Forms.MVC.Html
         public const string DefaultHelpInlineClass = "form-text text-muted";
         public const string DefaultLabelClass = "col-form-label col-sm-3";
 
+        public const string ControlGroupContainerAttribute = "data-val-changevisually-container";
+        
         //You can override the defaults globally by changing these, or within each form using the method "BeginControlClassOverrideGroup"
         //Since these are able to be set globally, they are a bit dangerous.
         //If I were not trying to maintain backwards compatibility I would have designed this differently.
@@ -53,6 +55,16 @@ namespace MvcMega.Forms.MVC.Html
             {
                 //Set it to the overriden default
                 controlGroupClass = GetDefaultControlGroupClass();
+            }
+            
+            if (controlGroupHtmlAttributes == null)
+            {
+                controlGroupHtmlAttributes = new Dictionary<string, object>();
+            }
+
+            if (!controlGroupHtmlAttributes.ContainsKey(ControlGroupContainerAttribute))
+            {
+                controlGroupHtmlAttributes.Add(ControlGroupContainerAttribute, "true");
             }
 
             WriteStartTagWithClass(htmlHelper, container.Tag, controlGroupClass, controlGroupHtmlAttributes);
