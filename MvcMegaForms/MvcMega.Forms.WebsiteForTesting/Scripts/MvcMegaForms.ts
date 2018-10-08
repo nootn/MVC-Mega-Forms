@@ -88,7 +88,7 @@ class MvcMegaForms {
 
     
 
-    public static ChangeVisuallyJQueryParentContainerSelector: string = '.form-group';
+    public static ChangeVisuallyJQueryParentContainerSelector: string = '[data-val-changevisually-container="true"]';
     public static ChangeVisuallyJQueryHideEffect: string = 'fast';
     public static ChangeVisuallyJQueryShowEffect: string = 'fast';
     public static CascadeJQueryHideEffect: string = 'fast';
