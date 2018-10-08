@@ -2,9 +2,10 @@
 <package>
   <metadata>
     <id>MvcMegaForms</id>
-    <version>0.2.0.3</version>
+    <version>0.2.0.4</version>
     <releaseNotes>
       * Makes default CSS class names bootstrap 4 compatible to prevent having to override them as you upgrade bootstrap to the latest version
+      * Fixes change visually issue with last release
     </releaseNotes>
     <authors>http://about.me/nootn</authors>
     <owners>http://about.me/nootn</owners>
