@@ -780,7 +780,7 @@ var MvcMegaForms = (function () {
         "use strict";
         return (item == null || item === undefined || typeof item == 'undefined');
     };
-    MvcMegaForms.ChangeVisuallyJQueryParentContainerSelector = '.form-group';
+    MvcMegaForms.ChangeVisuallyJQueryParentContainerSelector = '[data-val-changevisually-container="true"]';
     MvcMegaForms.ChangeVisuallyJQueryHideEffect = 'fast';
     MvcMegaForms.ChangeVisuallyJQueryShowEffect = 'fast';
     MvcMegaForms.CascadeJQueryHideEffect = 'fast';
