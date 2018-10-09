@@ -35,10 +35,6 @@ namespace MVCMega.Forms.FunctionalTests
         [SetUp]
         public void SetUp()
         {
-//            Instance.Run(
-//                "MvcMega.Forms.WebsiteForTesting",
-//                12121,
-//                c => c.WithRemoteWebDriver(BrowserFactory.Chrome).UsingCamera(new FileCamera("SCREENSHOTS")));
         }
     }
 }
