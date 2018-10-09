@@ -24,7 +24,7 @@ namespace MVCMega.Forms.FunctionalTests
         public void SetupTest()
         {
             _driver = new ChromeDriver();
-            _driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(10));
+            _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
         }
 
         [TearDown]

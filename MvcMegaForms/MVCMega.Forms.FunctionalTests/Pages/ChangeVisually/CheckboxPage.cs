@@ -16,5 +16,9 @@ namespace MVCMega.Forms.FunctionalTests.Pages.ChangeVisually
 {
     public class CheckboxPage : SingleFormPageBase<CheckboxModel>
     {
+        public IWebElement NextField
+        {
+            get { return Find.Element(By.Id("NextField")); }
+        }
     }
 }

@@ -14,16 +14,31 @@ using TestStack.Seleno.Configuration.Screenshots;
 
 namespace MVCMega.Forms.FunctionalTests
 {
+
+
     [SetUpFixture]
     public class AssemblyFixture
     {
+        public static class Host
+        {
+            public static readonly SelenoHost Instance = new SelenoHost();
+
+            static Host()
+            {
+                Instance.Run(
+                    "MvcMega.Forms.WebsiteForTesting",
+                    12121,
+                    c => c.WithRemoteWebDriver(BrowserFactory.Chrome).UsingCamera(new FileCamera("SCREENSHOTS")));
+            }
+        }
+
         [SetUp]
         public void SetUp()
         {
-            SelenoApplicationRunner.Run(
-                "MvcMega.Forms.WebsiteForTesting",
-                12121,
-                c => c.UsingCamera(new FileCamera("SCREENSHOTS")));
+//            Instance.Run(
+//                "MvcMega.Forms.WebsiteForTesting",
+//                12121,
+//                c => c.WithRemoteWebDriver(BrowserFactory.Chrome).UsingCamera(new FileCamera("SCREENSHOTS")));
         }
     }
 }

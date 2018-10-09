@@ -14,6 +14,7 @@ using MVCMega.Forms.FunctionalTests.Pages.ChangeVisually;
 using MvcMega.Forms.WebsiteForTesting.Models.ChangeVisuallyScreens;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.Events;
 using TestStack.BDDfy;
 using TestStack.BDDfy.Core;
 using TestStack.BDDfy.Scanners.StepScanners.Fluent;
@@ -28,46 +29,41 @@ namespace MVCMega.Forms.FunctionalTests.ChangeVisually
     {
         private TextboxPage _page;
 
-        private void GivenUserIsOnTheCheckboxPage()
+        private void GivenUserIsOnTheTextboxPage()
         {
-            _page = new HomePage()
+            _page = AssemblyFixture.Host.Instance.NavigateToInitialPage<HomePage>()
                 .GoToTextboxPage();
         }
 
         private void WhenMakeNotEmptyToShowNextField1IsEmptyInitially()
         {
-            var model = new TextboxModel();
-            model.MakeNotEmptyToShowNextField1 = string.Empty;
-            _page.FillSingleForm(model);
+            _page.MakeNotEmptyToShowNextField1.SendKeys("SomeValue\t");
+
+            _page.ClearMakeNotEmptyToShowNextField1();
         }
 
         private void WhenMakeNotEmptyToShowNextField1IsNotEmpty()
         {
-            var model = new TextboxModel();
-            model.MakeNotEmptyToShowNextField1 = "something";
-            _page.FillSingleForm(model);
+            _page.ClearMakeNotEmptyToShowNextField1();
+            _page.MakeNotEmptyToShowNextField1.SendKeys("SomeValue\t");            
         }
 
         private void ThenNextField1IsHidden()
         {
-            //TODO: waiting on Seleno to get the element properly
-            var elem = _page.AssertThatElements(By.Id("NextField1"));
-            elem.Exist();
-            elem.ConformTo(i => Assert.IsTrue(i.All(a => a.GetCssValue("display") == "none")));
+            //TODO: waiting on Seleno to get the element properly            
+            Assert.False(_page.NextField1.Displayed);            
         }
 
         private void ThenNextField1IsShown()
         {
-            //TODO: waiting on Seleno to get the element properly
-            var elem = _page.AssertThatElements(By.Id("NextField1"));
-            elem.Exist();
-            //elem.ConformTo(i => Assert.IsTrue(i.All(a => a.FindElement(new By.jQueryBy("").Parent(".form-group")).GetCssValue("display") == "block")));
+            //TODO: waiting on Seleno to get the element properly            
+            Assert.True(_page.NextField1.Displayed);            
         }
 
         [Test]
         public void SetTextboxToEmptyToHideNextValue()
         {
-            this.Given(_ => _.GivenUserIsOnTheCheckboxPage())
+            this.Given(_ => _.GivenUserIsOnTheTextboxPage())
                 .When(_ => _.WhenMakeNotEmptyToShowNextField1IsEmptyInitially())
                 .Then(_ => _.ThenNextField1IsHidden())
                 .BDDfy();
@@ -76,7 +72,7 @@ namespace MVCMega.Forms.FunctionalTests.ChangeVisually
         [Test]
         public void SetTextboxToNotEmptyToShowNextValue()
         {
-            this.Given(_ => _.GivenUserIsOnTheCheckboxPage())
+            this.Given(_ => _.GivenUserIsOnTheTextboxPage())
                 .When(_ => _.WhenMakeNotEmptyToShowNextField1IsNotEmpty())
                 .Then(_ => _.ThenNextField1IsShown())
                 .BDDfy();
