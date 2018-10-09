@@ -1,0 +1,932 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TestStack.Seleno</name>
+    </assembly>
+    <members>
+        <member name="P:TestStack.Seleno.Configuration.Contracts.IDomCapture.Browser">
+            <summary>
+            The browser that is viewing the page the DOM was captured from.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.IDomCapture.CaptureDom(System.String)">
+            <summary>
+            Captures the DOM using the given filename (if specified).
+            </summary>
+            <param name="fileName">The filename to use to save the DOM as</param>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.Contracts.IControlIdGenerator">
+            <summary>
+            Generates ids for HTML controls.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.IControlIdGenerator.GetControlName(System.Linq.Expressions.LambdaExpression)">
+            <summary>
+            Generates a control name from a lambda expression of a property representing the control.
+            </summary>
+            <param name="expression">A lambda expression of the property representing the control</param>
+            <returns>The name of the HTML control</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.IControlIdGenerator.GetControlId(System.String)">
+            <summary>
+            Generates a control id from the name of the control.
+            </summary>
+            <param name="name">The name of the control</param>
+            <returns>The id of the HTML control</returns>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.Contracts.ISelenoApplication">
+            <summary>
+            Defines an instance of a running Seleno Application and associated web browser and Seleno test entry points.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.ISelenoApplication.Initialize">
+            <summary>
+            Initialise the application.
+            </summary>
+        </member>
+        <member name="P:TestStack.Seleno.Configuration.Contracts.ISelenoApplication.Browser">
+            <summary>
+            Access the Selenium Web Driver browsing the web application being tested.
+            </summary>
+        </member>
+        <member name="P:TestStack.Seleno.Configuration.Contracts.ISelenoApplication.WebServer">
+            <summary>
+            Access the web server running the web application being tested.
+            </summary>
+        </member>
+        <member name="P:TestStack.Seleno.Configuration.Contracts.ISelenoApplication.Camera">
+            <summary>
+            Access the camera that takes screenshots of the web application being tested.
+            </summary>
+        </member>
+        <member name="P:TestStack.Seleno.Configuration.Contracts.ISelenoApplication.Logger">
+            <summary>
+            Access the logger.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.ISelenoApplication.NavigateToInitialPage``2(System.Linq.Expressions.Expression{System.Action{``0}},System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Navigate to the initial page in a test by looking up the URL using an MVC controller and action and then return a page object instance of the specified type.
+            Note: Requires you to have configured the seleno application with a Route Config.
+            </summary>
+            <typeparam name="TController">The type of the MVC controller containing the action to visit</typeparam>
+            <typeparam name="TPage">The type of page object to intialise and return</typeparam>
+            <param name="action">A lambda expression that specifies the action to navigate to</param>
+            <param name="routeValues">Extra route data to use to generate the route</param>
+            <returns>An initialised page object</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.ISelenoApplication.NavigateToInitialPage``2(System.Linq.Expressions.Expression{System.Action{``0}},System.Object)">
+            <summary>
+            Navigate to the initial page in a test by looking up the URL using an MVC controller and action and then return a page object instance of the specified type.
+            Note: Requires you to have configured the seleno application with a Route Config.
+            </summary>
+            <typeparam name="TController">The type of the MVC controller containing the action to visit</typeparam>
+            <typeparam name="TPage">The type of page object to intialise and return</typeparam>
+            <param name="action">A lambda expression that specifies the action to navigate to</param>
+            <param name="routeValues">Extra route data to use to generate the route as an anonymous object</param>
+            <returns>An initialised page object</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.ISelenoApplication.NavigateToInitialPage``1(System.String)">
+            <summary>
+            Navigate to the initial page in a test via a URL string relative to the root of the web application and then return a page object instance of the specified type.
+            </summary>
+            <typeparam name="TPage">The type of page object to initialise and return</typeparam>
+            <param name="url">A URL string, either relative to the root of the web application being tested or absoluate URL</param>
+            <returns>An initialised page object</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.ISelenoApplication.SetBrowserWindowSize(System.Int32,System.Int32)">
+            <summary>
+            Gets or sets the size of the outer browser window, including title bars and window borders. When setting this property, it should act as the JavaScript window.resizeTo() method.
+            </summary>
+            <param name="width">The integer width component of the window size</param>
+            <param name="height">The integer height component of the window size</param>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.ISelenoApplication.TakeScreenshotAndThrow(System.String,System.String)">
+            <summary>
+            Takes a screenshot of the currently active browser window, saves it to the configured location, and throws a SelenoException.
+            </summary>
+            <param name="imageName">The name of the image</param>
+            <param name="errorMessage">The error message that will be applied to the SelenoException</param>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.ISelenoApplication.CaptureDomAndThrow(System.String,System.String)">
+            <summary>
+            Captures the dom of the currently active browser window, saves it to the configured location, and throws a SelenoException.
+            </summary>
+            <param name="captureName">The name of the capture</param>
+            <param name="errorMessage">The error message that will be applied to the SelenoException</param>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.Contracts.IAppConfigurator">
+            <summary>
+            Configure a Seleno test.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.IAppConfigurator.ProjectToTest(TestStack.Seleno.Configuration.WebServers.WebApplication)">
+            <summary>
+            Specify the details of the project you are testing.
+            </summary>
+            <param name="webApplication">The project you are testing</param>
+            <returns>The configurator to allow for method chaining</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.IAppConfigurator.WithWebServer(TestStack.Seleno.Configuration.Contracts.IWebServer)">
+            <summary>
+            Specify the web server you would like to use.
+            By default the IISExpressWebServer is used.
+            </summary>
+            <param name="webServer">The webserver to use</param>
+            <returns>The configurator to allow for method chaining</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.IAppConfigurator.WithRemoteWebDriver(System.Func{OpenQA.Selenium.Remote.RemoteWebDriver})">
+            <summary>
+            Specify the web driver/browser you would like to use.
+            By default Firefox is used.
+            </summary>
+            <param name="webDriver">The web driver</param>
+            <returns>The configurator to allow for method chaining</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.IAppConfigurator.WithMinimumWaitTimeoutOf(System.TimeSpan)">
+            <summary>
+            Specify the minimum amount of time in seconds to wait when trying to find elements on the page.
+            By default the minimum wait is 10 seconds.
+            </summary>
+            <param name="minimumWait">The minimum number of seconds to wait to find an element on the page</param>
+            <returns>The configurator to allow for method chaining</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.IAppConfigurator.UsingCamera(TestStack.Seleno.Configuration.Contracts.ICamera)">
+            <summary>
+            Specify the camera you would like to use.
+            By default no camera is used.
+            </summary>
+            <param name="camera">The camera</param>
+            <returns>The configurator to allow for method chaining</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.IAppConfigurator.UsingCamera(System.String)">
+            <summary>
+            Specify the directory path to store screenshots in.
+            </summary>
+            <param name="screenShotPath">The directory to store screenshots in</param>
+            <returns>The configurator to allow for method chaining</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.IAppConfigurator.UsingLoggerFactory(Castle.Core.Logging.ILoggerFactory)">
+            <summary>
+            Specify the logger factory you would like to use.
+            By default a null logger is used.
+            </summary>
+            <param name="loggerFactory">The logger factory</param>
+            <returns>The configurator to allow for method chaining</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.IAppConfigurator.WithRouteConfig(System.Action{System.Web.Routing.RouteCollection})">
+            <summary>
+            Define the routes for the application.
+            </summary>
+            <param name="routeCollectionUpdater">A method that takes a route collection and populates it with routes</param>
+            <returns>The configurator to allow for method chaining</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.IAppConfigurator.UsingControlIdGenerator(TestStack.Seleno.Configuration.Contracts.IControlIdGenerator)">
+            <summary>
+            Specify a control id generator to use; default is <see cref="T:TestStack.Seleno.Configuration.ControlIdGenerators.DefaultControlIdGenerator"/>, Seleno also has an
+              <see cref="T:TestStack.Seleno.Configuration.ControlIdGenerators.MvcControlIdGenerator"/> and you can implement your own by implementing the <see cref="T:TestStack.Seleno.Configuration.Contracts.IControlIdGenerator"/> interface.
+            </summary>
+            <param name="controlIdGenerator">An instance of the <see cref="T:TestStack.Seleno.Configuration.Contracts.IControlIdGenerator"/> interface</param>
+            <returns>The configurator to allow for method chaining</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.IAppConfigurator.WithEnvironmentVariable(System.String,System.String)">
+            <summary>
+            Adds an environment variable to be injected into the web application process
+            </summary>
+            <param name="name">The name of the environment variable</param>
+            <param name="value">The optional value of the environment variable</param>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.Contracts.ICamera">
+            <summary>
+            Class with ability to take screenshots.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Contracts.ICamera.TakeScreenshot(System.String)">
+            <summary>
+            Take a screenshot using the given filename (if specified).
+            </summary>
+            <param name="fileName">The filename to use to save the screenshot</param>
+        </member>
+        <member name="P:TestStack.Seleno.Configuration.Contracts.ICamera.ScreenshotTaker">
+            <summary>
+            The driver to take screenshots with - will be set after the camera is registered with Seleno.
+            </summary>
+        </member>
+        <member name="P:TestStack.Seleno.Configuration.Contracts.ICamera.Browser">
+            <summary>
+            The browser that is viewing the page the screenshot is taken against.
+            </summary>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.ControlIdGenerators.Html401IdUtil">
+            <summary>
+            Copied from System.Web.Mvc.TagBuilder
+            </summary>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.ControlIdGenerators.DefaultControlIdGenerator">
+            <summary>
+            Default control id generator - uses the property name of the last property in the lambda expression chain.
+            </summary>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.ControlIdGenerators.MvcControlIdGenerator">
+            <summary>
+            Default control id generator - uses the same algorithm ASP.NET MVC uses to generate control ids.
+            </summary>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.DomCaptures.FileDomCapture">
+            <summary>
+            Captures the DOM to a file
+            </summary>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.DomCaptures.NullDomCapture">
+            <summary>
+            DOM Capturer that doesn't actually do anything
+            </summary>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.Interceptors.SelenoReceivedException">
+            <summary>
+            Wraps an exception that has been received and processed by Seleno.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Interceptors.SelenoReceivedException.#ctor(System.Exception)">
+            <summary>
+            Creates a <see cref="T:TestStack.Seleno.Configuration.Interceptors.SelenoReceivedException"/>.
+            </summary>
+            <param name="innerException">The exception that has been caught and processed by Seleno</param>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.WebServers.IProjectLocation">
+            <summary>
+            The location of the Visual Studio web project under test.
+            </summary>
+        </member>
+        <member name="P:TestStack.Seleno.Configuration.WebServers.IProjectLocation.FullPath">
+            <summary>
+            The absolute path to the web project.
+            </summary>
+            <value>
+            The full path.
+            </value>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.WebServers.ProjectLocation">
+            <inheritdoc />
+        </member>
+        <member name="P:TestStack.Seleno.Configuration.WebServers.ProjectLocation.FullPath">
+            <inheritdoc />
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.WebServers.ProjectLocation.FromPath(System.String)">
+            <summary>
+            Returns the project location from the absolute file path to the web project.
+            </summary>
+            <param name="webProjectFullPath">The web project full path.</param>
+            <returns></returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.WebServers.ProjectLocation.FromFolder(System.String)">
+            <summary>
+            Returns the project location from the folder name of the web project.
+            </summary>
+            <param name="webProjectFolderName">Name of the web project folder.</param>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.WebServers.WebApplication">
+            <summary>
+            Defines a web application that exists at a location and can be deployed to a certain port number.
+            </summary>
+        </member>
+        <member name="P:TestStack.Seleno.Configuration.WebServers.WebApplication.Location">
+            <summary>
+            The location of the web application.
+            </summary>
+        </member>
+        <member name="P:TestStack.Seleno.Configuration.WebServers.WebApplication.PortNumber">
+            <summary>
+            The port number the web application will be deployed to.
+            </summary>
+        </member>
+        <member name="P:TestStack.Seleno.Configuration.WebServers.WebApplication.EnvironmentVariables">
+            <summary>
+            Environment variables to be injected into the web site process
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.WebServers.WebApplication.#ctor(TestStack.Seleno.Configuration.WebServers.IProjectLocation,System.Int32)">
+            <summary>
+            Create a web application using the given location and port number.
+            </summary>
+            <param name="location">The location of the web application</param>
+            <param name="portNumber">The port number the web application will be deployed to</param>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.WebServers.WebApplication.AddEnvironmentVariable(System.String,System.String)">
+            <summary>
+            Adds an environment variable to be injected into the web application process
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.AppConfigurationException">
+            <summary>
+            AppConfiguration Exception throw during the set up of webserver.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.AppConfigurationException.#ctor">
+            <summary>
+            AppConfiguration Exception throw during the set up of webserver.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.AppConfigurationException.#ctor(System.String)">
+            <summary>
+            AppConfiguration Exception throw during the set up of webserver.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.AppConfigurationException.#ctor(System.String,System.Exception)">
+            <summary>
+            AppConfiguration Exception throw during the set up of webserver.
+            </summary>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.BrowserFactory">
+            <summary>
+            Allows the creation of Browser specific web drivers.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.BrowserFactory.PhantomJS">
+            <summary>
+            Returns an initialised PhantomJS Web Driver.
+            </summary>
+            <remarks>You need to have phantomjs.exe embedded into your assembly</remarks>
+            <returns>Initialised PhantomJS driver</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.BrowserFactory.PhantomJS(OpenQA.Selenium.PhantomJS.PhantomJSOptions)">
+            <summary>
+            Returns an initialised PhantomJS Web Driver.
+            </summary>
+            <remarks>You need to have phantomjs.exe embedded into your assembly</remarks>
+            <param name="options">Options to configure the driver</param>
+            <returns>Initialised PhantomJS driver</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.BrowserFactory.Chrome">
+            <summary>
+            Returns an initialised Chrome Web Driver.
+            </summary>
+            <remarks>You need to have chromedriver.exe embedded into your assembly and have Chrome installed on the machine running the test</remarks>
+            <returns>Initialised Chrome driver</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.BrowserFactory.Chrome(OpenQA.Selenium.Chrome.ChromeOptions)">
+            <summary>
+            Returns an initialised Chrome Web Driver.
+            </summary>
+            <remarks>You need to have chromedriver.exe embedded into your assembly and have Chrome installed on the machine running the test</remarks>
+            <param name="options">Options to configure the driver</param>
+            <returns>Initialised Chrome driver</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.BrowserFactory.FireFox">
+            <summary>
+            Returns an initialised Firefox Web Driver.
+            </summary>
+            <remarks>You need to have Firefox installed on the machine running the test</remarks>
+            <returns>Initialised Firefox driver</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.BrowserFactory.FireFox(OpenQA.Selenium.Firefox.FirefoxProfile)">
+            <summary>
+            Returns an initialised Firefox Web Driver.
+            </summary>
+            <remarks>You need to have Firefox installed on the machine running the test</remarks>
+            <param name="profile">Profile to use for the driver</param>
+            <returns>Initialised Firefox driver</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.BrowserFactory.Safari">
+            <summary>
+            Returns an initialised Safari Web Driver.
+            </summary>
+            <remarks>You need to have Safari installed on the machine running the test</remarks>
+            <returns>Initialised Safari driver</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.BrowserFactory.Safari(OpenQA.Selenium.Safari.SafariOptions)">
+            <summary>
+            Returns an initialised Safari Web Driver.
+            </summary>
+            <remarks>You need to have Safari installed on the machine running the test</remarks>
+            <param name="options">Profile to use for the driver</param>
+            <returns>Initialised Safari driver</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.BrowserFactory.InternetExplorer">
+            <summary>
+            Returns an initialised 64-bit IE Web Driver.
+            </summary>
+            <remarks>You need to have IEDriverServer_x64_2.28.0.exe embedded into your assembly</remarks>
+            <returns>Initialised IE driver</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.BrowserFactory.InternetExplorer(OpenQA.Selenium.IE.InternetExplorerOptions)">
+            <summary>
+            Returns an initialised 64-bit IE Web Driver.
+            </summary>
+            <remarks>You need to have IEDriverServer_x64_2.28.0.exe embedded into your assembly</remarks>
+            <param name="options">Options to configure the driver</param>
+            <returns>Initialised IE driver</returns>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.WebDriverNotFoundException">
+            <summary>
+            Exception to record inability to find a Web Driver.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.WebDriverNotFoundException.#ctor(System.String)">
+            <summary>
+            Create a web driver not found exception for the given driver.
+            </summary>
+            <param name="expectedExecutableName">The name of the expected executable to be embedded in the assembly</param>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.BrowserNotFoundException">
+            <summary>
+            Exception to record inability to find a Browser.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.BrowserNotFoundException.#ctor(System.String,System.Exception)">
+            <summary>
+            Create a web driver not found exception for the given driver.
+            </summary>
+            <param name="expectedBrowser">The name of the expected browser</param>
+            <param name="innerException">The exception that indicated the browser couldn't be found</param>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.AppConfigurator.WithEnvironmentVariable(System.String,System.String)">
+            <summary>
+            Adds an environment variable to be injected into the web application process
+            </summary>
+            <param name="name">The name of the environment variable</param>
+            <param name="value">The optional value of the environment variable</param>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.SelenoApplicationRunner">
+            <summary>Obsolete</summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.SelenoApplicationRunner.Run(System.String,System.Int32,System.Action{TestStack.Seleno.Configuration.Contracts.IAppConfigurator})">
+            <summary>
+            Obsolete
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.SelenoApplicationRunner.Run(TestStack.Seleno.Configuration.WebServers.WebApplication,System.Action{TestStack.Seleno.Configuration.Contracts.IAppConfigurator})">
+            <summary>
+            Obsolete
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.SelenoApplicationRunner.Run(System.Action{TestStack.Seleno.Configuration.Contracts.IAppConfigurator})">
+            <summary>
+            Obsolete
+            </summary>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.SelenoHost">
+            <summary>
+            The entry point for Seleno.
+            </summary>
+        </member>
+        <member name="P:TestStack.Seleno.Configuration.SelenoHost.Application">
+            <summary>
+            The currently running seleno application.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.SelenoHost.Run(System.String,System.Int32,System.Action{TestStack.Seleno.Configuration.Contracts.IAppConfigurator})">
+            <summary>
+            Begin a Seleno test for a Visual Studio web project.
+            </summary>
+            <param name="webProjectFolder">The name of the web project to run</param>
+            <param name="portNumber">The port number to run the project under</param>
+            <param name="configure">Any configuration changes you would like to make</param>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.SelenoHost.Run(TestStack.Seleno.Configuration.WebServers.WebApplication,System.Action{TestStack.Seleno.Configuration.Contracts.IAppConfigurator})">
+            <summary>
+            Begin a Seleno test for a web application.
+            </summary>
+            <param name="app">The web application to test</param>
+            <param name="configure">Any configuration changes you would like to make</param>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.SelenoHost.Run(System.Action{TestStack.Seleno.Configuration.Contracts.IAppConfigurator})">
+            <summary>
+            Begin a Seleno test.
+            </summary>
+            <param name="configure">Any configuration changes you would like to make</param>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.SelenoHost.NavigateToInitialPage``2(System.Linq.Expressions.Expression{System.Action{``0}},System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Navigate to the given controller action and return an initialised page object of the specified type.
+            </summary>
+            <typeparam name="TController">The controller to navigate to</typeparam>
+            <typeparam name="TPage">The type of page object to initialise and return</typeparam>
+            <param name="action">The controller action to navigate to</param>
+            <param name="routeValues">Extra route data to use to generate the route</param>
+            <returns>The initialised page object</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.SelenoHost.NavigateToInitialPage``2(System.Linq.Expressions.Expression{System.Action{``0}},System.Object)">
+            <summary>
+            Navigate to the given controller action and return an initialised page object of the specified type.
+            </summary>
+            <typeparam name="TController">The controller to navigate to</typeparam>
+            <typeparam name="TPage">The type of page object to initialise and return</typeparam>
+            <param name="action">The controller action to navigate to</param>
+            <param name="routeValues">Extra route data to use to generate the route as an anonymous object</param>
+            <returns>The initialised page object</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.SelenoHost.NavigateToInitialPage``1(System.String)">
+            <summary>
+            Navigate to the given URL and return an initialised page object of the specified type.
+            </summary>
+            <typeparam name="TPage">The type of page object to initialise and return</typeparam>
+            <param name="url">The URL to navigate to (either relative to the base URL of the site or an absolute URL)</param>
+            <returns>The initialised page object</returns>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.Screenshots.FileCamera">
+            <summary>
+            Camera that saves screenshots to a file.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.Screenshots.FileCamera.#ctor(System.String)">
+            <summary>
+            Constructs a FileCamera.
+            </summary>
+            <param name="screenShotPath">The file system directory to save screenshots in</param>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.Screenshots.NullCamera">
+            <summary>
+            Camera that doesn't take any screenshots.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.SelenoApplication.#ctor(Autofac.IContainer)">
+            <summary>
+            Create a SelenoApplication
+            </summary>
+            <param name="container">An Autofac container that will be owned by the SelenoApplication and disposed by the SelenoApplication</param>
+        </member>
+        <member name="T:TestStack.Seleno.Configuration.SelenoException">
+            <summary>
+            Base class for exceptions that the Seleno library throws.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.SelenoException.#ctor">
+            <summary>
+            Create Seleno exception without message.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.SelenoException.#ctor(System.String)">
+            <summary>
+            Create Seleno exception with message.
+            </summary>
+            <param name="message">Exception message</param>
+        </member>
+        <member name="M:TestStack.Seleno.Configuration.SelenoException.#ctor(System.String,System.Exception)">
+            <summary>
+            Create Seleno exception with message and inner exception.
+            </summary>
+            <param name="message">Exception message</param>
+            <param name="innerException">Inner exception</param>
+        </member>
+        <member name="T:TestStack.Seleno.Extensions.WebElementExtensions">
+            <summary>
+            Extension methods against an <see cref="T:OpenQA.Selenium.IWebElement"/>.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Extensions.WebElementExtensions.GetAttributeAs``1(OpenQA.Selenium.IWebElement,System.String)">
+            <summary>
+            Returns the value for the given HTML attribute on the <see cref="T:OpenQA.Selenium.IWebElement"/> and type casts it the the requested type.
+            </summary>
+            <typeparam name="TReturn">The type to cast the value to</typeparam>
+            <param name="element">The element to return the attribute value from</param>
+            <param name="attributeName">The name of the attribute to return the value for</param>
+            <returns>The type-casted value</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Extensions.WebElementExtensions.GetControlValueAs``1(OpenQA.Selenium.IWebElement)">
+            <summary>
+            Returns the value for the "value" HTML attribute on the <see cref="T:OpenQA.Selenium.IWebElement"/> and type casts it the the requested type.
+            </summary>
+            <typeparam name="TReturn">The type to cast the value to</typeparam>
+            <param name="element">The element to return the value attribute value from</param>
+            <returns>The type-casted value attribute value</returns>
+        </member>
+        <member name="M:TestStack.Seleno.Extensions.WebElementExtensions.ClearAndSendKeys(OpenQA.Selenium.IWebElement,System.String,System.Boolean)">
+            <summary>Obsolete</summary>
+        </member>
+        <member name="M:TestStack.Seleno.Extensions.WebElementExtensions.SetAttribute(OpenQA.Selenium.IWebElement,System.String,System.String)">
+            <summary>Obsolete</summary>
+        </member>
+        <member name="M:TestStack.Seleno.Extensions.WebElementExtensions.ReplaceInputValueWith(OpenQA.Selenium.IWebDriver,System.String,System.String)">
+            <summary>Obsolete</summary>
+        </member>
+        <member name="M:TestStack.Seleno.Extensions.WebElementExtensions.GetAttributeAsType``1(OpenQA.Selenium.IWebElement,System.String)">
+            <summary>Obsolete</summary>
+        </member>
+        <member name="M:TestStack.Seleno.Extensions.WebElementExtensions.GetValueFromTextBox``1(OpenQA.Selenium.IWebElement)">
+            <summary>Obsolete</summary>
+        </member>
+        <member name="M:TestStack.Seleno.Extensions.WebElementExtensions.TextAsType``1(OpenQA.Selenium.IWebElement)">
+            <summary>Obsolete</summary>
+        </member>
+        <member name="M:TestStack.Seleno.Extensions.TypeExtensions.TryConvertTo``2(``0,``1)">
+            <summary>
+            Generic method to convert from one type to another and returns the strongly typed value. 
+            Returns default value for type if cannot convert.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.Extensions.TypeExtensions.TryConvertTo``1(``0,System.Type,System.Object)">
+            <summary>
+            Converts from one type to another and returns the value. Returns default value for type if cannot convert.
+            </summary>
+        </member>
+        <member name="T:TestStack.Seleno.PageObjects.Actions.IPageNavigator">
+            <summary>
+            Navigate to a different page.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IPageNavigator.To``1(OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            Navigate to a different page by clicking on an element in the page.
+            </summary>
+            <typeparam name="TPage">The page object type for the expected resultant page</typeparam>
+            <param name="elementToClick">The element to find in the current page and click</param>
+            <param name="maxWait">Maximum amount of time to wait for the element to become available to click</param>
+            <returns>An instantiated and initialised <see cref="!:TPage"/> page object</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IPageNavigator.To``1(TestStack.Seleno.PageObjects.Locators.By.jQueryBy,System.TimeSpan)">
+            <summary>
+            Navigate to a different page by clicking on an element in the page.
+            </summary>
+            <typeparam name="TPage">The page object type for the expected resultant page</typeparam>
+            <param name="jQueryElementToClick">jQuery expression to find an element</param>
+            <param name="maxWait">Maximum amount of time to wait for the element to become available to click</param>
+            <returns>An instantiated and initialised <see cref="!:TPage"/> page object</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IPageNavigator.To``1(System.String)">
+            <summary>
+            Navigate to a different page by going to a URL (relative to the root URL of the application under test).
+            </summary>
+            <typeparam name="TPage">The page object type for the expected resultant page</typeparam>
+            <param name="url">The URL, either relative to the root URL of the application under test or the absolute URL, to navigate to</param>
+            <returns>An instantiated and initialised <see cref="!:TPage"/> page object</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IPageNavigator.To``2(System.Linq.Expressions.Expression{System.Action{``0}},System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Navigate to a different page by going to a URL by an ASP.NET MVC route.
+            </summary>
+            <typeparam name="TController">The type of the controller that is serving the page you are navigating to</typeparam>
+            <typeparam name="TPage">The page object type for the expected resultant page</typeparam>
+            <param name="action">An expression representing the controller action being navigated to</param>
+            <param name="routeValues">Extra route data to use to generate the route</param>
+            <returns>An instantiated and initialised <see cref="!:TPage"/> page object</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IPageNavigator.To``2(System.Linq.Expressions.Expression{System.Action{``0}},System.Object)">
+            <summary>
+            Navigate to a different page by going to a URL by an ASP.NET MVC route.
+            </summary>
+            <typeparam name="TController">The type of the controller that is serving the page you are navigating to</typeparam>
+            <typeparam name="TPage">The page object type for the expected resultant page</typeparam>
+            <param name="action">An expression representing the controller action being navigated to</param>
+            <param name="routeValues">Extra route data to use to generate the route as an anonymous object</param>
+            <returns>An instantiated and initialised <see cref="!:TPage"/> page object</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IPageNavigator.To(OpenQA.Selenium.By)">
+            <summary>Obsolete</summary>
+        </member>
+        <member name="T:TestStack.Seleno.PageObjects.Actions.IScriptExecutor">
+            <summary>Obsolete</summary>
+        </member>
+        <member name="T:TestStack.Seleno.PageObjects.Actions.IExecutor">
+            <summary>
+            Executes JavaScript on the page and actions on elements in the page.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IExecutor.ActionOnLocator(OpenQA.Selenium.By,System.Action{OpenQA.Selenium.IWebElement},System.TimeSpan)">
+            <summary>
+            Locate an element using a Selenium Web Driver expression and performs an action on the element if found.
+            Throws an exception if the element isn't found.
+            </summary>
+            <example>
+            Execute.ActionOnLocator(By.Id("helloworld"), e => e.ClearAndSendKeys("xyz"))
+            </example>
+            <param name="findExpression">Selenium Web Driver expression to find an element</param>
+            <param name="action">The action to perform when the element is found</param>
+            <param name="maxWait">Maximum amount of time to wait for the element to become available</param>
+            <exception cref="T:OpenQA.Selenium.NoSuchElementException">When the element isn't found</exception>
+            <returns>The <see cref="T:OpenQA.Selenium.IWebElement"/> representing the found element</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IExecutor.ActionOnLocator(TestStack.Seleno.PageObjects.Locators.By.jQueryBy,System.Action{OpenQA.Selenium.IWebElement},System.TimeSpan)">
+            <summary>
+            Locate an element using a jQuery expression and performs an action on the element if found.
+            Throws an exception if the element isn't found.
+            </summary>
+            <example>
+            Execute.ActionOnLocator(By.jQuery("#helloworld"), e => e.ClearAndSendKeys("xyz"))
+            </example>
+            <param name="jQueryFindExpression">jQuery expression to find an element</param>
+            <param name="action">The action to perform when the element is found</param>
+            <param name="maxWait">Maximum amount of time to wait for the element to become available</param>
+            <exception cref="T:OpenQA.Selenium.NoSuchElementException">When the element isn't found</exception>
+            <returns>The <see cref="T:OpenQA.Selenium.IWebElement"/> representing the found element</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IExecutor.PredicateScriptAndWaitToComplete(System.String,System.TimeSpan)">
+            <summary>
+            Executes some JavaScript that returns a boolean and waits until its returned value is true
+            </summary>
+            <param name="predicateScriptToBeExecuted">The predicate javaScript to execute</param>
+            <param name="maxWait">Maximum amount of time to wait for predicate Javascript to return true (default is 5 seconds)</param>
+            <exception cref="T:System.TimeoutException">When the executed JavaScript took more than maxWait to execute</exception>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IExecutor.ScriptAndReturn(System.String,System.Type)">
+            <summary>
+            Executes some JavaScript and returns the return value type-casted to the given type.
+            </summary>
+            <param name="javascriptToBeExecuted">The JavaScript to execute</param>
+            <param name="returnType">The type to cast the return value to</param>
+            <returns>The type-casted value as returned from the JavaScript execution</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IExecutor.ScriptAndReturn``1(System.String)">
+            <summary>
+            Executes some JavaScript and returns the return value type-casted to the given type.
+            </summary>
+            <typeparam name="TReturn">The type to cast the return value to</typeparam>
+            <param name="javascriptToBeExecuted">The JavaScript to execute</param>
+            <returns>The type-casted value as returned from the JavaScript execution</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IExecutor.Script(System.String)">
+            <summary>
+            Executes the given JavaScript.
+            </summary>
+            <param name="javascriptToBeExecuted">The JavaScript to execute</param>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IExecutor.ActionOnLocator``1(OpenQA.Selenium.By,System.Func{OpenQA.Selenium.IWebElement,``0},System.Int32)">
+            <summary>Obsolete</summary>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IExecutor.WithPatience(OpenQA.Selenium.By,System.Action{OpenQA.Selenium.IWebElement},System.Int32)">
+            <summary>Obsolete</summary>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IWait.AjaxCallsToComplete(System.TimeSpan)">
+            <summary>
+            Wait until ajax calls are complete
+            </summary>
+            <param name="maxWait">Maximum amount of time to wait for ajax calls to be completed (default is 5 seconds)</param>
+            <exception cref="T:System.TimeoutException">When the ajax calls took more than maxWait to execute</exception>
+        </member>
+        <member name="T:TestStack.Seleno.PageObjects.Actions.IElementFinder">
+            <summary>
+            Provides an API to find elements on the page.
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IElementFinder.Element(OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            Locate an element using a Selenium Web Driver expression and return the <see cref="T:OpenQA.Selenium.IWebElement"/> corresponding to that element.
+            Throws an exception if the element isn't found.
+            </summary>
+            <example>
+            Find.Element(By.Id("helloworld"))
+            </example>
+            <param name="findExpression">Selenium Web Driver expression to find an element</param>
+            <param name="maxWait">Maximum amount of time to wait for the element to become available</param>
+            <exception cref="T:OpenQA.Selenium.NoSuchElementException">When the element isn't found</exception>
+            <returns>The <see cref="T:OpenQA.Selenium.IWebElement"/> representing the element</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IElementFinder.Element(TestStack.Seleno.PageObjects.Locators.By.jQueryBy,System.TimeSpan)">
+            <summary>
+            Locate an element using a jQuery expression and return the <see cref="T:OpenQA.Selenium.IWebElement"/> corresponding to that element.
+            Throws an exception if the element isn't found.
+            </summary>
+            <example>
+            Find.Element(By.jQuery("#helloworld"))
+            </example>
+            <param name="jQueryFindExpression">jQuery expression to find an element</param>
+            <param name="maxWait">Maximum amount of time to wait for the element to become available</param>
+            <exception cref="T:OpenQA.Selenium.NoSuchElementException">When the element isn't found</exception>
+            <returns>The <see cref="T:OpenQA.Selenium.IWebElement"/> representing the element</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IElementFinder.Elements(OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            Locates multiple elements using a Selenium Web Driver expression and return the list of<see cref="T:OpenQA.Selenium.IWebElement"/>s that match.
+            Returns an empty list of no elements found
+            </summary>
+            <example>
+            Find.Elements(By.ClassName("helloworld"))
+            </example>
+            <param name="findExpression">Selenium Web Driver expression to find elements</param>
+            <param name="maxWait">Maximum amount of time to wait for the elements to become available</param>
+            <returns>The <see cref="T:OpenQA.Selenium.IWebElement"/>s that matched the search</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IElementFinder.Elements(TestStack.Seleno.PageObjects.Locators.By.jQueryBy,System.TimeSpan)">
+            <summary>
+            Locates multiple elements using a jQuery expression and return the list of<see cref="T:OpenQA.Selenium.IWebElement"/>s that match.
+            Returns an empty list of no elements found
+            </summary>
+            <example>
+            Find.Elements(By.jQuery("#helloworld"))
+            </example>
+            <param name="jQueryFindExpression">jQuery expression to find elements</param>
+            <param name="maxWait">Maximum amount of time to wait for the elements to become available</param>
+            <returns>The <see cref="T:OpenQA.Selenium.IWebElement"/>s that matched the search</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IElementFinder.OptionalElement(OpenQA.Selenium.By,System.TimeSpan)">
+            <summary>
+            Locate an element that may or not be present using a Selenium Web Driver expression and return the <see cref="T:OpenQA.Selenium.IWebElement"/> corresponding to that element.
+            Returns null if the element isn't found.
+            </summary>
+            <example>
+            Find.OptionalElement(By.Id("helloworld"))
+            </example>
+            <param name="findExpression">Selenium Web Driver expression to find an element</param>
+            <param name="maxWait">Maximum amount of time to wait for the element to become available</param>
+            <returns>The <see cref="T:OpenQA.Selenium.IWebElement"/> representing the element</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IElementFinder.OptionalElement(TestStack.Seleno.PageObjects.Locators.By.jQueryBy,System.TimeSpan)">
+            <summary>
+            Locate an element that may or not be present using a jQuery expression and return the <see cref="T:OpenQA.Selenium.IWebElement"/> corresponding to that element.
+            Returns null if the element isn't found.
+            </summary>
+            <example>
+            Find.OptionalElement(By.jQuery("#helloworld"))
+            </example>
+            <param name="jQueryFindExpression">jQuery expression to find an element</param>
+            <param name="maxWait">Maximum amount of time to wait for the element to become available</param>
+            <returns>The <see cref="T:OpenQA.Selenium.IWebElement"/> representing the element</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IElementFinder.ElementWithWait(OpenQA.Selenium.By,System.Int32)">
+            <summary>Obsolete</summary>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IElementFinder.TryFindElement(OpenQA.Selenium.By)">
+            <summary>Obsolete</summary>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.IElementFinder.TryFindElementByjQuery(TestStack.Seleno.PageObjects.Locators.By.jQueryBy)">
+            <summary>Obsolete</summary>
+        </member>
+        <member name="P:TestStack.Seleno.PageObjects.Actions.TableReader`1.Item(System.Int32)">
+            <summary>
+            Return a row In the Grid reading data of the HTML page and mapping it back to the ViewModel used to generate it
+            </summary>
+            <param name="rowNumber">number of the row 1 based</param>
+            <returns></returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.TableReader`1.GetCellValueFor``1(System.Int32,System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+            Retrieve a cell value in grid for specified row number
+            </summary>
+            <param name="rowIndex">number of the row in the grid to click on (1 based)</param>
+            <param name="propertySelector">An expression that indicates which property to get the value for in the given row</param>
+            <returns>The value of the requested cell</returns>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Actions.Wait.AjaxCallsToComplete(System.TimeSpan)">
+            <summary>
+            Wait until ajax calls are complete
+            </summary>
+            <param name="maxWait">Maximum amount of time to wait for ajax calls to be completed (default is 5 seconds)</param>
+            <exception cref="T:System.TimeoutException">When the ajax calls took more than maxWait to execute</exception>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Locators.By.jQuery(System.String)">
+            <summary>
+            jQuery selector
+            </summary>
+        </member>
+        <member name="T:TestStack.Seleno.PageObjects.Locators.By.jQueryBy">
+            <summary>
+            Specialized "ActionOnLocator" class for jQuery selector
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Locators.jQueryExtensions.jQueryLoaded(OpenQA.Selenium.Remote.RemoteWebDriver)">
+            <summary>
+            Return whether jQuery is loaded in the current page
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Locators.jQueryExtensions.LoadjQuery(OpenQA.Selenium.Remote.RemoteWebDriver,System.String,System.Nullable{System.TimeSpan})">
+            <summary>
+            Load jQuery from an external URL to the current page
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Locators.jQueryExtensions.GetHtml(OpenQA.Selenium.IWebDriver,TestStack.Seleno.PageObjects.Locators.By.jQueryBy)">
+            <summary>
+            Gets the HTML using jQuery selector class
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Locators.jQueryExtensions.FindElements(OpenQA.Selenium.IWebDriver,TestStack.Seleno.PageObjects.Locators.By.jQueryBy)">
+            <summary>
+            Overloads the FindElement function to include support for the jQuery selector class
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Locators.jQueryExtensions.FindElementByjQuery(OpenQA.Selenium.IWebDriver,TestStack.Seleno.PageObjects.Locators.By.jQueryBy)">
+            <summary>
+            Overloads the FindElement function to include support for the jQuery selector class
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Locators.jQueryExtensions.GetHtml(OpenQA.Selenium.Remote.RemoteWebDriver,TestStack.Seleno.PageObjects.Locators.By.jQueryBy)">
+            <summary>
+            Overloads the FindElement function to include support for the jQuery selector class
+            </summary>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.Locators.jQueryExtensions.FindElements(OpenQA.Selenium.Remote.RemoteWebDriver,TestStack.Seleno.PageObjects.Locators.By.jQueryBy)">
+            <summary>
+            Overloads the FindElements function to include support for the jQuery selector class
+            </summary>
+        </member>
+        <member name="T:TestStack.Seleno.PageObjects.UiComponent`1">
+            <summary>
+            Strongly-typed extension of UiComponent.
+            </summary>
+            <typeparam name="TModel"></typeparam>
+        </member>
+        <member name="M:TestStack.Seleno.PageObjects.UiComponent`1.GetName``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+            Simple helper to return the name of the property passed in as a lambda expression.
+            This method helps prevent the need for magic strings and the declaration of the return type, TU,
+            rather than "object" prevents errors with boxing value types.
+            </summary>
+        </member>
+        <member name="T:TestStack.Seleno.PageObjects.UiComponent">
+            <summary>
+            Base class for Page Objects and Components
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -15,20 +15,6 @@ describe("ConditionMetForChangeVisually method", function () {
             }).toThrow("MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: ifOperator was not supplied");
         });
 
-        it("should throw an exception if the 'expectedValue' is an array - only single value checking is supported", function () {
-
-            var ifOperator = "equals";
-            var expectedValue = [1, 2];
-            var actualValue = [1, 2];
-            var conditionPassesIfNull = true;
-            var valueTypeToCompare = "string";
-            var valueFormat = null;
-
-            expect(function () {
-                MvcMegaForms.ConditionMetForChangeVisually(ifOperator, expectedValue, actualValue, conditionPassesIfNull, valueTypeToCompare, valueFormat);
-            }).toThrow("MvcMegaForms-ChangeVisually Critical Error in ConditionMetForChangeVisually: Array data type for expectedValue is not supported at this time.  expectedValue supplied was: " + expectedValue);
-        });
-
         it("should return true when 'actualValue' is not specified, 'expectedValue' is specified and 'conditionPassesIfNull' is true", function () {
 
             var ifOperator = "equals";

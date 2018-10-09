@@ -29,7 +29,7 @@ namespace MVCMega.Forms.FunctionalTests.ChangeVisually
 
         private void GivenUserIsOnTheCheckboxPage()
         {
-            _page = new HomePage()
+            _page = AssemblyFixture.Host.Instance.NavigateToInitialPage<HomePage>()
                 .GoToCheckboxPage();
         }
 
@@ -42,9 +42,7 @@ namespace MVCMega.Forms.FunctionalTests.ChangeVisually
 
         private void ThenNextFieldIsShown()
         {
-            var elem = _page.AssertThatElements(By.Id("NextField"));
-
-            //TODO: assert that elem exists and is not hidden (I.e. check html attributes..)
+            Assert.True(_page.NextField.Displayed);
 
             //Mehdi, could there be a nicer way to get the ID?  We know the model type.. so something like:
             //var elem = _homePage.GetElementByModelProperty(m => m.NextField).

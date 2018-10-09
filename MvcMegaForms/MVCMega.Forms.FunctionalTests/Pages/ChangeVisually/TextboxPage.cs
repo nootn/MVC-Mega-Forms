@@ -16,5 +16,19 @@ namespace MVCMega.Forms.FunctionalTests.Pages.ChangeVisually
 {
     public class TextboxPage : SingleFormPageBase<TextboxModel>
     {
+        public IWebElement NextField1
+        {
+            get { return Find.Element(By.Name("NextField1")); }
+        }
+
+        public IWebElement MakeNotEmptyToShowNextField1
+        {
+            get { return Find.Element(By.Name("MakeNotEmptyToShowNextField1")); }
+        }
+
+        public void ClearMakeNotEmptyToShowNextField1()
+        {
+            Input.ClearAndSendKeys(model => model.MakeNotEmptyToShowNextField1, "\t", true);
+        }
     }
 }
